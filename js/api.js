@@ -1,13 +1,4 @@
-// Calls go through the local CORS proxy (proxy.js) so the browser isn't
-// blocked by the upstream API's missing Access-Control-Allow-Origin header.
-const API_BASE = "https://bbmeta.vercel.app";
-const API_KEY = "";
-
-// Shared request headers
-const headers = {
-  Authorization: `Bearer ${API_KEY}`,
-  "Content-Type": "application/json",
-};
+const API_BASE = "";
 
 let requestCount = 0;
 let lastReset = Date.now();
@@ -36,7 +27,7 @@ function getCachedData(key) {
     if (Date.now() - timestamp < FIVE_MINUTES) {
       return data;
     }
-    localStorage.removeItem(key); // Expired
+    localStorage.removeItem(key);
   } catch (e) {
     localStorage.removeItem(key);
   }
@@ -64,13 +55,13 @@ export async function fetchLeaderboard(country = "", limit = 200) {
     return cached;
   }
 
-  let url = `${API_BASE}/v1/rankings/players?limit=${limit}`;
+  let url = `/api/v1/rankings/players?limit=${limit}`;
   if (country) {
     url += `&country=${encodeURIComponent(country)}`;
   }
 
   try {
-    const response = await safeFetch(url, { headers });
+    const response = await safeFetch(url);
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status} ${response.statusText}`);
@@ -87,7 +78,6 @@ export async function fetchLeaderboard(country = "", limit = 200) {
       error,
     );
 
-    // Fallback Mock Data Generation for local testing/offline mode
     const mockData = generateMockLeaderboard(country, limit);
     setCachedData(cacheKey, mockData);
     return mockData;
@@ -150,16 +140,16 @@ export async function fetchPlayerProfile(tag) {
   const cached = getCachedData(cacheKey);
   if (cached) return cached;
 
-  const url = `${API_BASE}/v1/players/${encodeURIComponent(tag)}`;
-  const response = await safeFetch(url, { headers });
+  const url = `/api/v1/players/${encodeURIComponent(tag)}`;
+  const response = await safeFetch(url);
   const data = await response.json();
   setCachedData(cacheKey, data);
   return data;
 }
 
 export async function fetchBattleLog(tag, limit = 10) {
-  const url = `${API_BASE}/v1/players/${encodeURIComponent(tag)}/battlelog?limit=${limit}`;
-  const response = await safeFetch(url, { headers });
+  const url = `/api/v1/players/${encodeURIComponent(tag)}/battlelog?limit=${limit}`;
+  const response = await safeFetch(url);
   const data = await response.json();
 
   return Array.isArray(data) ? data : data?.items || [];
@@ -174,13 +164,13 @@ export async function fetchMetaDecks(
   const cached = getCachedData(cacheKey);
   if (cached) return cached;
 
-  let url = `${API_BASE}/v2/meta/decks?days=${days}&limit=${limit}`;
+  let url = `/api/v2/meta/decks?days=${days}&limit=${limit}`;
   if (minTrophies != null)
     url += `&minTrophies=${encodeURIComponent(minTrophies)}`;
   if (maxTrophies != null)
     url += `&maxTrophies=${encodeURIComponent(maxTrophies)}`;
 
-  const response = await safeFetch(url, { headers });
+  const response = await safeFetch(url);
   const data = await response.json();
   setCachedData(cacheKey, data);
   return data;
@@ -191,14 +181,14 @@ export async function fetchCloneStats(minTrophies = null, maxTrophies = null) {
   const cached = getCachedData(cacheKey);
   if (cached) return cached;
 
-  let url = `${API_BASE}/v2/meta/units?days=7`;
+  let url = `/api/v2/meta/units?days=7`;
   if (minTrophies != null)
     url += `&minTrophies=${encodeURIComponent(minTrophies)}`;
   if (maxTrophies != null)
     url += `&maxTrophies=${encodeURIComponent(maxTrophies)}`;
 
   try {
-    const response = await safeFetch(url, { headers });
+    const response = await safeFetch(url);
     if (!response.ok) {
       throw new Error(`API returned status ${response.status}`);
     }
@@ -273,7 +263,6 @@ export async function fetchBattleHistory(tag, limit = 10) {
     return {
       result: b.result || (b.win ? "win" : "loss"),
       timestamp: b.battleTime || b.timestamp || b.time || b.createdAt || null,
-      // Surface the mode so the UI can label 2v2 vs 1v1 battles.
       mode: b.mode || (b.teamSize === 2 ? "2v2" : "1v1"),
       teamSize: b.teamSize || 1,
       deck: deck.length ? deck : Array(8).fill("💣"),
@@ -291,8 +280,8 @@ export async function fetchTrophyHistory(tag) {
   if (cached) return cached;
 
   try {
-    const url = `${API_BASE}/v1/players/${encodeURIComponent(tag)}/history?days=30`;
-    const response = await safeFetch(url, { headers });
+    const url = `/api/v1/players/${encodeURIComponent(tag)}/history?days=30`;
+    const response = await safeFetch(url);
     const data = await response.json();
 
     const items = Array.isArray(data) ? data : data?.items || [];
@@ -300,7 +289,7 @@ export async function fetchTrophyHistory(tag) {
     const trophies = [];
 
     items.forEach((item) => {
-      if (item.trophies == null) return; // skip days with no snapshot
+      if (item.trophies == null) return;
       dates.push(item.date || item.timestamp || item.battleTime || "");
       trophies.push(item.trophies ?? item.value ?? 0);
     });
@@ -315,12 +304,7 @@ export async function fetchTrophyHistory(tag) {
 
 export async function validateApiKey() {
   try {
-    const response = await safeFetch(
-      `${API_BASE}/v1/rankings/players?limit=1`,
-      {
-        headers,
-      },
-    );
+    const response = await safeFetch(`/api/v1/rankings/players?limit=1`);
     return response.ok;
   } catch {
     return false;
