@@ -1,6 +1,6 @@
 // Calls go through the local CORS proxy (proxy.js) so the browser isn't
 // blocked by the upstream API's missing Access-Control-Allow-Origin header.
-const API_BASE = "http://127.0.0.1:3002";
+const API_BASE = "https://bbmeta.vercel.app";
 const API_KEY = "";
 
 // Shared request headers
@@ -165,7 +165,6 @@ export async function fetchBattleLog(tag, limit = 10) {
   return Array.isArray(data) ? data : data?.items || [];
 }
 
-
 export async function fetchMetaDecks(
   days = 7,
   limit = 50,
@@ -186,7 +185,6 @@ export async function fetchMetaDecks(
   setCachedData(cacheKey, data);
   return data;
 }
-
 
 export async function fetchCloneStats(minTrophies = null, maxTrophies = null) {
   const cacheKey = `clone_stats_${minTrophies || ""}_${maxTrophies || ""}`;
@@ -216,13 +214,12 @@ export async function fetchCloneStats(minTrophies = null, maxTrophies = null) {
       "[API] Clone stats fetch failed, providing fallback mock data.",
       error,
     );
-    
+
     const mock = generateMockCloneStats(minTrophies, maxTrophies);
     setCachedData(cacheKey, mock);
     return mock;
   }
 }
-
 
 function generateMockCloneStats(minTrophies = null, maxTrophies = null) {
   const names = [
@@ -257,7 +254,6 @@ function generateMockCloneStats(minTrophies = null, maxTrophies = null) {
   });
 }
 
-
 export async function fetchBattleHistory(tag, limit = 10) {
   const cacheKey = `battle_history_${tag}_${limit}`;
   const cached = getCachedData(cacheKey);
@@ -289,7 +285,6 @@ export async function fetchBattleHistory(tag, limit = 10) {
   return normalized;
 }
 
-
 export async function fetchTrophyHistory(tag) {
   const cacheKey = `trophy_history_${tag}`;
   const cached = getCachedData(cacheKey);
@@ -317,7 +312,6 @@ export async function fetchTrophyHistory(tag) {
     return { dates: [], trophies: [] };
   }
 }
-
 
 export async function validateApiKey() {
   try {
