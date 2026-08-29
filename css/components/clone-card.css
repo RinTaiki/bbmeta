@@ -1,0 +1,145 @@
+.clone-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.clone-card {
+  background: rgba(255, 250, 240, 0.85);
+  backdrop-filter: blur(8px);
+  border: 2px solid #d8c19a;
+  box-shadow: 0 6px 18px rgba(80, 56, 20, 0.14);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.clone-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 22px rgba(80, 56, 20, 0.22);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.clone-avatar-container {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.clone-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+}
+
+.clone-icon-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background: #c9881f;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clone-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.clone-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #2c2013;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.clone-sample {
+  font-size: 0.75rem;
+  color: #736250;
+}
+
+.metric-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.metric-bar-bg {
+  height: 8px;
+  background: #e8d5b5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.metric-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.usage-fill {
+  background: #c9881f;
+}
+
+.win-high {
+  color: #2e7d32;
+}
+.win-high-fill {
+  background: #2e7d32;
+}
+
+.win-med {
+  color: #f5a623;
+}
+.win-med-fill {
+  background: #f5a623;
+}
+
+.win-low {
+  color: #c0392b;
+}
+.win-low-fill {
+  background: #c0392b;
+}
+
+@media (max-width: 900px) {
+  .clone-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 550px) {
+  .clone-grid {
+    grid-template-columns: 1fr;
+  }
+}

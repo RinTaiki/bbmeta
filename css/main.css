@@ -1,0 +1,43 @@
+:root {
+  --color-accent: #c9a84c;
+  --color-accent-hover: #e0bc5c;
+  --color-text: #ffffff;
+  --color-text-muted: rgba(255, 255, 255, 0.7);
+  --color-bg-dark: #0f1115;
+  --font-primary: "Inter", system-ui, -apple-system, sans-serif;
+  --shadow-warm: 0 8px 32px rgba(201, 168, 76, 0.15);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--color-bg-dark);
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

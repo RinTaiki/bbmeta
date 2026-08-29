@@ -1,0 +1,4 @@
+Player ID:
+#LCPGV9CQ
+
+cd /home/chidera/BB && node proxy.js

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BBmeta — Player Profile</title>
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/components/header.css" />
+    <link rel="stylesheet" href="css/components/footer.css" />
+    <link rel="stylesheet" href="css/components/notifications.css" />
+    <link rel="stylesheet" href="css/components/player-card.css" />
+    <link rel="stylesheet" href="css/components/battle-card.css" />
+    <link rel="stylesheet" href="css/components/chart.css" />
+    <link rel="stylesheet" href="css/profile.css" />
+  </head>
+  <body class="fade-in">
+
+    <div class="profile-bg"></div>
+    <div class="profile-bg-deco">
+      <img src="assets/emotes/king-celebration.png" alt="" style="--r: -8deg" />
+      <img src="assets/emotes/king-surprised.png" alt="" style="--r: 10deg" />
+      <img src="assets/emotes/king-smile.png" alt="" style="--r: 6deg" />
+      <img src="assets/emotes/king-tongue.png" alt="" style="--r: -12deg" />
+    </div>
+
+
+    <header class="site-header">
+      <div class="header-container">
+        <a href="index.html" class="logo">BBmeta</a>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="leaderboard.html">Leaderboard</a>
+          <a href="clones.html">Clones</a>
+          <a href="meta.html">Meta</a>
+          <a href="deck-builder.html">Deck Builder</a>
+          <a href="#about" class="nav-about">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="profile-page">
+      <div class="content-wrapper">
+
+        <div id="loading-state" class="state-container">
+          <div class="spinner"></div>
+          <p id="loading-message">Fetching player profile...</p>
+        </div>
+
+
+        <div id="error-state" class="state-container hidden">
+          <div class="error-icon">⚠️</div>
+          <h2>Player Not Found</h2>
+          <p>The tag provided does not exist or API request failed.</p>
+          <a href="index.html" class="btn-back">Return Home</a>
+        </div>
+
+
+        <div id="profile-content" class="hidden">
+
+          <section class="player-card-section">
+            <div class="player-card">
+              <div class="player-header">
+                <div class="player-avatar-wrapper">
+                  <div class="player-avatar">👑</div>
+                  <span class="level-badge" id="stat-level">--</span>
+                </div>
+                <div class="player-identity">
+                  <div class="name-row">
+                    <h1 id="player-name">---</h1>
+                    <span class="tribe-pill" id="stat-tribe">No Tribe</span>
+                  </div>
+                  <div class="player-tag-container">
+                    <span id="player-tag">#---</span>
+                    <button id="copy-tag-btn" class="copy-btn" title="Copy Tag">
+                      📋 Copy
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="stats-grid">
+                <div class="stat-box highlight-gold">
+                  <span class="stat-label">Current Trophies</span>
+                  <span class="stat-value" id="stat-trophies">--</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-label">Global Rank</span>
+                  <span class="stat-value" id="stat-rank">--</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-label">Best Rank</span>
+                  <span class="stat-value" id="stat-best-rank">--</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-label">Win Rate</span>
+                  <span class="stat-value" id="stat-win-rate">--%</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-label">Wins / Losses</span>
+                  <span class="stat-value" id="stat-wl">-- / --</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="profile-columns">
+
+            <section class="battles-section">
+              <div class="section-header-strip">
+                <h2 class="section-title">Recent Battles</h2>
+              </div>
+              <div id="battles-loading" class="sub-loading">
+
+              </div>
+              <div id="battles-error" class="sub-error hidden">
+
+              </div>
+              <div id="battles-list" class="battles-container"></div>
+            </section>
+
+
+            <section class="chart-section">
+              <div class="section-header-strip">
+                <h2 class="section-title">30-Day Trophy History</h2>
+              </div>
+              <div id="chart-loading" class="sub-loading">
+                Generating graph...
+              </div>
+              <div id="chart-error" class="sub-error hidden">
+                History unavailable.
+              </div>
+              <div id="chart-container" class="chart-card hidden">
+                <canvas id="trophyChart"></canvas>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer" id="about">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <span class="footer-logo">BBmeta</span> — Badland Brawl Stats
+        </div>
+        <div class="footer-disclaimer">Game assets © Frogmind</div>
+      </div>
+    </footer>
+
+    <div id="notification-container" class="toast-container"></div>
+    <script type="module" src="js/profile.js"></script>
+  </body>
+</html>

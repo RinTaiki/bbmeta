@@ -1,0 +1,317 @@
+
+.hero {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 60px;
+
+  background-image: url("../assets/clones/canyon_dawn.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 700px;
+  width: 100%;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  letter-spacing: -1px;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--color-text-muted);
+  margin-bottom: 36px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.search-box {
+  display: flex;
+  gap: 10px;
+  max-width: 520px;
+  margin: 0 auto;
+  background: rgba(20, 22, 28, 0.55);
+  padding: 6px;
+  border-radius: 40px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 14px 20px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.search-input::placeholder {
+  color: #888888;
+}
+
+.search-button {
+  background-color: var(--color-accent);
+  color: #0f1115;
+  border: none;
+  outline: none;
+  padding: 14px 28px;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.search-button:hover {
+  background-color: var(--color-accent-hover);
+  transform: translateY(-1px);
+}
+
+.features {
+  padding: 80px 24px;
+  background: var(--color-bg-dark);
+}
+
+.features-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 300px;
+  padding: 20px;
+  background: #f3e7cd;
+  border: 6px solid #6b4423;
+  border-radius: 14px;
+  box-shadow: 4px 4px 0 #5c3a1e;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 8px 8px 0 #5c3a1e;
+}
+
+.card__title {
+  font-size: 32px;
+  font-weight: 900;
+  color: #3a2410;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.card__title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 90%;
+  height: 3px;
+  background-color: #6b4423;
+  transform: translateX(-100%);
+  transition: transform 0.3s;
+}
+
+.card:hover .card__title::after {
+  transform: translateX(0);
+}
+
+.card__content {
+  font-size: 16px;
+  line-height: 1.4;
+  color: #3a2410;
+  margin-bottom: 20px;
+}
+
+.card__emote {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  transform-origin: bottom center;
+  animation: emote-breathe 13s ease-in-out infinite;
+}
+
+@keyframes emote-breathe {
+  0% {
+    transform: scale(1);
+  }
+  6% {
+    transform: scale(1.12);
+  }
+  12% {
+    transform: scale(0.97);
+  }
+  18% {
+    transform: scale(1.05);
+  }
+  23%,
+  100% {
+    transform: scale(1);
+  }
+}
+
+.card:hover .card__emote {
+  animation: emote-pop 0.6s ease-out;
+}
+
+@keyframes emote-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.3);
+  }
+  70% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes emote-pop {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  40% {
+    transform: scale(1.35, 1.2) rotate(-6deg);
+  }
+  70% {
+    transform: scale(0.9, 1.08) rotate(5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.card__button {
+  border: 3px solid #6b4423;
+  background: #6b4423;
+  color: #fff;
+  padding: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s;
+  width: 50%;
+  height: 100%;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.card__button::before {
+  content: "Sure?";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 105%;
+  background-color: #5ad641;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+}
+
+.card__button:hover::before {
+  transform: translateY(0);
+}
+
+.card__button:active {
+  transform: scale(0.95);
+}
+
+@keyframes glitch {
+  0% {
+    transform: translate(2px, 2px);
+  }
+  25% {
+    transform: translate(-2px, -2px);
+  }
+  50% {
+    transform: translate(-2px, 2px);
+  }
+  75% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(2px, 2px);
+  }
+}
+
+.glitch {
+  animation: glitch 0.3s infinite;
+}
+
+@media (max-width: 640px) {
+  .hero-title {
+    font-size: 2.1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .search-box {
+    flex-direction: column;
+    background: transparent;
+    backdrop-filter: none;
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .search-input,
+  .search-button {
+    border-radius: 12px;
+    width: 100%;
+  }
+
+  .card {
+    max-width: 100%;
+  }
+}

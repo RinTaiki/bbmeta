@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BBmeta — Clone Stats</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Baloo+2:wght@500;600;700;800&family=Fredoka:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/components/header.css" />
+    <link rel="stylesheet" href="css/components/footer.css" />
+    <link rel="stylesheet" href="css/components/notifications.css" />
+    <link rel="stylesheet" href="css/components/filter-bar.css" />
+    <link rel="stylesheet" href="css/components/clone-card.css" />
+    <link rel="stylesheet" href="css/clones.css" />
+  </head>
+  <body class="fade-in">
+    <header class="site-header">
+      <div class="header-container">
+        <a href="index.html" class="logo">BBmeta</a>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="leaderboard.html">Leaderboard</a>
+          <a href="clones.html" class="active">Clones</a>
+          <a href="meta.html">Meta</a>
+          <a href="deck-builder.html">Deck Builder</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="clones-page">
+      <div class="content-wrapper">
+        <section class="page-hero">
+          <h1>Clone Meta</h1>
+          <p>Usage and win rate for every clone in Badland Brawl</p>
+        </section>
+
+        <section class="filter-bar-container">
+          <div class="filter-group">
+            <label for="trophy-filter">Trophy Range</label>
+            <select id="trophy-filter" class="filter-select">
+              <option value="all">All Trophies</option>
+              <option value="top">6,000+</option>
+              <option value="mid">4,000–5,999</option>
+              <option value="low">&lt; 4,000</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="rarity-filter">Rarity</label>
+            <select id="rarity-filter" class="filter-select">
+              <option value="all">All Rarities</option>
+              <option value="primal">Primal</option>
+              <option value="evolved">Evolved</option>
+              <option value="mythical">Mythical</option>
+              <option value="unreal">Unreal</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="sort-filter">Sort By</label>
+            <select id="sort-filter" class="filter-select">
+              <option value="usage">Usage (highest)</option>
+              <option value="winRate">Win Rate (highest)</option>
+              <option value="name">Name (A-Z)</option>
+              <option value="sampleSize">Sample Size (highest)</option>
+            </select>
+          </div>
+        </section>
+
+        <div id="loading-state" class="state-container">
+          <div class="spinner"></div>
+          <p>Loading clone data...</p>
+        </div>
+
+        <div id="error-state" class="state-container hidden">
+          <div class="error-icon">⚠️</div>
+          <p>Failed to load clone stats. Try again.</p>
+          <button id="retry-btn" class="btn-retry">Retry</button>
+        </div>
+
+        <div id="empty-state" class="state-container hidden">
+          <p>No clone data available for this filter.</p>
+        </div>
+
+        <div id="clone-grid" class="clone-grid hidden"></div>
+      </div>
+    </main>
+
+    <div id="clone-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <button id="modal-close" class="modal-close">&times;</button>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <span class="footer-logo">BBmeta</span> — Badland Brawl Stats
+        </div>
+        <div class="footer-disclaimer">Game assets © Frogmind</div>
+      </div>
+    </footer>
+
+    <div id="notification-container" class="toast-container"></div>
+    <script type="module" src="js/clones.js"></script>
+  </body>
+</html>

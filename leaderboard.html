@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BBmeta — Global Leaderboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/components/header.css" />
+    <link rel="stylesheet" href="css/components/footer.css" />
+    <link rel="stylesheet" href="css/components/notifications.css" />
+    <link rel="stylesheet" href="css/leaderboard.css" />
+  </head>
+  <body class="fade-in">
+    <header class="site-header">
+      <div class="header-container">
+        <a href="index.html" class="logo">BBmeta</a>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="leaderboard.html" class="active">Leaderboard</a>
+          <a href="clones.html">Clones</a>
+          <a href="meta.html">Meta</a>
+          <a href="deck-builder.html">Deck Builder</a>
+          <a href="#about" class="nav-about">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="leaderboard-page">
+      <section class="leaderboard-hero">
+        <div class="hero-overlay"></div>
+        <div class="leaderboard-container">
+          <div class="section-header">
+            <img
+              class="king-stance"
+              src="assets/king/King_00.png"
+              alt="King stance"
+            />
+            <h1 class="page-title">Global Leaderboard</h1>
+            <p class="page-subtitle">Top players worldwide</p>
+          </div>
+
+          <div class="controls-bar">
+            <div class="search-wrapper">
+              <input
+                type="text"
+                id="search-input"
+                class="control-input"
+                placeholder="Search player by name or tag..."
+                autocomplete="off"
+              />
+            </div>
+
+            <div class="filter-wrapper">
+              <select id="country-filter" class="control-select">
+                <option value="">Global (All Countries)</option>
+                <option value="US">🇺🇸 United States</option>
+                <option value="DE">🇩🇪 Germany</option>
+                <option value="FR">🇫🇷 France</option>
+                <option value="GB">🇬🇧 United Kingdom</option>
+                <option value="ES">🇪🇸 Spain</option>
+                <option value="BR">🇧🇷 Brazil</option>
+                <option value="JP">🇯🇵 Japan</option>
+                <option value="KR">🇰🇷 South Korea</option>
+                <option value="FI">🇫🇮 Finland</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-card glass-panel">
+            <!-- Loading State -->
+            <div id="loading-state" class="state-container">
+              <img src="assets/cog.png" alt="Loading" class="cog-spinner" />
+              <p>Loading leaderboard...</p>
+            </div>
+
+            <div id="error-state" class="state-container hidden">
+              <div class="error-icon">⚠️</div>
+              <p id="error-message">Failed to load leaderboard. Try again.</p>
+              <button id="retry-btn" class="btn-retry">Retry</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="leaderboard-table" id="leaderboard-table">
+                <thead>
+                  <tr>
+                    <th class="col-rank">Rank</th>
+                    <th class="col-player">Player</th>
+                    <th class="col-trophies">Trophies</th>
+                    <th class="col-clan">Clan</th>
+                    <th class="col-winrate">Win Rate</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboard-body"></tbody>
+              </table>
+            </div>
+
+            <div id="empty-state" class="state-container hidden">
+              <p>No players match your search criteria.</p>
+            </div>
+          </div>
+
+          <div class="pagination-container hidden" id="pagination-container">
+            <button id="load-more-btn" class="btn-load-more">
+              Load More Players
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="about">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <span class="footer-logo">BBmeta</span> — Unofficial Badland Brawl
+          Stats
+        </div>
+        <ul class="footer-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#privacy">Privacy</a></li>
+        </ul>
+        <div class="footer-disclaimer">Game assets © Frogmind</div>
+      </div>
+    </footer>
+
+    <div id="notification-container" class="toast-container"></div>
+
+    <script type="module" src="js/leaderboard.js"></script>
+  </body>
+</html>

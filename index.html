@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BBmeta — Badland Brawl Stats & Community</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/components/header.css" />
+    <link rel="stylesheet" href="css/components/footer.css" />
+    <link rel="stylesheet" href="css/components/notifications.css" />
+    <link rel="stylesheet" href="css/landing.css" />
+  </head>
+  <body class="fade-in">
+    <header class="site-header">
+      <div class="header-container">
+        <a href="index.html" class="logo">BBmeta</a>
+        <nav class="nav-links">
+          <a href="index.html" class="active">Home</a>
+          <a href="leaderboard.html">Leaderboard</a>
+          <a href="clones.html">Clones</a>
+          <a href="meta.html">Meta</a>
+          <a href="deck-builder.html">Deck Builder</a>
+          <a href="#about" class="nav-about">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <h1 class="hero-title">Badland Brawl Stats & Community</h1>
+          <p class="hero-subtitle">
+            Track your progress, explore the meta, and build better decks.
+          </p>
+
+          <form id="search-form" class="search-box">
+            <input
+              type="text"
+              id="player-tag-input"
+              class="search-input"
+              placeholder="Enter player tag (e.g., #ABCDEFG)"
+              required
+              autocomplete="off"
+            />
+            <button type="submit" class="search-button">Search</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="features">
+        <div class="features-container">
+          <div class="card">
+            <img
+              class="card__emote"
+              src="assets/emotes/king-smile.png"
+              alt="King smiling"
+            />
+            <span class="card__title">Player Profiles</span>
+            <p class="card__content">
+              Look up any player, see rank, trophies, and battle history.
+            </p>
+            <a href="profile.html" class="card__button">View Profiles</a>
+          </div>
+
+          <div class="card">
+            <img
+              class="card__emote"
+              src="assets/emotes/king-choosingcard.png"
+              alt="King choosing a card"
+            />
+            <span class="card__title">Meta Stats</span>
+            <p class="card__content">
+              Clone usage, win rates, and top decks in real-time.
+            </p>
+            <a href="meta.html" class="card__button">Explore Meta</a>
+          </div>
+
+          <div class="card">
+            <img
+              class="card__emote"
+              src="assets/emotes/king-celebration.png"
+              alt="King celebrating"
+            />
+            <span class="card__title">Deck Builder</span>
+            <p class="card__content">
+              Build and optimize your 8-clone deck with data-driven insights.
+            </p>
+            <a href="deck-builder.html" class="card__button">Build Deck</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="about">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <span class="footer-logo">BBmeta</span> — Unofficial Badland Brawl
+          Stats
+        </div>
+        <ul class="footer-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#privacy">Privacy</a></li>
+        </ul>
+        <div class="footer-disclaimer">Game assets © Frogmind</div>
+      </div>
+    </footer>
+
+    <div id="notification-container" class="toast-container"></div>
+
+    <script type="module" src="js/landing.js"></script>
+  </body>
+</html>

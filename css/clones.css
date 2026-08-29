@@ -1,0 +1,414 @@
+:root {
+  --accent-gold: #c9881f;
+  --accent-gold-bg: rgba(201, 136, 31, 0.15);
+  --border-gold: #d8c19a;
+  --text-dark: #2c2013;
+  --text-muted: #736250;
+  --win-high: #2e7d32;
+  --win-med: #f5a623;
+  --win-low: #c0392b;
+  --usage-bg: #e8d5b5;
+}
+
+body {
+  background:
+    linear-gradient(rgba(40, 24, 10, 0.45), rgba(40, 24, 10, 0.45)),
+    url("../assets/backgrounds/holiday_eggopening.png") center/cover no-repeat
+      fixed;
+  color: var(--text-dark);
+  font-family:
+    "Inter",
+    -apple-system,
+    sans-serif;
+  min-height: 100vh;
+}
+
+.clones-page {
+  padding: 90px 16px 40px;
+}
+
+.content-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-hero {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.page-hero h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+
+.page-hero p {
+  font-size: 1rem;
+  color: #f0e6d2;
+}
+
+.state-container {
+  background: rgba(255, 250, 240, 0.85);
+  backdrop-filter: blur(8px);
+  border: 2px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 48px 20px;
+  text-align: center;
+  margin: 32px 0;
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--usage-bg);
+  border-top-color: var(--accent-gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btn-retry {
+  margin-top: 12px;
+  background: var(--accent-gold);
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(20, 12, 4, 0.72);
+  backdrop-filter: blur(6px) saturate(1.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+  animation: overlayIn 0.25s ease;
+}
+
+@keyframes overlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 540px;
+  padding: 28px;
+  border-radius: 22px;
+  background: linear-gradient(
+    165deg,
+    rgba(38, 26, 14, 0.92),
+    rgba(24, 16, 9, 0.95)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.55),
+    0 0 0 1px var(--rarity, var(--border-gold)) inset,
+    0 0 40px -10px var(--rarity-bg, rgba(201, 136, 31, 0.5));
+  overflow: hidden;
+  max-height: 88vh;
+  overflow-y: auto;
+  animation: cardPop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.modal-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--rarity, var(--border-gold)),
+    transparent
+  );
+  pointer-events: none;
+}
+
+@keyframes cardPop {
+  from {
+    transform: translateY(14px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--border-gold);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  z-index: 5;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.modal-close:hover {
+  background: #fff;
+  transform: rotate(90deg);
+}
+
+.hidden {
+  display: none !important;
+}
+
+:root {
+  --rarity-unreal: #3fa535;
+  --rarity-unreal-bg: rgba(63, 165, 53, 0.15);
+  --rarity-primal: #2f6fd6;
+  --rarity-primal-bg: rgba(47, 111, 214, 0.15);
+  --rarity-mythical: #8e44d6;
+  --rarity-mythical-bg: rgba(142, 68, 214, 0.15);
+  --rarity-evolved: #e07b1a;
+  --rarity-evolved-bg: rgba(224, 123, 26, 0.15);
+  --rarity-unknown: #8a7a5c;
+  --rarity-unknown-bg: rgba(138, 122, 92, 0.15);
+}
+
+.rarity-unreal {
+  --rarity: var(--rarity-unreal);
+  --rarity-bg: var(--rarity-unreal-bg);
+}
+.rarity-primal {
+  --rarity: var(--rarity-primal);
+  --rarity-bg: var(--rarity-primal-bg);
+}
+.rarity-mythical {
+  --rarity: var(--rarity-mythical);
+  --rarity-bg: var(--rarity-mythical-bg);
+}
+.rarity-evolved {
+  --rarity: var(--rarity-evolved);
+  --rarity-bg: var(--rarity-evolved-bg);
+}
+.rarity-unknown {
+  --rarity: var(--rarity-unknown);
+  --rarity-bg: var(--rarity-unknown-bg);
+}
+
+.rarity-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "Fredoka", "Baloo 2", "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--rarity);
+  background: var(--rarity-bg);
+  border: 1.5px solid var(--rarity);
+  padding: 4px 12px 4px 10px;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+}
+
+.rarity-badge::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rarity);
+  box-shadow: 0 0 0 2px var(--rarity-bg);
+}
+
+.card-header {
+  position: relative;
+}
+
+.card-header .rarity-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.spotlight {
+  display: flex;
+  gap: 26px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.spotlight-frame {
+  flex: 1 1 0;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  max-height: 260px;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spotlight-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.35));
+}
+
+.spotlight-info {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.spotlight-name {
+  font-family: "Baloo 2", "Fredoka", "Inter", sans-serif;
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: #fdf6ea;
+  margin: 0 0 10px;
+  line-height: 1.1;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.spotlight-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0 12px;
+}
+
+.metric-pill {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 9px 14px;
+  min-width: 86px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(2px);
+}
+
+.metric-pill span {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(253, 246, 234, 0.6);
+}
+
+.metric-pill strong {
+  font-family: "Baloo 2", "Fredoka", "Inter", sans-serif;
+  font-size: 1.2rem;
+  color: #fdf6ea;
+}
+
+.spotlight-note {
+  font-size: 0.78rem;
+  color: rgba(253, 246, 234, 0.55);
+  margin: 6px 0 0;
+  line-height: 1.4;
+}
+
+@media (max-width: 480px) {
+  .spotlight {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .spotlight-metrics {
+    justify-content: center;
+  }
+}
+
+.clone-card,
+.modal-card {
+  --bite-depth: 22px;
+  --bite-w: 26px;
+
+  -webkit-mask-image:
+    linear-gradient(#000 0 0),
+    linear-gradient(
+      -24deg,
+      transparent 0,
+      transparent var(--bite-depth),
+      #000 var(--bite-depth)
+    ),
+    linear-gradient(
+      90deg,
+      #000 0,
+      #000 calc(100% - var(--bite-depth)),
+      transparent calc(100% - var(--bite-depth))
+    ),
+    linear-gradient(
+      18deg,
+      transparent 0,
+      transparent var(--bite-depth),
+      #000 var(--bite-depth)
+    );
+  -webkit-mask-composite: source-over, source-out, source-out, source-out;
+  mask-image:
+    linear-gradient(#000 0 0),
+    linear-gradient(
+      -24deg,
+      transparent 0,
+      transparent var(--bite-depth),
+      #000 var(--bite-depth)
+    ),
+    linear-gradient(
+      90deg,
+      #000 0,
+      #000 calc(100% - var(--bite-depth)),
+      transparent calc(100% - var(--bite-depth))
+    ),
+    linear-gradient(
+      18deg,
+      transparent 0,
+      transparent var(--bite-depth),
+      #000 var(--bite-depth)
+    );
+  mask-composite: add, subtract, subtract, subtract;
+
+  filter: drop-shadow(0 0 0.75px rgba(40, 24, 10, 0.6));
+}

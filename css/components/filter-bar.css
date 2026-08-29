@@ -1,0 +1,46 @@
+.filter-bar-container {
+    background: rgba(255, 250, 240, 0.85);
+    backdrop-filter: blur(8px);
+    border: 2px solid #d8c19a;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    box-shadow: 0 6px 18px rgba(80, 56, 20, 0.14);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 160px;
+}
+
+.filter-group label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #736250;
+    letter-spacing: 0.5px;
+}
+
+.filter-select {
+    background: #fff;
+    border: 1px solid #d8c19a;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #2c2013;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.filter-select:focus {
+    border-color: #c9881f;
+}

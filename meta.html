@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BBmeta — Meta Decks</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/components/header.css" />
+    <link rel="stylesheet" href="css/components/footer.css" />
+    <link rel="stylesheet" href="css/components/notifications.css" />
+    <link rel="stylesheet" href="css/meta.css" />
+  </head>
+  <body class="fade-in">
+    <header class="site-header">
+      <div class="header-container">
+        <a href="index.html" class="logo">BBmeta</a>
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="leaderboard.html">Leaderboard</a>
+          <a href="clones.html">Clones</a>
+          <a href="meta.html" class="active">Meta</a>
+          <a href="deck-builder.html">Deck Builder</a>
+          <a href="#about" class="nav-about">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="meta-page">
+      <section class="meta-hero">
+        <div class="meta-container">
+          <div class="section-header">
+            <img
+              class="king-stance"
+              src="assets/king/King_00.png"
+              alt="King stance"
+            />
+            <h1 class="page-title">Meta Decks</h1>
+            <p class="page-subtitle">Top competitive decks by win rate</p>
+          </div>
+
+          <div class="controls-bar">
+            <div class="filter-group">
+              <span class="filter-label">Trophy Range</span>
+              <div class="trophy-filter" id="trophy-filter">
+                <button class="filter-chip active" data-min="" data-max="">
+                  All
+                </button>
+                <button class="filter-chip" data-min="6000" data-max="">
+                  6,000+
+                </button>
+                <button class="filter-chip" data-min="4000" data-max="5999">
+                  4,000–5,999
+                </button>
+                <button class="filter-chip" data-min="" data-max="3999">
+                  &lt; 4,000
+                </button>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <span class="filter-label">Sort By</span>
+              <select id="sort-select" class="control-select">
+                <option value="winRate">Win Rate</option>
+                <option value="usageRate">Usage</option>
+                <option value="sampleSize">Sample Size</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-card glass-panel">
+            <div id="loading-state" class="state-container">
+              <img src="assets/cog.png" alt="Loading" class="cog-spinner" />
+              <p>Loading meta decks...</p>
+            </div>
+
+            <div id="error-state" class="state-container hidden">
+              <div class="error-icon">⚠️</div>
+              <p id="error-message">Failed to load meta decks. Try again.</p>
+              <button id="retry-btn" class="btn-retry">Retry</button>
+            </div>
+
+            <div id="empty-state" class="state-container hidden">
+              <p>No decks match this trophy range.</p>
+            </div>
+
+            <div id="decks-grid" class="decks-grid"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="about">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <span class="footer-logo">BBmeta</span> — Unofficial Badland Brawl
+          Stats
+        </div>
+        <ul class="footer-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#privacy">Privacy</a></li>
+        </ul>
+        <div class="footer-disclaimer">Game assets © Frogmind</div>
+      </div>
+    </footer>
+
+    <div id="notification-container" class="toast-container"></div>
+
+    <script type="module" src="js/meta.js"></script>
+  </body>
+</html>

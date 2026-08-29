@@ -1,0 +1,14 @@
+.chart-card {
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border-strong);
+  border-radius: 0;
+  padding: 18px;
+  height: 320px;
+  position: relative;
+  box-shadow: var(--shadow-soft);
+}
+
+.chart-card canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
