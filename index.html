@@ -7,6 +7,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
       rel="stylesheet"
@@ -21,7 +23,9 @@
   <body class="fade-in">
     <header class="site-header">
       <div class="header-container">
-        <a href="index.html" class="logo">BBmeta</a>
+        <a href="index.html" class="logo"
+          >BBmeta<span class="beta-tag">[Beta]</span></a
+        >
         <nav class="nav-links">
           <a href="index.html" class="active">Home</a>
           <a href="leaderboard.html">Leaderboard</a>
@@ -103,8 +107,10 @@
     <footer class="site-footer" id="about">
       <div class="footer-container">
         <div class="footer-brand">
-          <span class="footer-logo">BBmeta</span> — Unofficial Badland Brawl
-          Stats
+          <span class="footer-logo"
+            >BBmeta<span class="beta-tag">[Beta]</span></span
+          >
+          — Unofficial Badland Brawl Stats
         </div>
         <ul class="footer-links">
           <li><a href="#about">About</a></li>
@@ -115,8 +121,48 @@
       </div>
     </footer>
 
+    <!-- Floating News Button -->
+    <button
+      id="news-trigger-btn"
+      class="news-button"
+      aria-label="Open News Feed"
+    >
+      <span>📰 News</span>
+      <span id="news-unread-badge" class="badge" style="display: none">0</span>
+    </button>
+
+    <!-- News Popup Modal -->
+    <div id="news-popup-overlay" class="news-popup-overlay">
+      <div class="news-popup">
+        <div class="news-popup-header">
+          <h2>📰 BBmeta Updates</h2>
+          <button
+            id="news-close-btn"
+            class="news-close-btn"
+            aria-label="Close News Feed"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div id="news-popup-list" class="news-popup-body"></div>
+
+        <div class="news-popup-footer">
+          <a
+            href="https://discord.gg/YOUR_INVITE"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="news-discord-link"
+          >
+            💬 Join our Discord
+          </a>
+        </div>
+      </div>
+    </div>
+
     <div id="notification-container" class="toast-container"></div>
 
     <script type="module" src="js/landing.js"></script>
+    <script type="module" src="js/news-popup.js"></script>
   </body>
 </html>

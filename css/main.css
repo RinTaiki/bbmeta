@@ -1,3 +1,6 @@
+@import "components/news-button.css";
+@import "components/news-popup.css";
+
 :root {
   --color-accent: #c9a84c;
   --color-accent-hover: #e0bc5c;

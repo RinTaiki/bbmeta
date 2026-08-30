@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BBmeta — Player Profile</title>
 
-
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,9 +12,7 @@
       rel="stylesheet"
     />
 
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 
     <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="css/components/header.css" />
@@ -27,7 +24,6 @@
     <link rel="stylesheet" href="css/profile.css" />
   </head>
   <body class="fade-in">
-
     <div class="profile-bg"></div>
     <div class="profile-bg-deco">
       <img src="assets/emotes/king-celebration.png" alt="" style="--r: -8deg" />
@@ -36,10 +32,11 @@
       <img src="assets/emotes/king-tongue.png" alt="" style="--r: -12deg" />
     </div>
 
-
     <header class="site-header">
       <div class="header-container">
-        <a href="index.html" class="logo">BBmeta</a>
+        <a href="index.html" class="logo"
+          >BBmeta<span class="beta-tag">[Beta]</span></a
+        >
         <nav class="nav-links">
           <a href="index.html">Home</a>
           <a href="leaderboard.html">Leaderboard</a>
@@ -53,12 +50,10 @@
 
     <main class="profile-page">
       <div class="content-wrapper">
-
         <div id="loading-state" class="state-container">
           <div class="spinner"></div>
           <p id="loading-message">Fetching player profile...</p>
         </div>
-
 
         <div id="error-state" class="state-container hidden">
           <div class="error-icon">⚠️</div>
@@ -67,9 +62,7 @@
           <a href="index.html" class="btn-back">Return Home</a>
         </div>
 
-
         <div id="profile-content" class="hidden">
-
           <section class="player-card-section">
             <div class="player-card">
               <div class="player-header">
@@ -90,7 +83,6 @@
                   </div>
                 </div>
               </div>
-
 
               <div class="stats-grid">
                 <div class="stat-box highlight-gold">
@@ -118,20 +110,14 @@
           </section>
 
           <div class="profile-columns">
-
             <section class="battles-section">
               <div class="section-header-strip">
                 <h2 class="section-title">Recent Battles</h2>
               </div>
-              <div id="battles-loading" class="sub-loading">
-
-              </div>
-              <div id="battles-error" class="sub-error hidden">
-
-              </div>
+              <div id="battles-loading" class="sub-loading"></div>
+              <div id="battles-error" class="sub-error hidden"></div>
               <div id="battles-list" class="battles-container"></div>
             </section>
-
 
             <section class="chart-section">
               <div class="section-header-strip">
@@ -155,7 +141,10 @@
     <footer class="site-footer" id="about">
       <div class="footer-container">
         <div class="footer-brand">
-          <span class="footer-logo">BBmeta</span> — Badland Brawl Stats
+          <span class="footer-logo"
+            >BBmeta<span class="beta-tag">[Beta]</span></span
+          >
+          — Badland Brawl Stats
         </div>
         <div class="footer-disclaimer">Game assets © Frogmind</div>
       </div>

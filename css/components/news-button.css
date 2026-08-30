@@ -1,0 +1,36 @@
+.news-button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+    background: rgba(255, 250, 240, 0.9);
+    border: 2px solid #c9881f;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #2c2114;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(80, 56, 20, 0.2);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.news-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(201, 136, 31, 0.3);
+}
+
+.news-button .badge {
+    background: #dc2626;
+    color: #fff;
+    border-radius: 50%;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 20px;
+    text-align: center;
+}
