@@ -13,7 +13,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "API_KEY not configured" });
   }
 
-  // Strip the '/api' prefix from the request path
   let path = req.url;
   if (path.startsWith("/api/")) {
     path = path.substring(4); // remove '/api'

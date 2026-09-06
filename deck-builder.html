@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BBmeta — Deck Builder</title>
+    <meta
+      name="description"
+      content="Build and optimize your 8-clone deck with data-driven insights."
+    />
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/emotes/king-choosingcard.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/components/header.css" />
+    <link rel="stylesheet" href="css/components/footer.css" />
+    <link rel="stylesheet" href="css/deck-builder.css" />
+  </head>
+  <body class="fade-in">
+    <header class="site-header">
+      <div class="header-container">
+        <a href="index.html" class="logo"
+          >BBmeta<span class="beta-tag">[Beta]</span></a
+        >
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="leaderboard.html">Leaderboard</a>
+          <a href="clones.html">Clones</a>
+          <a href="meta.html">Meta</a>
+          <a href="deck-builder.html" class="active">Deck Builder</a>
+          <a href="#about" class="nav-about">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Background layers -->
+      <div class="db-bg">
+        <img
+          src="assets/backgrounds/canyon_dawn.jpg"
+          alt=""
+          class="db-bg-img"
+        />
+        <div class="db-bg-overlay"></div>
+      </div>
+
+      <!-- Floating decorative emotes -->
+      <div class="db-deco" aria-hidden="true">
+        <img
+          src="assets/emotes/king-choosingcard.png"
+          alt=""
+          class="db-deco-emote db-deco-1"
+        />
+        <img
+          src="assets/emotes/bomb-explosion.png"
+          alt=""
+          class="db-deco-emote db-deco-2"
+        />
+        <img
+          src="assets/emotes/rogue-ready.png"
+          alt=""
+          class="db-deco-emote db-deco-3"
+        />
+        <img
+          src="assets/emotes/king-smile.png"
+          alt=""
+          class="db-deco-emote db-deco-4"
+        />
+      </div>
+
+      <!-- Under Construction Card -->
+      <section class="db-construction">
+        <div class="db-card">
+          <div class="db-stripe" aria-hidden="true"></div>
+
+          <div class="db-card-body">
+            <img
+              src="assets/king/render_d1.png"
+              alt="King holding a card"
+              class="db-king"
+            />
+
+            <div class="db-badge">
+              <svg
+                class="db-badge-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M12 3.2 2.6 19.6c-.5.9.1 2 1.2 2h16.4c1.1 0 1.7-1.1 1.2-2L12 3.2Z"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                />
+                <path
+                  d="M12 9v5.3"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                />
+                <path
+                  d="M12 17.8h.01"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                />
+              </svg>
+              UNDER CONSTRUCTION
+            </div>
+
+            <h1 class="db-title">Deck Builder</h1>
+            <p class="db-desc">
+              We're putting the finishing touches on the deck builder.
+              Pick the perfect 8-clone lineup, test synergies, and share
+              your builds with the community — coming soon.
+            </p>
+
+            <!-- Skeleton deck preview -->
+            <div class="db-skeleton" aria-hidden="true">
+              <div class="db-skeleton-slot"></div>
+              <div class="db-skeleton-slot"></div>
+              <div class="db-skeleton-slot"></div>
+              <div class="db-skeleton-slot"></div>
+              <div class="db-skeleton-slot"></div>
+              <div class="db-skeleton-slot"></div>
+              <div class="db-skeleton-slot"></div>
+              <div class="db-skeleton-slot"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer" id="about">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <span class="footer-logo"
+            >BBmeta<span class="beta-tag">[Beta]</span></span
+          >
+          <p class="footer-disclaimer">
+            Not affiliated with Thrium Games. Fan-made stats tracker.
+          </p>
+        </div>
+        <ul class="footer-links">
+          <li><a href="leaderboard.html">Leaderboard</a></li>
+          <li><a href="clones.html">Clones</a></li>
+          <li><a href="meta.html">Meta</a></li>
+          <li><a href="deck-builder.html">Deck Builder</a></li>
+        </ul>
+      </div>
+    </footer>
+  </body>
+</html>

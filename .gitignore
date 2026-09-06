@@ -1,0 +1,14 @@
+# API keys
+proxy.js
+.env
+*.env
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules
+node_modules/

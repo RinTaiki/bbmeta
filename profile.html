@@ -80,6 +80,14 @@
                     <button id="copy-tag-btn" class="copy-btn" title="Copy Tag">
                       📋 Copy
                     </button>
+                    <a
+                      href="season.html"
+                      id="season-recap-btn"
+                      class="season-recap-btn"
+                      title="View Season Recap"
+                    >
+                      📊 Season Recap
+                    </a>
                   </div>
                 </div>
               </div>
@@ -113,6 +121,26 @@
             <section class="battles-section">
               <div class="section-header-strip">
                 <h2 class="section-title">Recent Battles</h2>
+                <div
+                  class="battle-filter"
+                  id="battle-filter"
+                  role="group"
+                  aria-label="Filter battles"
+                >
+                  <button
+                    type="button"
+                    class="filter-btn is-active"
+                    data-filter="all"
+                  >
+                    All
+                  </button>
+                  <button type="button" class="filter-btn" data-filter="1v1">
+                    1v1
+                  </button>
+                  <button type="button" class="filter-btn" data-filter="2v2">
+                    2v2
+                  </button>
+                </div>
               </div>
               <div id="battles-loading" class="sub-loading"></div>
               <div id="battles-error" class="sub-error hidden"></div>
@@ -130,7 +158,10 @@
                 History unavailable.
               </div>
               <div id="chart-container" class="chart-card hidden">
-                <canvas id="trophyChart"></canvas>
+                <div id="chart-summary" class="chart-summary"></div>
+                <div class="chart-canvas-wrap">
+                  <canvas id="trophyChart"></canvas>
+                </div>
               </div>
             </section>
           </div>

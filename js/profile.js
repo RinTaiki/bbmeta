@@ -4,9 +4,12 @@ import {
   fetchTrophyHistory,
   fetchLeaderboard,
 } from "./api.js";
+import { CLONE_META } from "./clone-meta.js";
 import { showNotification } from "./notifications.js";
 
 let trophyChartInstance = null;
+let allBattles = [];
+let activeFilter = "all";
 
 document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -112,6 +115,11 @@ function renderProfile(data) {
       showNotification("Copied to clipboard!", "success");
     });
   });
+
+  const recapBtn = document.getElementById("season-recap-btn");
+  if (recapBtn) {
+    recapBtn.href = `season.html?tag=${encodeURIComponent(data.tag)}`;
+  }
 }
 
 async function loadBattleHistory(tag) {
@@ -120,7 +128,7 @@ async function loadBattleHistory(tag) {
   const container = document.getElementById("battles-list");
 
   try {
-    const battles = await fetchBattleHistory(tag);
+    const battles = await fetchBattleHistory(tag, 30);
     loadingEl.classList.add("hidden");
 
     if (!battles || battles.length === 0) {
@@ -128,60 +136,405 @@ async function loadBattleHistory(tag) {
       return;
     }
 
-    battles.forEach((battle) => {
-      const card = createBattleCard(battle);
-      container.appendChild(card);
-    });
+    allBattles = battles;
+    setupBattleFilter();
+    renderBattleList();
   } catch (err) {
     loadingEl.classList.add("hidden");
     errorEl.classList.remove("hidden");
   }
 }
 
+function setupBattleFilter() {
+  const filterBar = document.getElementById("battle-filter");
+  if (!filterBar) return;
+
+  filterBar.querySelectorAll(".filter-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      filterBar
+        .querySelectorAll(".filter-btn")
+        .forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      activeFilter = btn.dataset.filter;
+      renderBattleList();
+    });
+  });
+}
+
+function renderBattleList() {
+  const container = document.getElementById("battles-list");
+  if (!container) return;
+
+  const filtered = allBattles.filter((b) => {
+    if (activeFilter === "all") return true;
+    const is2v2 = b.teamSize === 2 || b.mode === "2v2";
+    return activeFilter === "2v2" ? is2v2 : !is2v2;
+  });
+
+  container.innerHTML = "";
+
+  if (filtered.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "battles-empty";
+    empty.textContent =
+      activeFilter === "2v2"
+        ? "No 2v2 battles found."
+        : "No 1v1 battles found.";
+    container.appendChild(empty);
+    return;
+  }
+
+  filtered.forEach((battle) => {
+    container.appendChild(createBattleCard(battle));
+  });
+}
+
+/* ============================================================
+   CLONE RESOLUTION (shared with season page)
+   ============================================================ */
+
+function resolveCloneMeta(cardName) {
+  const key = String(cardName || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+  return (
+    Object.values(CLONE_META).find(
+      (m) =>
+        m.file &&
+        m.file
+          .toLowerCase()
+          .replace(/\.png$/, "")
+          .replace(/[^a-z0-9]/g, "") === key,
+    ) || null
+  );
+}
+
+function resolveCloneIcon(cardName) {
+  const meta = resolveCloneMeta(cardName);
+  if (meta?.file) return `assets/clones/${meta.file}`;
+
+  const key = String(cardName || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+  return `assets/clones/${key}.png`;
+}
+
+function resolveCloneByUnit(unit) {
+  // Prefer the numeric unit id — it maps directly to CLONE_META keys
+  if (unit.id != null && CLONE_META[unit.id]) {
+    return CLONE_META[unit.id];
+  }
+  return resolveCloneMeta(unit.name);
+}
+
+function resolveCloneIconByUnit(unit) {
+  const meta = resolveCloneByUnit(unit);
+  if (meta?.file) return `assets/clones/${meta.file}`;
+  return resolveCloneIcon(unit.name);
+}
+
+/* ============================================================
+   BATTLE CARD (season-style, compact)
+   ============================================================ */
+
+function buildTeamSegment(side, team, opts = {}) {
+  const {
+    showDeck = true,
+    showTrophies = true,
+    showDelta = true,
+    showClan = true,
+  } = opts;
+
+  const seg = document.createElement("div");
+  seg.className = `battle-team ${side}`;
+
+  // --- Player info ---
+  const info = document.createElement("div");
+  info.className = "battle-team-info";
+
+  const nameRow = document.createElement("div");
+  nameRow.className = "battle-player-name-row";
+
+  const name = document.createElement("a");
+  name.className = "battle-player-name";
+  name.href = "#";
+  name.textContent = team.name || "Unknown King";
+
+  const pro = document.createElement("span");
+  pro.className = "battle-pro-label";
+  pro.textContent = "PRO";
+
+  nameRow.appendChild(name);
+  nameRow.appendChild(pro);
+
+  info.appendChild(nameRow);
+
+  if (showClan) {
+    const sub = document.createElement("div");
+    sub.className = "battle-player-sub";
+
+    const clan = document.createElement("a");
+    clan.className = "battle-player-clan";
+    clan.href = "#";
+    clan.textContent = team.clan || "No Clan";
+
+    const rank = document.createElement("span");
+    rank.className = "battle-player-rank";
+    rank.textContent = team.rank ? `Rank #${team.rank}` : "";
+
+    sub.appendChild(clan);
+    sub.appendChild(rank);
+
+    info.appendChild(sub);
+  }
+
+  // Render when there is a trophy count OR a non-zero delta (the API omits
+  // the opponent's trophy count but still reports their trophyChange).
+  if (
+    showTrophies &&
+    (team.trophies != null || (showDelta && team.trophyDelta))
+  ) {
+    const trophies = document.createElement("div");
+    trophies.className = "battle-trophies";
+
+    if (team.trophies != null) {
+      const trophyIcon = document.createElement("img");
+      trophyIcon.className = "battle-trophy-icon";
+      trophyIcon.src = "assets/icons/trophiestotal.png";
+      trophyIcon.alt = "";
+      trophyIcon.loading = "lazy";
+
+      const trophyVal = document.createElement("span");
+      trophyVal.className = "battle-trophy-value";
+      trophyVal.textContent = team.trophies.toLocaleString();
+
+      trophies.appendChild(trophyIcon);
+      trophies.appendChild(trophyVal);
+    }
+
+    if (showDelta) {
+      const deltaVal = team.trophyDelta || 0;
+      if (deltaVal !== 0) {
+        const delta = document.createElement("span");
+        delta.className = `battle-trophy-delta ${deltaVal >= 0 ? "is-gain" : "is-loss"}`;
+        delta.textContent = `${deltaVal >= 0 ? "+" : ""}${deltaVal}`;
+        trophies.appendChild(delta);
+      }
+    }
+
+    info.appendChild(trophies);
+  }
+
+  seg.appendChild(info);
+
+  // --- Deck (4x2 grid, no rarity tint) ---
+  // Only render when the API actually returned deck cards (survival battles
+  // come back with units: null, so there is nothing to show).
+  if (showDeck && Array.isArray(team.deck) && team.deck.length > 0) {
+    const deck = document.createElement("div");
+    deck.className = "battle-deck";
+
+    team.deck.forEach((card) => {
+      const cardName = typeof card === "string" ? card : card.name || "Clone";
+
+      const slot = document.createElement("div");
+      slot.className = "battle-deck-slot";
+
+      const img = document.createElement("img");
+      img.className = "battle-deck-img";
+      img.alt = cardName;
+      img.loading = "lazy";
+      img.src = resolveCloneIconByUnit(card);
+      img.onerror = () => {
+        img.style.display = "none";
+        slot.classList.add("is-fallback");
+        slot.dataset.fallback = cardName.charAt(0).toUpperCase();
+      };
+
+      slot.appendChild(img);
+
+      if (card && typeof card === "object" && card.level != null) {
+        const level = document.createElement("span");
+        level.className = "battle-deck-level";
+        level.textContent = `Lv ${card.level}`;
+        slot.appendChild(level);
+      }
+      deck.appendChild(slot);
+    });
+
+    seg.appendChild(deck);
+  }
+
+  return seg;
+}
+
 function createBattleCard(battle) {
+  const isWin = (battle.result || "").toLowerCase() === "win";
+
+  // Map raw mode to a friendly label. "pvp" + teamSize 1 = ranked (trophies
+  // at stake), "survival" = casual (no trophies gained/lost), teamSize 2 = 2v2.
+  const rawMode = (battle.mode || "").toLowerCase();
+  const is2v2 = battle.teamSize === 2 || rawMode === "2v2";
+  const isSurvival = rawMode === "survival";
+  const modeLabel = is2v2 ? "2v2" : isSurvival ? "Survival" : "Ranked";
+  const modeClass = is2v2 ? "is-2v2" : isSurvival ? "is-survival" : "is-ranked";
+
   const card = document.createElement("div");
-  card.className = "battle-card";
+  card.className = `battle-card ${isWin ? "is-win" : "is-loss"}`;
 
-  const isWin = battle.result === "win";
-  const resultClass = isWin ? "win" : "loss";
-  const resultEmote = isWin
+  // --- Header ---
+  const header = document.createElement("div");
+  header.className = "battle-card-header";
+
+  const ribbon = document.createElement("div");
+  ribbon.className = `battle-ribbon ${isWin ? "win" : "loss"}`;
+  ribbon.textContent = isWin ? "Victory" : "Defeat";
+
+  const result = document.createElement("div");
+  result.className = "battle-result";
+
+  const mode = document.createElement("h4");
+  mode.className = `battle-mode ${modeClass}`;
+  mode.textContent = modeLabel;
+
+  const score = document.createElement("div");
+  score.className = "battle-score";
+
+  const teamCrowns = battle.teamCrowns ?? (isWin ? 2 : 0);
+  const oppCrowns = battle.opponentCrowns ?? (isWin ? 1 : 2);
+
+  const crownBlue = document.createElement("span");
+  crownBlue.className = "battle-crown battle-crown--blue";
+  crownBlue.textContent = "♛";
+
+  const scoreText = document.createElement("span");
+  scoreText.className = "battle-score-text";
+  scoreText.textContent = `${teamCrowns} - ${oppCrowns}`;
+
+  const crownRed = document.createElement("span");
+  crownRed.className = "battle-crown battle-crown--red";
+  crownRed.textContent = "♛";
+
+  score.appendChild(crownBlue);
+  score.appendChild(scoreText);
+  score.appendChild(crownRed);
+
+  result.appendChild(mode);
+  result.appendChild(score);
+
+  const vsBadge = document.createElement("div");
+  vsBadge.className = "battle-vs";
+  vsBadge.textContent = "VS";
+
+  header.appendChild(ribbon);
+  header.appendChild(result);
+  header.appendChild(vsBadge);
+
+  // --- Emote decorations (win/loss themed) ---
+  const winEmote = document.createElement("img");
+  winEmote.className = "battle-emote battle-emote--win";
+  winEmote.src = isWin
     ? "assets/emotes/king-celebration.png"
+    : "assets/emotes/king-sad.png";
+  winEmote.alt = "";
+  winEmote.loading = "lazy";
+
+  const lossEmote = document.createElement("img");
+  lossEmote.className = "battle-emote battle-emote--loss";
+  lossEmote.src = isWin
+    ? "assets/emotes/king-omg-legend.png"
     : "assets/emotes/king-crying.png";
-  const resultText = isWin ? "Victory" : "Defeat";
-  const relativeTime = getRelativeTime(battle.timestamp);
+  lossEmote.alt = "";
+  lossEmote.loading = "lazy";
 
-  const is2v2 = battle.teamSize === 2 || battle.mode === "2v2";
-  const modeBadge = is2v2
-    ? `<span class="battle-mode mode-2v2">2v2</span>`
-    : `<span class="battle-mode mode-1v1">1v1</span>`;
+  card.appendChild(winEmote);
+  card.appendChild(lossEmote);
 
-  const deckClones = battle.deck || Array(8).fill("💣");
+  // --- Teams ---
+  const teams = document.createElement("div");
+  teams.className = "battle-teams";
 
-  card.innerHTML = `
-        <div class="battle-header">
-            <span class="battle-result ${resultClass}">
-                <img src="${resultEmote}" alt="${resultText}" />
-                ${resultText}
-            </span>
-            ${modeBadge}
-            <span class="battle-date">${relativeTime}</span>
-        </div>
-        <div class="battle-opponent">
-            <span>vs</span> ${battle.opponent?.name || "Opponent"}
-        </div>
-        <div class="battle-deck">
-            ${deckClones
-              .slice(0, 8)
-              .map(
-                (clone) => `
-                <div class="clone-icon" title="${clone.name || "Clone"}">
-                    ${clone.icon ? `<img src="${clone.icon}" alt="${clone.name || "Clone"}" />` : "👾"}
-                </div>
-            `,
-              )
-              .join("")}
-        </div>
-    `;
+  const playerTeam = battle.player || {
+    name: "You",
+    deck: battle.deck || [],
+  };
+  const opponentTeam = battle.opponent || { name: "Enemy King" };
+
+  if (is2v2) {
+    // 2v2: names only — no decks, no trophies, no clan.
+    teams.appendChild(
+      buildTeamSegment("team", playerTeam, {
+        showDeck: false,
+        showTrophies: false,
+        showClan: false,
+      }),
+    );
+    teams.appendChild(
+      buildTeamSegment("opponent", opponentTeam, {
+        showDeck: false,
+        showTrophies: false,
+        showClan: false,
+      }),
+    );
+  } else if (isSurvival) {
+    // Survival: decks + clan, no trophies (nothing at stake).
+    teams.appendChild(
+      buildTeamSegment("team", playerTeam, {
+        showDeck: true,
+        showTrophies: false,
+        showClan: true,
+      }),
+    );
+    teams.appendChild(
+      buildTeamSegment("opponent", opponentTeam, {
+        showDeck: true,
+        showTrophies: false,
+        showClan: true,
+      }),
+    );
+  } else {
+    // Ranked: full info — trophies + delta, decks, clan.
+    teams.appendChild(
+      buildTeamSegment("team", playerTeam, {
+        showDeck: true,
+        showTrophies: true,
+        showDelta: true,
+        showClan: true,
+      }),
+    );
+    teams.appendChild(
+      buildTeamSegment("opponent", opponentTeam, {
+        showDeck: true,
+        showTrophies: true,
+        showDelta: true,
+        showClan: true,
+      }),
+    );
+  }
+
+  // --- Footer ---
+  const footer = document.createElement("div");
+  footer.className = "battle-card-footer";
+
+  const meta = document.createElement("div");
+  meta.className = "battle-meta";
+
+  const duration = document.createElement("span");
+  duration.className = "battle-duration";
+  duration.textContent = battle.duration || "--";
+
+  const date = document.createElement("span");
+  date.className = "battle-date";
+  date.textContent = getRelativeTime(battle.timestamp);
+
+  meta.appendChild(duration);
+  meta.appendChild(date);
+
+  footer.appendChild(meta);
+
+  card.appendChild(header);
+  card.appendChild(teams);
+  card.appendChild(footer);
 
   return card;
 }
@@ -208,6 +561,13 @@ async function loadTrophyChart(tag) {
   }
 }
 
+function formatChartLabel(raw) {
+  if (!raw) return "";
+  const d = new Date(raw);
+  if (isNaN(d.getTime())) return String(raw);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
 function renderChart(dates, trophies) {
   const ctx = document.getElementById("trophyChart").getContext("2d");
 
@@ -215,43 +575,108 @@ function renderChart(dates, trophies) {
     trophyChartInstance.destroy();
   }
 
+  const gradient = ctx.createLinearGradient(0, 0, 0, 320);
+  gradient.addColorStop(0, "rgba(201, 136, 31, 0.35)");
+  gradient.addColorStop(0.55, "rgba(201, 136, 31, 0.12)");
+  gradient.addColorStop(1, "rgba(201, 136, 31, 0.02)");
+
+  const first = trophies[0] ?? 0;
+  const last = trophies[trophies.length - 1] ?? 0;
+  const net = last - first;
+  const best = Math.max(...trophies);
+  const bestIdx = trophies.indexOf(best);
+
   trophyChartInstance = new Chart(ctx, {
     type: "line",
     data: {
-      labels: dates,
+      labels: dates.map(formatChartLabel),
       datasets: [
         {
           label: "Trophies",
           data: trophies,
           borderColor: "#c9881f",
-          backgroundColor: "rgba(201, 136, 31, 0.12)",
+          borderWidth: 2.5,
+          backgroundColor: gradient,
           fill: true,
-          tension: 0.3,
-          pointRadius: 4,
+          tension: 0.35,
+          pointRadius: 3,
           pointHoverRadius: 6,
+          pointBackgroundColor: "#fffaf0",
+          pointBorderColor: "#c9881f",
+          pointBorderWidth: 2,
+          pointHitRadius: 12,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: {
+        mode: "index",
+        intersect: false,
+      },
       plugins: {
-        legend: {
-          labels: { color: "#2c2114" },
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: "#2c2114",
+          titleColor: "#ffe9b8",
+          bodyColor: "#fffaf0",
+          borderColor: "#b8923f",
+          borderWidth: 1,
+          padding: 10,
+          cornerRadius: 8,
+          displayColors: false,
+          callbacks: {
+            label: (item) => {
+              const val = item.parsed.y;
+              const prev = trophies[item.dataIndex - 1];
+              let delta = "";
+              if (prev != null) {
+                const d = val - prev;
+                delta = d >= 0 ? `  ▲ +${d}` : `  ▼ ${d}`;
+              }
+              return `Trophies: ${val.toLocaleString()}${delta}`;
+            },
+          },
         },
       },
       scales: {
         x: {
-          ticks: { color: "#7c6a4f" },
-          grid: { color: "rgba(184, 146, 63, 0.15)" },
+          ticks: {
+            color: "#7c6a4f",
+            maxTicksLimit: 8,
+            maxRotation: 0,
+            autoSkip: true,
+          },
+          grid: { color: "rgba(184, 146, 63, 0.12)" },
         },
         y: {
           ticks: { color: "#7c6a4f" },
-          grid: { color: "rgba(184, 146, 63, 0.15)" },
+          grid: { color: "rgba(184, 146, 63, 0.12)" },
         },
       },
     },
   });
+
+  // Summary strip above the chart
+  const summary = document.getElementById("chart-summary");
+  if (summary) {
+    const netClass = net >= 0 ? "is-gain" : "is-loss";
+    summary.innerHTML = `
+      <div class="chart-summary-item">
+        <span class="chart-summary-label">Net</span>
+        <span class="chart-summary-value ${netClass}">${net >= 0 ? "+" : ""}${net.toLocaleString()}</span>
+      </div>
+      <div class="chart-summary-item">
+        <span class="chart-summary-label">Peak</span>
+        <span class="chart-summary-value">${best.toLocaleString()}</span>
+      </div>
+      <div class="chart-summary-item">
+        <span class="chart-summary-label">Current</span>
+        <span class="chart-summary-value">${last.toLocaleString()}</span>
+      </div>
+    `;
+  }
 }
 
 function getRelativeTime(timestamp) {

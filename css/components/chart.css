@@ -1,14 +1,67 @@
 .chart-card {
   background: var(--panel-bg);
   border: 2px solid var(--panel-border-strong);
-  border-radius: 0;
+  border-radius: 14px;
   padding: 18px;
-  height: 320px;
+  height: 360px;
   position: relative;
+  overflow: hidden;
   box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.chart-card canvas {
+.chart-canvas-wrap {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.chart-canvas-wrap canvas {
   width: 100% !important;
   height: 100% !important;
+  display: block;
+}
+
+/* Summary strip above the chart */
+
+.chart-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chart-summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 14px;
+  background: rgba(201, 136, 31, 0.08);
+  border: 1px solid rgba(184, 146, 63, 0.3);
+  border-radius: 10px;
+}
+
+.chart-summary-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.chart-summary-value {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-summary-value.is-gain {
+  color: var(--win-green);
+}
+
+.chart-summary-value.is-loss {
+  color: var(--loss-red);
 }

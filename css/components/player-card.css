@@ -125,6 +125,34 @@
   transform: translateY(-1px);
 }
 
+.season-recap-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent-gold-bg);
+  border: 2px solid var(--accent-gold);
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--accent-gold);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.season-recap-btn:hover {
+  background: var(--accent-gold);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(201, 136, 31, 0.3);
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -183,5 +211,12 @@
   }
   .name-row h1 {
     font-size: 1.5rem;
+  }
+  .player-tag-container {
+    flex-wrap: wrap;
+  }
+  .season-recap-btn {
+    padding: 4px 10px;
+    font-size: 0.72rem;
   }
 }

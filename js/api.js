@@ -1,4 +1,11 @@
-const API_BASE = "";
+const FORCE_LOCAL = false;
+
+// Detect environment: localhost (dev) or production (Vercel)
+const IS_LOCAL =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+const API_BASE = IS_LOCAL ? "http://127.0.0.1:3002" : "";
+const PATH_PREFIX = IS_LOCAL ? "" : "/api";
 
 let requestCount = 0;
 let lastReset = Date.now();
@@ -55,7 +62,7 @@ export async function fetchLeaderboard(country = "", limit = 200) {
     return cached;
   }
 
-  let url = `/api/v1/rankings/players?limit=${limit}`;
+  let url = `${API_BASE}${PATH_PREFIX}/v1/rankings/players?limit=${limit}`;
   if (country) {
     url += `&country=${encodeURIComponent(country)}`;
   }
@@ -140,15 +147,22 @@ export async function fetchPlayerProfile(tag) {
   const cached = getCachedData(cacheKey);
   if (cached) return cached;
 
-  const url = `/api/v1/players/${encodeURIComponent(tag)}`;
+  const url = `${API_BASE}${PATH_PREFIX}/v1/players/${encodeURIComponent(tag)}`;
   const response = await safeFetch(url);
   const data = await response.json();
+
+  // Never cache error responses (e.g. proxy 502s) — they would poison the
+  // 5-minute cache and make valid players look "not found".
+  if (!response.ok || data?.error || data?.detail) {
+    return data;
+  }
+
   setCachedData(cacheKey, data);
   return data;
 }
 
 export async function fetchBattleLog(tag, limit = 10) {
-  const url = `/api/v1/players/${encodeURIComponent(tag)}/battlelog?limit=${limit}`;
+  const url = `${API_BASE}${PATH_PREFIX}/v1/players/${encodeURIComponent(tag)}/battlelog?limit=${limit}`;
   const response = await safeFetch(url);
   const data = await response.json();
 
@@ -164,7 +178,7 @@ export async function fetchMetaDecks(
   const cached = getCachedData(cacheKey);
   if (cached) return cached;
 
-  let url = `/api/v2/meta/decks?days=${days}&limit=${limit}`;
+  let url = `${API_BASE}${PATH_PREFIX}/v2/meta/decks?days=${days}&limit=${limit}`;
   if (minTrophies != null)
     url += `&minTrophies=${encodeURIComponent(minTrophies)}`;
   if (maxTrophies != null)
@@ -181,7 +195,7 @@ export async function fetchCloneStats(minTrophies = null, maxTrophies = null) {
   const cached = getCachedData(cacheKey);
   if (cached) return cached;
 
-  let url = `/api/v2/meta/units?days=7`;
+  let url = `${API_BASE}${PATH_PREFIX}/v2/meta/units?days=7`;
   if (minTrophies != null)
     url += `&minTrophies=${encodeURIComponent(minTrophies)}`;
   if (maxTrophies != null)
@@ -244,6 +258,15 @@ function generateMockCloneStats(minTrophies = null, maxTrophies = null) {
   });
 }
 
+function normalizeUnits(units) {
+  if (!Array.isArray(units)) return [];
+  return units.map((u) => ({
+    id: u.id ?? null,
+    name: u.displayName || u.name || "Clone",
+    level: u.level ?? 16,
+  }));
+}
+
 export async function fetchBattleHistory(tag, limit = 10) {
   const cacheKey = `battle_history_${tag}_${limit}`;
   const cached = getCachedData(cacheKey);
@@ -254,19 +277,54 @@ export async function fetchBattleHistory(tag, limit = 10) {
 
   const normalized = battles.map((b) => {
     const playerTeam = b.team?.[0] || {};
-    const units = playerTeam.units || b.deck || b.clones || [];
-    const deck = units.map((u) => ({
-      name: u.displayName || u.name || "Clone",
-      icon: u.icon || null,
-    }));
+    const opp = b.opponent || {};
+
+    const playerUnits = playerTeam.units || b.deck || b.clones || [];
+    const oppUnits = opp.units || opp.deck || opp.clones || [];
+
+    const score = b.score || {};
+    const teamCrowns = score.player ?? b.teamCrowns ?? null;
+    const oppCrowns = score.opponent ?? b.opponentCrowns ?? null;
+
+    const durationSeconds = b.durationSeconds ?? null;
+    const duration =
+      b.duration ||
+      (durationSeconds != null
+        ? `${Math.floor(durationSeconds / 60)}m ${String(
+            durationSeconds % 60,
+          ).padStart(2, "0")}s`
+        : "--");
+
+    const trophyDelta =
+      b.trophyChange ?? playerTeam.trophyChange ?? opp.trophyChange ?? 0;
 
     return {
-      result: b.result || (b.win ? "win" : "loss"),
+      result:
+        String(b.result || (b.win ? "win" : "loss")).toLowerCase() === "lose"
+          ? "loss"
+          : String(b.result || (b.win ? "win" : "loss")).toLowerCase(),
       timestamp: b.battleTime || b.timestamp || b.time || b.createdAt || null,
       mode: b.mode || (b.teamSize === 2 ? "2v2" : "1v1"),
       teamSize: b.teamSize || 1,
-      deck: deck.length ? deck : Array(8).fill("💣"),
-      opponent: b.opponent || { name: b.opponentName || "Opponent" },
+      duration,
+      teamCrowns,
+      opponentCrowns: oppCrowns,
+      player: {
+        name: playerTeam.name || "You",
+        clan: playerTeam.clan?.name || playerTeam.clan || "",
+        rank: playerTeam.rank ?? null,
+        trophies: playerTeam.trophies ?? null,
+        trophyDelta,
+        deck: normalizeUnits(playerUnits),
+      },
+      opponent: {
+        name: opp.name || opp.opponentName || "Opponent",
+        clan: opp.clan?.name || opp.clan || "",
+        rank: opp.rank ?? null,
+        trophies: opp.trophies ?? null,
+        trophyDelta: opp.trophyChange ?? null,
+        deck: normalizeUnits(oppUnits),
+      },
     };
   });
 
@@ -280,7 +338,7 @@ export async function fetchTrophyHistory(tag) {
   if (cached) return cached;
 
   try {
-    const url = `/api/v1/players/${encodeURIComponent(tag)}/history?days=30`;
+    const url = `${API_BASE}${PATH_PREFIX}/v1/players/${encodeURIComponent(tag)}/history?days=30`;
     const response = await safeFetch(url);
     const data = await response.json();
 
@@ -288,9 +346,16 @@ export async function fetchTrophyHistory(tag) {
     const dates = [];
     const trophies = [];
 
+    // Only keep data from the 1st of the current month (new season start).
+    const now = new Date();
+    const seasonStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
     items.forEach((item) => {
       if (item.trophies == null) return;
-      dates.push(item.date || item.timestamp || item.battleTime || "");
+      const rawDate = item.date || item.timestamp || item.battleTime || "";
+      const d = new Date(rawDate);
+      if (!isNaN(d.getTime()) && d < seasonStart) return;
+      dates.push(rawDate);
       trophies.push(item.trophies ?? item.value ?? 0);
     });
 
@@ -304,7 +369,9 @@ export async function fetchTrophyHistory(tag) {
 
 export async function validateApiKey() {
   try {
-    const response = await safeFetch(`/api/v1/rankings/players?limit=1`);
+    const response = await safeFetch(
+      `${API_BASE}${PATH_PREFIX}/v1/rankings/players?limit=1`,
+    );
     return response.ok;
   } catch {
     return false;

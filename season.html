@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BBmeta — Season Recap</title>
+
+    <meta property="og:title" content="BBmeta Season Recap" />
+    <meta
+      property="og:description"
+      content="My Badland Brawl season, wrapped."
+    />
+    <meta property="og:type" content="website" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- PNG export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/components/header.css" />
+    <link rel="stylesheet" href="css/components/footer.css" />
+    <link rel="stylesheet" href="css/components/notifications.css" />
+    <link rel="stylesheet" href="css/season.css" />
+  </head>
+  <body class="fade-in">
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="season-bg"></div>
+    <div class="season-bg-glow"></div>
+
+    <div class="season-bg-deco">
+      <img
+        src="assets/emotes/king-celebration.png"
+        alt=""
+        class="deco-emote float-1"
+      />
+      <img
+        src="assets/emotes/king-omg-legend.png"
+        alt=""
+        class="deco-emote float-2"
+      />
+      <img
+        src="assets/emotes/kind-smile-legend.png"
+        alt=""
+        class="deco-emote float-3"
+      />
+      <img
+        src="assets/emotes/king-tongue-legend.png"
+        alt=""
+        class="deco-emote float-4"
+      />
+    </div>
+
+    <header class="site-header">
+      <div class="header-container">
+        <a href="index.html" class="logo"
+          >BBmeta<span class="beta-tag">[Beta]</span></a
+        >
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="leaderboard.html">Leaderboard</a>
+          <a href="clones.html">Clones</a>
+          <a href="meta.html">Meta</a>
+          <a href="deck-builder.html">Deck Builder</a>
+          <a href="#about" class="nav-about">About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="season-page">
+      <div class="season-wrapper">
+        <!-- Page heading -->
+        <div class="season-heading">
+          <img class="king-stance" src="assets/king/King_00.png" alt="" />
+          <span class="season-kicker">Your season, wrapped</span>
+          <h1 class="page-title">Season Recap</h1>
+          <p class="page-subtitle">A look back at your month in the Badlands</p>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading-state" class="state-container">
+          <img src="assets/cog.png" alt="Loading" class="cog-spinner" />
+          <p>Deducing your season recap...</p>
+        </div>
+
+        <!-- Error -->
+        <div id="error-state" class="state-container hidden">
+          <div class="error-icon">⚠️</div>
+          <h2>Recap Not Found</h2>
+          <p>
+            We couldn't find season data for that tag. Try again with another
+            tag.
+          </p>
+          <a href="index.html" class="btn-back">Return Home</a>
+        </div>
+
+        <!-- Content -->
+        <div id="season-content" class="hidden">
+          <div class="recap-layout">
+            <!-- ============ SIDEBAR ============ -->
+            <aside class="recap-side">
+              <!-- ============ SEASON STATS ============ -->
+              <section class="side-panel stats-recap">
+                <header class="stats-heading">
+                  <div>
+                    <span class="section-eyebrow">Season stats</span>
+                    <h2 class="section-title" id="stat-name-heading">
+                      Your numbers
+                    </h2>
+                    <p class="stats-player-meta">
+                      <span id="stat-tag-heading">--</span>
+                      <span aria-hidden="true">•</span>
+                      <span id="stat-month-heading">--</span>
+                    </p>
+                  </div>
+                  <span class="stats-icon">📊</span>
+                </header>
+
+                <div class="stats-grid">
+                  <div class="stat-box">
+                    <span class="stat-label">Best Rank</span
+                    ><strong id="stat-best-rank-row">--</strong>
+                  </div>
+                  <div class="stat-box">
+                    <span class="stat-label">Final Rank</span
+                    ><strong id="stat-final-rank-row">--</strong>
+                  </div>
+                  <div class="stat-box">
+                    <span class="stat-label">Win Rate</span
+                    ><strong id="stat-winrate-row">--</strong>
+                  </div>
+                  <div class="stat-box">
+                    <span class="stat-label">Battles</span
+                    ><strong id="stat-battles-row">--</strong>
+                  </div>
+                  <div class="stat-box">
+                    <span class="stat-label">Wins</span
+                    ><strong id="stat-wins-row">--</strong>
+                  </div>
+                  <div class="stat-box">
+                    <span class="stat-label">Losses</span
+                    ><strong id="stat-losses-row">--</strong>
+                  </div>
+                  <div class="stat-box">
+                    <span class="stat-label">#1 Finishes</span
+                    ><strong id="stat-first-row">--</strong>
+                  </div>
+                  <div class="stat-box">
+                    <span class="stat-label">Signature Clone</span
+                    ><strong id="stat-clone-row">--</strong>
+                  </div>
+                </div>
+
+                <div class="stats-share" data-html2canvas-ignore="true">
+                  <button
+                    id="btn-download"
+                    class="btn-share btn-share--primary"
+                    type="button"
+                  >
+                    Download PNG
+                  </button>
+                  <button id="btn-copy-link" class="btn-share" type="button">
+                    Copy Link
+                  </button>
+                </div>
+              </section>
+            </aside>
+          </div>
+
+          <!-- ============ RECENT 1V1 BATTLES (battle-card layout) ============ -->
+          <section class="battles-recap battles-recap--wide">
+            <header class="battles-heading">
+              <div>
+                <span class="section-eyebrow">Battle log</span>
+                <h2 class="section-title">Recent 1v1 Battles</h2>
+              </div>
+              <span class="live-dot">Latest 5</span>
+            </header>
+            <div id="recent-battles-list" class="recent-battles-list"></div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer" id="about">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <span class="footer-logo"
+            >BBmeta<span class="beta-tag">[Beta]</span></span
+          >
+          — Badland Brawl Stats
+        </div>
+        <div class="footer-disclaimer">Game assets © Frogmind</div>
+      </div>
+    </footer>
+
+    <div id="notification-container" class="toast-container"></div>
+
+    <script type="module" src="js/season.js"></script>
+  </body>
+</html>
