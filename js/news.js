@@ -26,4 +26,13 @@ export const NEWS_ITEMS = [
       "Global leaderboard now shows top 200 players with country filtering. Find players near you!",
     read: false,
   },
+  {
+    id: 4,
+    date: "Sep 15, 2026",
+    tag: "Update",
+    title: "Improvements and refactoring",
+    content:
+      "Improved some core features, as well refactoring some designs. There will be many changes in the future! Join our Discord Server below to give feedback. Mobile support is also coming in the future. Note: There are some issues with the Api not showing the full leaderboard. We are working on it!",
+    read: false,
+  },
 ];

@@ -9,17 +9,48 @@ const PATH_PREFIX = IS_LOCAL ? "" : "/api";
 
 let requestCount = 0;
 let lastReset = Date.now();
+let lastRequestTime = 0;
 
-async function safeFetch(url, options = {}) {
-  if (Date.now() - lastReset > 60000) {
+// Serial queue so concurrent callers share one throttling chain
+// instead of each independently waiting the same full delay.
+let _queueTail = Promise.resolve();
+
+function safeFetch(url, options = {}) {
+  // Chain onto the queue — the throttle logic runs inside the
+  // chain so only one caller at a time decides whether to wait.
+  const ticket = _queueTail.then(() => _throttledFetch(url, options));
+  // Advance the tail (errors don't block the queue).
+  _queueTail = ticket.catch(() => {});
+  return ticket;
+}
+
+async function _throttledFetch(url, options) {
+  const now = Date.now();
+
+  // Reset counter every 60 s
+  if (now - lastReset > 60000) {
     requestCount = 0;
     lastReset = Date.now();
   }
 
-  if (requestCount >= 100) {
-    throw new Error("Rate limit exceeded. Wait a moment.");
+  // If we're approaching the per-minute cap, pause until the window resets
+  if (requestCount >= 80) {
+    const waitTime = 60000 - (Date.now() - lastReset) + 200;
+    console.warn(`[API] Rate limit window full, waiting ${waitTime}ms`);
+    await new Promise((r) => setTimeout(r, waitTime));
+    requestCount = 0;
+    lastReset = Date.now();
   }
 
+  // Enforce a minimum gap of 150 ms between any two requests
+  if (lastRequestTime) {
+    const gap = 150 - (Date.now() - lastRequestTime);
+    if (gap > 0) {
+      await new Promise((r) => setTimeout(r, gap));
+    }
+  }
+
+  lastRequestTime = Date.now();
   requestCount++;
   return fetch(url, options);
 }
@@ -52,6 +83,51 @@ function setCachedData(key, data) {
     console.warn("LocalStorage full or quota exceeded", e);
   }
 }
+
+// Prefixes used for all BBmeta cache keys (see setCachedData callers)
+const CACHE_PREFIXES = [
+  "leaderboard_data_",
+  "player_",
+  "meta_decks_",
+  "clone_stats_",
+  "battle_history_",
+  "trophy_history_",
+];
+
+// Purge every expired cache entry, not just the one being read.
+// Entries for filters/players that are never revisited would otherwise
+// linger in localStorage forever (e.g. stale country-filter caches).
+function purgeExpiredCaches() {
+  const MAX_AGE = 5 * 60 * 1000;
+  const now = Date.now();
+  let purged = 0;
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key || !CACHE_PREFIXES.some((p) => key.startsWith(p))) continue;
+
+    try {
+      const { timestamp } = JSON.parse(localStorage.getItem(key));
+      if (now - timestamp >= MAX_AGE) {
+        localStorage.removeItem(key);
+        purged++;
+      }
+    } catch {
+      // Unparseable entry — treat as corrupt and remove
+      localStorage.removeItem(key);
+      purged++;
+    }
+  }
+
+  if (purged > 0) {
+    console.log(
+      `[API] Purged ${purged} expired cache entr${purged === 1 ? "y" : "ies"}`,
+    );
+  }
+}
+
+// Sweep once at module load so stale data never survives a page refresh
+purgeExpiredCaches();
 
 export async function fetchLeaderboard(country = "", limit = 200) {
   const cacheKey = `leaderboard_data_${country}_${limit}`;
@@ -148,17 +224,21 @@ export async function fetchPlayerProfile(tag) {
   if (cached) return cached;
 
   const url = `${API_BASE}${PATH_PREFIX}/v1/players/${encodeURIComponent(tag)}`;
-  const response = await safeFetch(url);
-  const data = await response.json();
 
-  // Never cache error responses (e.g. proxy 502s) — they would poison the
-  // 5-minute cache and make valid players look "not found".
-  if (!response.ok || data?.error || data?.detail) {
+  try {
+    const response = await safeFetch(url);
+    const data = await response.json();
+
+    if (!response.ok || data?.error || data?.detail) {
+      return data;
+    }
+
+    setCachedData(cacheKey, data);
     return data;
+  } catch (err) {
+    console.warn(`[API] fetchPlayerProfile failed for ${tag}:`, err.message);
+    throw err;
   }
-
-  setCachedData(cacheKey, data);
-  return data;
 }
 
 export async function fetchBattleLog(tag, limit = 10) {
@@ -298,11 +378,17 @@ export async function fetchBattleHistory(tag, limit = 10) {
     const trophyDelta =
       b.trophyChange ?? playerTeam.trophyChange ?? opp.trophyChange ?? 0;
 
+    const rawResult = String(
+      b.result || (b.win ? "win" : "loss"),
+    ).toLowerCase();
+
     return {
       result:
-        String(b.result || (b.win ? "win" : "loss")).toLowerCase() === "lose"
-          ? "loss"
-          : String(b.result || (b.win ? "win" : "loss")).toLowerCase(),
+        rawResult === "draw" || rawResult === "tie"
+          ? "draw"
+          : rawResult === "lose"
+            ? "loss"
+            : rawResult,
       timestamp: b.battleTime || b.timestamp || b.time || b.createdAt || null,
       mode: b.mode || (b.teamSize === 2 ? "2v2" : "1v1"),
       teamSize: b.teamSize || 1,
@@ -346,7 +432,6 @@ export async function fetchTrophyHistory(tag) {
     const dates = [];
     const trophies = [];
 
-    // Only keep data from the 1st of the current month (new season start).
     const now = new Date();
     const seasonStart = new Date(now.getFullYear(), now.getMonth(), 1);
 

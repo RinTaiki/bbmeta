@@ -40,18 +40,32 @@
           <a href="clones.html" class="active">Clones</a>
           <a href="meta.html">Meta</a>
           <a href="deck-builder.html">Deck Builder</a>
+          <a href="about.html">About</a>
         </nav>
       </div>
     </header>
 
-    <main class="clones-page">
+    <main class="clones-page" aria-busy="true">
       <div class="content-wrapper">
         <section class="page-hero">
           <h1>Clone Meta</h1>
           <p>Usage and win rate for every clone in Badland Brawl</p>
         </section>
 
-        <section class="filter-bar-container">
+        <section class="filter-bar-container" role="search">
+          <div class="filter-group filter-search">
+            <label for="search-input">Search</label>
+            <input
+              type="search"
+              id="search-input"
+              class="filter-input"
+              placeholder="Search clone…"
+              autocomplete="off"
+              spellcheck="false"
+              enterkeyhint="search"
+            />
+          </div>
+
           <div class="filter-group">
             <label for="trophy-filter">Trophy Range</label>
             <select id="trophy-filter" class="filter-select">
@@ -74,6 +88,31 @@
           </div>
 
           <div class="filter-group">
+            <label for="mana-filter">Mana Cost</label>
+            <select id="mana-filter" class="filter-select">
+              <option value="all">Any Mana</option>
+              <option value="1">1 Mana</option>
+              <option value="2">2 Mana</option>
+              <option value="3">3 Mana</option>
+              <option value="4">4 Mana</option>
+              <option value="5">5 Mana</option>
+              <option value="6">6 Mana</option>
+              <option value="7">7 Mana</option>
+              <option value="8">8+ Mana</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="timeframe-filter">Timeframe</label>
+            <select id="timeframe-filter" class="filter-select">
+              <option value="season">Current Season</option>
+              <option value="7d">Last 7 Days</option>
+              <option value="30d">Last 30 Days</option>
+              <option value="all">All Time</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
             <label for="sort-filter">Sort By</label>
             <select id="sort-filter" class="filter-select">
               <option value="usage">Usage (highest)</option>
@@ -84,10 +123,11 @@
           </div>
         </section>
 
-        <div id="loading-state" class="state-container">
-          <div class="spinner"></div>
-          <p>Loading clone data...</p>
-        </div>
+        <div
+          id="loading-state"
+          class="state-container"
+          aria-live="polite"
+        ></div>
 
         <div id="error-state" class="state-container hidden">
           <div class="error-icon">⚠️</div>
@@ -102,11 +142,17 @@
         <div id="clone-grid" class="clone-grid hidden"></div>
       </div>
     </main>
-
-    <div id="clone-modal" class="modal-overlay hidden">
-      <div class="modal-card">
-        <button id="modal-close" class="modal-close">&times;</button>
-        <div id="modal-body"></div>
+    <div id="clone-modal" class="modal-overlay hidden" role="presentation">
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        <button class="modal-close" id="modal-close" aria-label="Close">
+          &times;
+        </button>
+        <div class="modal-body" id="modal-body"></div>
       </div>
     </div>
 
@@ -118,6 +164,11 @@
           >
           — Badland Brawl Stats
         </div>
+        <ul class="footer-links">
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="privacy.html">Privacy</a></li>
+        </ul>
         <div class="footer-disclaimer">Game assets © Frogmind</div>
       </div>
     </footer>

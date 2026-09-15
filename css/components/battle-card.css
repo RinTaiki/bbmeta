@@ -90,6 +90,10 @@
   border-top-color: var(--loss-red);
 }
 
+.battle-card.is-draw {
+  border-top-color: var(--accent-gold);
+}
+
 .battle-card:hover {
   transform: translateY(-3px);
   box-shadow:
@@ -161,6 +165,10 @@
   background: linear-gradient(135deg, #e05a4a 0%, var(--loss-red) 100%);
 }
 
+.battle-ribbon.draw {
+  background: linear-gradient(135deg, #c9a84c 0%, #9a7320 100%);
+}
+
 .battle-ribbon::after {
   content: "";
   position: absolute;
@@ -213,6 +221,13 @@
 .battle-crown {
   font-size: 0.95rem;
   line-height: 1;
+}
+
+.battle-crown img {
+  display: block;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
 }
 
 .battle-crown--blue {

@@ -44,12 +44,25 @@ function markAllAsRead() {
   updateBadge();
 }
 
+let newsSortOrder = "latest";
+
+function getSortedNews() {
+  return [...NEWS_ITEMS].sort((first, second) => {
+    const dateDifference =
+      new Date(second.date).getTime() - new Date(first.date).getTime();
+    return newsSortOrder === "latest"
+      ? dateDifference || second.id - first.id
+      : -dateDifference || first.id - second.id;
+  });
+}
+
 function renderNewsList() {
   const container = document.getElementById("news-popup-list");
   if (!container) return;
 
-  container.innerHTML = NEWS_ITEMS.map(
-    (item) => `
+  container.innerHTML = getSortedNews()
+    .map(
+      (item) => `
     <article class="news-item">
       <div class="meta">
         <span class="tag">${item.tag}</span>
@@ -59,7 +72,20 @@ function renderNewsList() {
       <p>${item.content}</p>
     </article>
   `,
-  ).join("");
+    )
+    .join("");
+}
+
+function setupNewsSort() {
+  document.querySelectorAll(".news-sort-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      newsSortOrder = button.dataset.sort === "oldest" ? "oldest" : "latest";
+      document.querySelectorAll(".news-sort-btn").forEach((sortButton) => {
+        sortButton.classList.toggle("is-active", sortButton === button);
+      });
+      renderNewsList();
+    });
+  });
 }
 
 function initNewsPopup() {
@@ -70,6 +96,7 @@ function initNewsPopup() {
   if (!button || !overlay) return;
 
   renderNewsList();
+  setupNewsSort();
   updateBadge();
 
   const openPopup = () => {

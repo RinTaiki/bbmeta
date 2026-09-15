@@ -16,10 +16,11 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(225, 240, 255, 0.35) 0%,
+    rgba(225, 240, 255, 0.30) 0%,
+    rgba(180, 210, 240, 0.45) 50%,
     rgba(200, 225, 245, 0.55) 100%
   );
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(4px);
   pointer-events: none;
   z-index: 1;
 }
@@ -89,25 +90,32 @@
 .control-input,
 .control-select {
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.55);
   outline: none;
   padding: 14px 20px;
   border-radius: 30px;
   font-family: inherit;
   font-size: 1rem;
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.4);
   color: #0d2b45;
-  box-shadow: 0 4px 16px rgba(40, 90, 140, 0.18);
-  backdrop-filter: blur(8px);
+  box-shadow:
+    0 4px 16px rgba(40, 90, 140, 0.14),
+    inset 0 1px 4px rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
   transition:
     background 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .control-input:focus,
 .control-select:focus {
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 6px 22px rgba(40, 120, 180, 0.3);
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(31, 74, 107, 0.35);
+  box-shadow:
+    0 6px 22px rgba(40, 120, 180, 0.28),
+    inset 0 1px 4px rgba(255, 255, 255, 0.5);
 }
 
 .control-input::placeholder {
@@ -130,12 +138,55 @@
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 18px;
-  box-shadow: 0 12px 40px rgba(40, 90, 140, 0.22);
-  backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.32);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 20px;
+  box-shadow:
+    0 8px 32px rgba(40, 90, 140, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset,
+    0 2px 12px rgba(255, 255, 255, 0.15) inset;
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
   overflow: hidden;
+  position: relative;
+}
+
+/* Liquid glass refraction shimmer */
+.glass-panel::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.7) 30%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(255, 255, 255, 0.7) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Subtle inner glow at the top of the glass panel */
+.glass-panel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 20px 20px 0 0;
 }
 
 .table-responsive {
@@ -150,14 +201,19 @@
 }
 
 .leaderboard-table th {
-  background: rgba(13, 43, 69, 0.12);
+  background: rgba(13, 43, 69, 0.08);
   padding: 16px 20px;
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #0d2b45;
   font-weight: 800;
-  border-bottom: 2px solid rgba(13, 43, 69, 0.18);
+  border-bottom: 2px solid rgba(13, 43, 69, 0.14);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .leaderboard-table td {
@@ -171,13 +227,20 @@
 .leaderboard-table tbody tr {
   transition:
     background-color 0.15s ease,
-    transform 0.15s ease;
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
   cursor: pointer;
 }
 
 .leaderboard-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.55);
   transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(40, 90, 140, 0.14);
+}
+
+.leaderboard-table tbody tr:focus-visible {
+  outline: 2px solid rgba(31, 74, 107, 0.6);
+  outline-offset: -2px;
 }
 
 .col-rank {
@@ -204,6 +267,72 @@
   min-width: 160px;
 }
 
+/* ── Main Deck mini-icons column ────────────────────────────── */
+.col-deck {
+  min-width: 130px;
+}
+
+.deck-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 30px;
+}
+
+.deck-loading {
+  color: rgba(13, 43, 69, 0.4);
+  font-weight: 700;
+}
+
+.deck-unavailable {
+  color: rgba(13, 43, 69, 0.35);
+  font-weight: 700;
+  padding: 0 4px;
+}
+
+.deck-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 0 0 1px rgba(13, 43, 69, 0.12),
+    0 1px 4px rgba(13, 43, 69, 0.12);
+  overflow: hidden;
+  transition: transform 0.15s ease;
+}
+
+.deck-icon:hover {
+  transform: translateY(-2px) scale(1.08);
+  z-index: 2;
+}
+
+.deck-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.deck-icon.is-fallback::after {
+  content: attr(data-fallback);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #1f4a6b;
+}
+
+.deck-more {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #1f4a6b;
+  background: rgba(13, 43, 69, 0.1);
+  border-radius: 6px;
+  padding: 3px 5px;
+}
+
 .trophy-icon {
   width: 22px;
   height: 22px;
@@ -211,33 +340,99 @@
   filter: drop-shadow(0 2px 3px rgba(184, 134, 11, 0.4));
 }
 
+/* ── Player tag: high-contrast + one-click copy on hover ──────── */
 .player-tag {
-  font-size: 0.8rem;
-  color: rgba(13, 43, 69, 0.55);
-  font-weight: 400;
+  font-size: 0.78rem;
+  color: #334f6d;
+  font-weight: 600;
+  letter-spacing: 0.3px;
   margin-left: 6px;
+  opacity: 0.9;
+}
+
+.player-tag-wrap {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.copy-tag-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-left: 5px;
+  border: 1px solid rgba(13, 43, 69, 0.18);
+  background: rgba(255, 255, 255, 0.65);
+  color: #334f6d;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-4px);
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.player-tag-wrap:hover .copy-tag-btn {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.copy-tag-btn:hover {
+  background: rgba(13, 43, 69, 0.16);
+  color: #0d2b45;
+}
+
+.copy-tag-btn.copied {
+  background: rgba(43, 182, 115, 0.22);
+  border-color: rgba(43, 182, 115, 0.5);
+  color: #1f8f5b;
+}
+
+.copy-tag-btn svg {
+  width: 12px;
+  height: 12px;
 }
 
 .rank-move {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   vertical-align: middle;
+  gap: 3px;
   margin-left: 8px;
+  padding: 1px 5px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 .rank-move.up {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-  filter: drop-shadow(0 1px 2px rgba(20, 140, 60, 0.4));
+  color: #1e8a55;
+  background: rgba(43, 182, 115, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(43, 182, 115, 0.22);
 }
 .rank-move.down {
-  width: 18px;
-  height: 18px;
-  object-fit: contain;
-  filter: drop-shadow(0 1px 2px rgba(200, 40, 40, 0.4));
+  color: #c0392b;
+  background: rgba(220, 80, 60, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(220, 80, 60, 0.2);
 }
 .rank-move.steady {
-  color: rgba(13, 43, 69, 0.4);
+  color: rgba(13, 43, 69, 0.45);
+  background: rgba(13, 43, 69, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(13, 43, 69, 0.08);
   font-weight: 700;
+}
+.rank-move-arrow {
+  display: inline-block;
+  font-size: 0.62rem;
+  line-height: 1;
+}
+.rank-move-value {
+  font-variant-numeric: tabular-nums;
 }
 
 .winrate-wrap {
@@ -258,13 +453,28 @@
   display: block;
   height: 100%;
   border-radius: 6px;
+  background: rgba(13, 43, 69, 0.28); /* neutral while loading */
+  transition: width 0.4s var(--ease-out, ease), background 0.3s ease;
+}
+/* Win rate ≥ 50% → green; < 50% → red/neutral */
+.winrate-bar span.is-good {
   background: linear-gradient(90deg, #2bb673, #1f8f5b);
+}
+.winrate-bar span.is-bad {
+  background: linear-gradient(90deg, #e0685a, #c0392b);
 }
 .winrate-value {
   font-weight: 800;
   color: #0d2b45;
   min-width: 48px;
   text-align: right;
+  transition: color 0.3s ease;
+}
+.winrate-value.is-good {
+  color: #1e8a55;
+}
+.winrate-value.is-bad {
+  color: #c0392b;
 }
 
 .badge-rank {

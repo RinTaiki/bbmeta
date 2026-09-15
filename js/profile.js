@@ -369,7 +369,9 @@ function buildTeamSegment(side, team, opts = {}) {
 }
 
 function createBattleCard(battle) {
-  const isWin = (battle.result || "").toLowerCase() === "win";
+  const resultValue = (battle.result || "").toLowerCase();
+  const isWin = resultValue === "win";
+  const isDraw = resultValue === "draw" || resultValue === "tie";
 
   // Map raw mode to a friendly label. "pvp" + teamSize 1 = ranked (trophies
   // at stake), "survival" = casual (no trophies gained/lost), teamSize 2 = 2v2.
@@ -380,15 +382,15 @@ function createBattleCard(battle) {
   const modeClass = is2v2 ? "is-2v2" : isSurvival ? "is-survival" : "is-ranked";
 
   const card = document.createElement("div");
-  card.className = `battle-card ${isWin ? "is-win" : "is-loss"}`;
+  card.className = `battle-card ${isWin ? "is-win" : isDraw ? "is-draw" : "is-loss"}`;
 
   // --- Header ---
   const header = document.createElement("div");
   header.className = "battle-card-header";
 
   const ribbon = document.createElement("div");
-  ribbon.className = `battle-ribbon ${isWin ? "win" : "loss"}`;
-  ribbon.textContent = isWin ? "Victory" : "Defeat";
+  ribbon.className = `battle-ribbon ${isWin ? "win" : isDraw ? "draw" : "loss"}`;
+  ribbon.textContent = isWin ? "Victory" : isDraw ? "Draw" : "Defeat";
 
   const result = document.createElement("div");
   result.className = "battle-result";
@@ -405,7 +407,10 @@ function createBattleCard(battle) {
 
   const crownBlue = document.createElement("span");
   crownBlue.className = "battle-crown battle-crown--blue";
-  crownBlue.textContent = "♛";
+  const crownBlueImage = document.createElement("img");
+  crownBlueImage.src = "assets/cog.png";
+  crownBlueImage.alt = "";
+  crownBlue.appendChild(crownBlueImage);
 
   const scoreText = document.createElement("span");
   scoreText.className = "battle-score-text";
@@ -413,7 +418,10 @@ function createBattleCard(battle) {
 
   const crownRed = document.createElement("span");
   crownRed.className = "battle-crown battle-crown--red";
-  crownRed.textContent = "♛";
+  const crownRedImage = document.createElement("img");
+  crownRedImage.src = "assets/cog.png";
+  crownRedImage.alt = "";
+  crownRed.appendChild(crownRedImage);
 
   score.appendChild(crownBlue);
   score.appendChild(scoreText);

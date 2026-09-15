@@ -1,4 +1,5 @@
 import { fetchLeaderboard, fetchPlayerProfile } from "./api.js";
+import { CLONE_META } from "./clone-meta.js";
 import { showNotification } from "./notifications.js";
 
 let rawLeaderboardData = [];
@@ -77,6 +78,8 @@ function renderTable() {
 
   visiblePlayers.forEach((player) => {
     const row = document.createElement("tr");
+    row.setAttribute("role", "link");
+    row.setAttribute("tabindex", "0");
 
     if (player.rank <= 3) {
       row.classList.add("top-row");
@@ -93,6 +96,8 @@ function renderTable() {
     const winRateValue = player.winRateValue ?? null;
     const winRateText =
       winRateValue !== null ? `${winRateValue.toFixed(1)}%` : "…";
+    const wrClass =
+      winRateValue === null ? "" : winRateValue >= 50 ? "is-good" : "is-bad";
 
     let movementHTML = "";
     let change = player.rankChange;
@@ -100,36 +105,66 @@ function renderTable() {
       change = deriveRankChange(player.rank);
     }
     if (change > 0) {
-      movementHTML = `<img class="rank-move up" src="assets/icons/leaderboardup.png" alt="Climbed ${change}" title="Climbed ${change}" />`;
+      movementHTML = `<span class="rank-move up" title="Climbed ${change}"><span class="rank-move-arrow">▲</span><span class="rank-move-value">${change}</span></span>`;
     } else if (change < 0) {
-      movementHTML = `<img class="rank-move down" src="assets/icons/leadeboarddown.png" alt="Fell ${Math.abs(change)}" title="Fell ${Math.abs(change)}" />`;
+      movementHTML = `<span class="rank-move down" title="Fell ${Math.abs(change)}"><span class="rank-move-arrow">▼</span><span class="rank-move-value">${Math.abs(change)}</span></span>`;
     } else {
       movementHTML = `<span class="rank-move steady" title="No change">—</span>`;
     }
+
+    const tagHTML = escapeHTML(player.tag);
+    const clanRaw = player.clan;
+    const clanName =
+      typeof clanRaw === "string" ? clanRaw : clanRaw?.name || "No Clan";
 
     row.innerHTML = `
             <td class="col-rank">${rankDisplay}</td>
             <td class="col-player">
                 ${escapeHTML(player.name)}
-                <span class="player-tag">${escapeHTML(player.tag)}</span>
+                <span class="player-tag-wrap">
+                  <span class="player-tag">${tagHTML}</span>
+                  <button class="copy-tag-btn" title="Copy tag" data-tag="${tagHTML}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                  </button>
+                </span>
                 ${movementHTML}
             </td>
             <td class="col-trophies">
                 <img class="trophy-icon" src="assets/icons/trophiestotal.png" alt="Trophies" />
                 ${player.trophies.toLocaleString()}
             </td>
-            <td class="col-clan">${escapeHTML(player.clan?.name || "No Clan")}</td>
+            <td class="col-clan">${escapeHTML(clanName)}</td>
+            <td class="col-deck">
+                <div class="deck-cell" data-tag="${tagHTML}" title="Main deck loading…">
+                    <span class="deck-loading">…</span>
+                </div>
+            </td>
             <td class="col-winrate">
                 <div class="winrate-wrap">
-                    <div class="winrate-bar"><span style="width:${winRateValue || 0}%"></span></div>
-                    <span class="winrate-value" data-tag="${escapeHTML(player.tag)}">${winRateText}</span>
+                    <div class="winrate-bar"><span class="${wrClass}" style="width:${winRateValue || 0}%"></span></div>
+                    <span class="winrate-value ${wrClass}" data-tag="${tagHTML}">${winRateText}</span>
                 </div>
             </td>
         `;
 
+    const copyBtn = row.querySelector(".copy-tag-btn");
+    if (copyBtn) {
+      copyBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        handleCopyTag(copyBtn, player.tag);
+      });
+    }
+
     row.addEventListener("click", () => {
       const encodedTag = encodeURIComponent(player.tag);
       window.location.href = `profile.html?tag=${encodedTag}`;
+    });
+
+    row.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        window.location.href = `profile.html?tag=${encodeURIComponent(player.tag)}`;
+      }
     });
 
     tbody.appendChild(row);
@@ -144,42 +179,239 @@ function renderTable() {
   fetchVisibleWinRates(visiblePlayers);
 }
 
+// ── Copy Tag helper ───────────────────────────────────────────
+function handleCopyTag(btn, tag) {
+  const copyIcon =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+  const checkIcon =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+  const doCopy = navigator.clipboard
+    ? navigator.clipboard.writeText(tag).then(() => true).catch(() => fallbackCopy(tag))
+    : Promise.resolve(fallbackCopy(tag));
+
+  doCopy.then(() => {
+    btn.classList.add("copied");
+    btn.innerHTML = checkIcon;
+    showNotification(`Copied ${tag} to clipboard`, "success", 2000);
+    setTimeout(() => {
+      btn.classList.remove("copied");
+      btn.innerHTML = copyIcon;
+    }, 1800);
+  });
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.style.cssText = "position:fixed;opacity:0";
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand("copy"); } catch {}
+  document.body.removeChild(ta);
+}
+
+// Track tags currently being fetched to prevent duplicate requests
+const pendingWinRateFetches = new Set();
+
 async function fetchVisibleWinRates(players) {
-  const CONCURRENCY = 6;
-  let index = 0;
+  const BATCH_SIZE = 5;
+  const BATCH_DELAY_MS = 300;
+  const MAX_RETRIES = 2;
+  const RETRY_BASE_DELAY_MS = 500;
 
-  async function worker() {
-    while (index < players.length) {
-      const player = players[index++];
-      if (player.winRateValue !== undefined && player.winRateValue !== null) {
-        continue;
-      }
+  // Only queue players that don't already have a win rate and aren't pending
+  const queue = players.filter(
+    (p) => p.winRateValue == null && !pendingWinRateFetches.has(p.tag),
+  );
+  if (queue.length === 0) return;
 
+  // Mark all as pending before starting
+  queue.forEach((p) => pendingWinRateFetches.add(p.tag));
+
+  async function fetchWithRetry(player) {
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       try {
         const profile = await fetchPlayerProfile(player.tag);
-        const wins = profile.recentWins || profile.wins || 0;
-        const losses = profile.recentLosses || profile.losses || 0;
+
+        // Check if the API returned an error object
+        if (profile?.error || profile?.detail) {
+          throw new Error(profile.detail || profile.error);
+        }
+
+        const wins = profile.recentWins ?? profile.wins ?? 0;
+        const losses = profile.recentLosses ?? profile.losses ?? 0;
         const total = wins + losses;
         const rate = total > 0 ? (wins / total) * 100 : 0;
 
-        player.winRateValue = rate;
+        // currentDeck travels with the same profile response — zero extra cost
+        const deck = Array.isArray(profile.currentDeck)
+          ? profile.currentDeck
+          : null;
 
-        const cell = document.querySelector(
-          `.winrate-value[data-tag="${CSS.escape(player.tag)}"]`,
-        );
-        if (cell) {
-          cell.textContent = `${rate.toFixed(1)}%`;
-          const bar = cell.previousElementSibling?.firstElementChild;
-          if (bar) bar.style.width = `${rate}%`;
-        }
+        return { rate, deck };
       } catch (err) {
-        console.warn(`Win rate fetch failed for ${player.tag}`, err);
+        if (attempt < MAX_RETRIES) {
+          const delay = RETRY_BASE_DELAY_MS * (attempt + 1);
+          await sleep(delay);
+        }
       }
     }
+    return null;
   }
 
-  const workers = Array.from({ length: CONCURRENCY }, () => worker());
-  await Promise.all(workers);
+  // Process in controlled batches
+  for (let i = 0; i < queue.length; i += BATCH_SIZE) {
+    const batch = queue.slice(i, i + BATCH_SIZE);
+
+    await Promise.allSettled(
+      batch.map(async (player) => {
+        const result = await fetchWithRetry(player);
+        pendingWinRateFetches.delete(player.tag);
+
+        if (result) {
+          player.winRateValue = result.rate;
+          updateWinRateCell(player.tag, result.rate);
+          if (Array.isArray(result.deck) && result.deck.length > 0) {
+            player.deck = result.deck;
+            updateDeckCell(player.tag, result.deck);
+          } else {
+            updateDeckUnavailable(player.tag);
+          }
+        } else {
+          updateDeckUnavailable(player.tag);
+        }
+      }),
+    );
+
+    // Delay between batches to stay under the rate limit
+    if (i + BATCH_SIZE < queue.length) {
+      await sleep(BATCH_DELAY_MS);
+    }
+  }
+}
+
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+function updateWinRateCell(tag, rate) {
+  const cell = document.querySelector(
+    `.winrate-value[data-tag="${CSS.escape(tag)}"]`,
+  );
+  if (cell) {
+    cell.textContent = `${rate.toFixed(1)}%`;
+    const wrClass = rate >= 50 ? "is-good" : "is-bad";
+    cell.classList.remove("is-good", "is-bad");
+    cell.classList.add(wrClass);
+    const bar = cell.previousElementSibling?.firstElementChild;
+    if (bar) {
+      bar.style.width = `${rate}%`;
+      bar.classList.remove("is-good", "is-bad");
+      bar.classList.add(wrClass);
+    }
+  }
+}
+
+/* ── Main Deck mini-icons (populated from the player profile's
+      currentDeck — same API response as the win rate above) ─── */
+function updateDeckCell(tag, deck) {
+  const cell = document.querySelector(
+    `.deck-cell[data-tag="${CSS.escape(tag)}"]`,
+  );
+  if (!cell) return;
+
+  cell.innerHTML = "";
+
+  const names = [];
+  deck.forEach((unit, i) => {
+    if (i >= MAX_DECK_ICONS) return;
+    const { file, label } = resolveCloneByUnit(unit);
+    names.push(label);
+
+    const slot = document.createElement("span");
+    slot.className = "deck-icon";
+    slot.title = label;
+
+    const img = document.createElement("img");
+    img.src = file;
+    img.alt = label;
+    img.loading = "lazy";
+    img.onerror = () => {
+      slot.classList.add("is-fallback");
+      slot.dataset.fallback = (label || "?").charAt(0).toUpperCase();
+      img.remove();
+    };
+
+    slot.appendChild(img);
+    cell.appendChild(slot);
+  });
+
+  if (deck.length > MAX_DECK_ICONS) {
+    const more = document.createElement("span");
+    more.className = "deck-more";
+    more.textContent = `+${deck.length - MAX_DECK_ICONS}`;
+    more.title = `${deck.length - MAX_DECK_ICONS} more clones`;
+    cell.appendChild(more);
+  }
+
+  cell.title = `Main deck: ${names.join(", ")}`;
+}
+
+function updateDeckUnavailable(tag) {
+  const cell = document.querySelector(
+    `.deck-cell[data-tag="${CSS.escape(tag)}"]`,
+  );
+  if (!cell) return;
+  cell.innerHTML = "";
+  const dash = document.createElement("span");
+  dash.className = "deck-unavailable";
+  dash.textContent = "—";
+  dash.title = "No deck data";
+  cell.appendChild(dash);
+}
+
+const MAX_DECK_ICONS = 4;
+
+function cloneKeyForName(name) {
+  return String(name || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function resolveCloneMeta(cardName) {
+  const key = cloneKeyForName(cardName);
+  return (
+    Object.values(CLONE_META).find(
+      (m) =>
+        m.file &&
+        cloneKeyForName(m.file.replace(/\.png$/, "")) === key,
+    ) || null
+  );
+}
+
+function resolveCloneByUnit(unit) {
+  // Prefer the numeric unit id — it maps directly to CLONE_META keys
+  if (unit && unit.id != null && CLONE_META[unit.id]) {
+    const meta = CLONE_META[unit.id];
+    return {
+      file: `assets/clones/${meta.file}`,
+      label:
+        unit.displayName || unit.name || meta.file.replace(/\.png$/, ""),
+    };
+  }
+  const meta = resolveCloneMeta(unit?.name);
+  if (meta?.file) {
+    return {
+      file: `assets/clones/${meta.file}`,
+      label: unit?.displayName || unit?.name || meta.file.replace(/\.png$/, ""),
+    };
+  }
+  const fallbackName = unit?.displayName || unit?.name || "Clone";
+  return {
+    file: `assets/clones/${cloneKeyForName(fallbackName)}.png`,
+    label: fallbackName,
+  };
 }
 
 function handleSearch(e) {
