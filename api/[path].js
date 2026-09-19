@@ -51,10 +51,15 @@ export default async function handler(req, res) {
   try {
     const client = await initRedis();
     if (client) {
-      const ip =
-        req.headers["x-forwarded-for"]?.split(",")[0].trim() ||
-        req.headers["x-real-ip"] ||
-        "unknown";
+      let ip = "unknown";
+      try {
+        const raw =
+          req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || "";
+        const str = Array.isArray(raw) ? String(raw[0]) : String(raw);
+        ip = str.split(",")[0].trim() || "unknown";
+      } catch (e) {
+        console.error("IP parse error:", e.message);
+      }
 
       const key = `ratelimit:${ip}`;
       const count = await client.incr(key);
