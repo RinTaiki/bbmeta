@@ -6,6 +6,7 @@ let rawLeaderboardData = [];
 let filteredData = [];
 let rankChanges = {};
 let displayedCount = 50;
+let leaderboardRequestId = 0;
 const PAGE_SIZE = 50;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -44,11 +45,21 @@ function initLeaderboard() {
 
 async function loadLeaderboardData(country = "") {
   showState("loading");
+  const requestId = ++leaderboardRequestId;
 
   try {
     showNotification("Fetching leaderboard...", "info");
-    rawLeaderboardData = await fetchLeaderboard(country, 200);
-    await fetchRankChanges();
+    const [leaderboardData, changes] = await Promise.all([
+      fetchLeaderboard(country, 200),
+      fetchRankChanges(),
+    ]);
+
+    if (requestId !== leaderboardRequestId) {
+      return;
+    }
+
+    rawLeaderboardData = leaderboardData;
+    rankChanges = changes;
 
     filteredData = [...rawLeaderboardData];
     displayedCount = PAGE_SIZE;
@@ -56,6 +67,10 @@ async function loadLeaderboardData(country = "") {
     renderTable();
     showNotification("Leaderboard updated", "success");
   } catch (error) {
+    if (requestId !== leaderboardRequestId) {
+      return;
+    }
+
     console.error("Leaderboard load error:", error);
     showState("error");
     showNotification("Failed to load leaderboard.", "error");
@@ -64,15 +79,20 @@ async function loadLeaderboardData(country = "") {
 
 async function fetchRankChanges() {
   try {
-    const response = await fetch("/api/rank-changes");
+    const base =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1"
+        ? "https://bbmeta.vercel.app"
+        : "";
+    const response = await fetch(`${base}/api/rank-changes`);
     if (!response.ok) {
       throw new Error(`Rank changes request failed: ${response.status}`);
     }
     const data = await response.json();
-    rankChanges = data.changes || {};
+    return data.changes || {};
   } catch (error) {
     console.warn("Rank changes unavailable:", error);
-    rankChanges = {};
+    return {};
   }
 }
 
@@ -91,6 +111,7 @@ function renderTable() {
   showState("table");
 
   const visiblePlayers = filteredData.slice(0, displayedCount);
+  const fragment = document.createDocumentFragment();
 
   visiblePlayers.forEach((player) => {
     const row = document.createElement("tr");
@@ -117,14 +138,15 @@ function renderTable() {
 
     const change = rankChanges[player.tag];
     let movementHTML = "";
-    if (change > 0) {
-      movementHTML = `<span class="rank-change up" title="Climbed ${change}">▲ ${change}</span>`;
-    } else if (change < 0) {
-      movementHTML = `<span class="rank-change down" title="Fell ${Math.abs(change)}">▼ ${Math.abs(change)}</span>`;
-    } else if (change === 0) {
-      movementHTML = `<span class="rank-change even" title="No change">—</span>`;
-    } else {
-      movementHTML = `<span class="rank-change new">NEW</span>`;
+
+    if (change !== null && change !== undefined) {
+      if (change > 0) {
+        movementHTML = `<span class="rank-change up" title="Climbed ${change}">▲ ${change}</span>`;
+      } else if (change < 0) {
+        movementHTML = `<span class="rank-change down" title="Fell ${Math.abs(change)}">▼ ${Math.abs(change)}</span>`;
+      } else {
+        movementHTML = `<span class="rank-change even" title="No change">—</span>`;
+      }
     }
 
     const tagHTML = escapeHTML(player.tag);
@@ -182,8 +204,10 @@ function renderTable() {
       }
     });
 
-    tbody.appendChild(row);
+    fragment.appendChild(row);
   });
+
+  tbody.appendChild(fragment);
 
   if (displayedCount < filteredData.length) {
     paginationContainer.classList.remove("hidden");
@@ -235,10 +259,10 @@ function fallbackCopy(text) {
 const pendingWinRateFetches = new Set();
 
 async function fetchVisibleWinRates(players) {
-  const BATCH_SIZE = 5;
-  const BATCH_DELAY_MS = 300;
-  const MAX_RETRIES = 2;
-  const RETRY_BASE_DELAY_MS = 500;
+  const BATCH_SIZE = 3;
+  const BATCH_DELAY_MS = 120;
+  const MAX_RETRIES = 1;
+  const RETRY_BASE_DELAY_MS = 350;
 
   // Only queue players that don't already have a win rate and aren't pending
   const queue = players.filter(

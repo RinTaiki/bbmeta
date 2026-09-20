@@ -196,13 +196,14 @@
 .leaderboard-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   text-align: left;
 }
 
 .leaderboard-table th {
   background: rgba(13, 43, 69, 0.08);
-  padding: 16px 20px;
-  font-size: 0.85rem;
+  padding: 12px 14px;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #0d2b45;
@@ -216,25 +217,25 @@
 }
 
 .leaderboard-table td {
-  padding: 16px 20px;
+  padding: 10px 12px;
   border-bottom: 1px solid rgba(13, 43, 69, 0.08);
-  font-size: 0.95rem;
-  white-space: nowrap;
+  font-size: 0.92rem;
+  white-space: normal;
   color: #0d2b45;
+  vertical-align: middle;
 }
 
 .leaderboard-table tbody tr {
-  transition:
-    background-color 0.15s ease,
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
+  contain: layout paint;
+  transition: background-color 0.15s ease;
   cursor: pointer;
+  will-change: background-color;
 }
 
 .leaderboard-table tbody tr:hover {
   background: rgba(255, 255, 255, 0.55);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(40, 90, 140, 0.14);
+  box-shadow: none;
+  transform: none;
 }
 
 .leaderboard-table tbody tr:focus-visible {
@@ -243,27 +244,34 @@
 }
 
 .col-rank {
+  width: 72px;
   text-align: center;
-  width: 90px;
+  white-space: nowrap;
 }
 .col-player {
   font-weight: 700;
+  line-height: 1.35;
+  min-width: 220px;
 }
 .col-trophies {
   font-weight: 800;
   color: #b8860b;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  min-width: 120px;
+  white-space: nowrap;
 }
 .col-clan {
   color: #1f4a6b;
   font-weight: 600;
+  white-space: nowrap;
 }
 .col-winrate {
   text-align: right;
   font-weight: 600;
-  min-width: 160px;
+  min-width: 150px;
+  white-space: nowrap;
 }
 
 /* ── Main Deck mini-icons column ────────────────────────────── */
@@ -341,27 +349,30 @@
 
 /* ── Player tag: high-contrast + one-click copy on hover ──────── */
 .player-tag {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   color: #334f6d;
   font-weight: 600;
-  letter-spacing: 0.3px;
-  margin-left: 6px;
+  letter-spacing: 0.2px;
+  margin-left: 0;
   opacity: 0.9;
 }
 
 .player-tag-wrap {
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   position: relative;
+  margin-left: 4px;
+  vertical-align: middle;
 }
 
 .copy-tag-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  margin-left: 5px;
+  width: 18px;
+  height: 18px;
+  margin-left: 0;
   border: 1px solid rgba(13, 43, 69, 0.18);
   background: rgba(255, 255, 255, 0.65);
   color: #334f6d;
@@ -369,8 +380,10 @@
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
-  transform: translateX(-4px);
-  transition: all 0.18s ease;
+  transform: translateX(-2px);
+  transition:
+    opacity 0.18s ease,
+    background-color 0.18s ease;
   flex-shrink: 0;
 }
 
@@ -400,10 +413,10 @@
   display: inline-flex;
   align-items: center;
   vertical-align: middle;
-  margin-left: 6px;
-  padding: 2px 8px;
+  margin-left: 4px;
+  padding: 2px 6px;
   border-radius: 10px;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
   white-space: nowrap;
 }

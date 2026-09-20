@@ -1,11 +1,12 @@
-const FORCE_LOCAL = false;
-
-// Detect environment: localhost (dev) or production (Vercel)
+// Detect environment
 const IS_LOCAL =
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1";
-const API_BASE = IS_LOCAL ? "http://127.0.0.1:3002" : "";
-const PATH_PREFIX = IS_LOCAL ? "" : "/api";
+
+// When local, hit the LIVE Vercel proxy (no local node needed!)
+// When production, use relative /api (Vercel's own proxy)
+const API_BASE = IS_LOCAL ? "https://bbmeta.vercel.app" : "";
+const PATH_PREFIX = "/api";
 
 let requestCount = 0;
 let lastReset = Date.now();

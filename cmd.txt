@@ -1,2 +1,6 @@
 OMNIROUTE_SERVER_HOST=127.0.0.1 omniroute serve --no-open --daemon
 pkill -f omniroute
+
+python3 -m http.server 5500
+then open:
+http://localhost:5500
