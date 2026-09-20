@@ -41,7 +41,9 @@ async function initProfilePage(tag) {
     }
 
     try {
-      const response = await fetch(`/api/rank1?tag=${tag}`);
+      const response = await fetch(
+        `/api/rank1?tag=${encodeURIComponent(tag)}`,
+      );
       if (!response.ok) throw new Error("API Error");
 
       const data = await response.json();
