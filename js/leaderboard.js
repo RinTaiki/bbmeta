@@ -58,6 +58,7 @@ async function loadLeaderboardData(country = "") {
       return;
     }
 
+    pendingWinRateFetches.clear();
     rawLeaderboardData = leaderboardData;
     rankChanges = changes;
 
@@ -209,6 +210,18 @@ function renderTable() {
 
   tbody.appendChild(fragment);
 
+  visiblePlayers.forEach((player) => {
+    if (
+      player.deckLoaded &&
+      Array.isArray(player.deck) &&
+      player.deck.length > 0
+    ) {
+      updateDeckCell(player.tag, player.deck);
+    } else if (player.deckLoaded === false) {
+      updateDeckUnavailable(player.tag);
+    }
+  });
+
   if (displayedCount < filteredData.length) {
     paginationContainer.classList.remove("hidden");
   } else {
@@ -266,7 +279,9 @@ async function fetchVisibleWinRates(players) {
 
   // Only queue players that don't already have a win rate and aren't pending
   const queue = players.filter(
-    (p) => p.winRateValue == null && !pendingWinRateFetches.has(p.tag),
+    (p) =>
+      (p.winRateValue == null || p.deckLoaded !== true) &&
+      !pendingWinRateFetches.has(p.tag),
   );
   if (queue.length === 0) return;
 
@@ -315,14 +330,19 @@ async function fetchVisibleWinRates(players) {
 
         if (result) {
           player.winRateValue = result.rate;
+          player.deck = Array.isArray(result.deck) ? result.deck : null;
+          player.deckLoaded =
+            Array.isArray(result.deck) && result.deck.length > 0;
+
           updateWinRateCell(player.tag, result.rate);
-          if (Array.isArray(result.deck) && result.deck.length > 0) {
-            player.deck = result.deck;
-            updateDeckCell(player.tag, result.deck);
+          if (player.deckLoaded) {
+            updateDeckCell(player.tag, player.deck);
           } else {
             updateDeckUnavailable(player.tag);
           }
         } else {
+          player.deck = null;
+          player.deckLoaded = false;
           updateDeckUnavailable(player.tag);
         }
       }),
@@ -456,6 +476,8 @@ function resolveCloneByUnit(unit) {
 
 function handleSearch(e) {
   const query = e.target.value.toLowerCase().trim();
+
+  pendingWinRateFetches.clear();
 
   if (!query) {
     filteredData = [...rawLeaderboardData];

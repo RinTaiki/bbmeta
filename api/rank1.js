@@ -16,10 +16,13 @@ export default async function handler(req, res) {
 
   // Fetch a player's #1 finishes
   if (req.method === "GET") {
-    const { tag } = req.query;
+    let { tag } = req.query;
     if (!tag) {
       return res.status(400).json({ error: "Missing tag parameter" });
     }
+
+    // Normalize: strip all leading #, add exactly one
+    tag = "#" + tag.replace(/^#+/, "").toUpperCase();
 
     try {
       const { data, error } = await supabase
@@ -60,10 +63,17 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const { player_tag, player_name, season, trophies } = req.body || {};
+    let { player_tag, player_name, season, trophies } = req.body || {};
 
     if (!player_tag || !season) {
       return res.status(400).json({ error: "player_tag and season required" });
+    }
+
+    // Normalize tag: strip ALL leading #, then add exactly one
+    player_tag = "#" + player_tag.replace(/^#+/, "").toUpperCase();
+
+    if (!/^#[A-Z0-9]+$/.test(player_tag)) {
+      return res.status(400).json({ error: "Invalid tag format" });
     }
 
     try {

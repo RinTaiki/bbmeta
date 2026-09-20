@@ -30,6 +30,86 @@ async function initProfilePage(tag) {
 
   showNotification("Loading profile...", "info");
 
+  async function fetchRankData(tag) {
+    const cacheKey = `rank1_${tag}`;
+    const cachedData = localStorage.getItem(cacheKey);
+    if (
+      cachedData &&
+      Date.now() - JSON.parse(cachedData).timestamp < 5 * 60 * 1000
+    ) {
+      return JSON.parse(cachedData).data;
+    }
+
+    try {
+      const response = await fetch(`/api/rank1?tag=${tag}`);
+      if (!response.ok) throw new Error("API Error");
+
+      const data = await response.json();
+      localStorage.setItem(
+        cacheKey,
+        JSON.stringify({ timestamp: Date.now(), data }),
+      );
+      return data;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  function determineTier(count) {
+    if (count === 0) return { tier: null }; // Hide case
+    if (count >= 20) return { tier: "mythic", icon: "👑", label: "Mythic" };
+    if (count >= 10) return { tier: "immortal", icon: "💎", label: "Immortal" };
+    if (count >= 5) return { tier: "legend", icon: "🥇", label: "Legend" };
+    if (count >= 3) return { tier: "warlord", icon: "🥈", label: "Warlord" };
+    if (count >= 1) return { tier: "champion", icon: "🥉", label: "Champion" };
+  }
+
+  function renderRank1Badge(data) {
+    const badgeEl = document.getElementById("rank1-badge");
+    if (!data || data.count === 0) {
+      badgeEl.style.display = "none"; // Hide badge
+      return;
+    }
+
+    const { count, seasons } = data;
+    const { tier, icon, label } = determineTier(count);
+
+    if (tier) {
+      badgeEl.className = `rank1-badge tier-${tier}`;
+      badgeEl.querySelector(".rank1-icon").textContent = icon;
+      badgeEl.querySelector(".rank1-label").textContent =
+        `${label} · ${count}×`;
+
+      // Tooltip
+      const tooltipTitle = `${icon} ${label} — ${count}× #1 Finishes`;
+      badgeEl.querySelector(".rank1-tooltip-title").textContent = tooltipTitle;
+
+      const seasonsList = badgeEl.querySelector(".rank1-seasons");
+      seasonsList.innerHTML = "";
+      const recentSeasons = seasons.slice(0, 5);
+      recentSeasons.forEach((season) => {
+        const seasonItem = document.createElement("li");
+        seasonItem.textContent = `Season ${season.season} — ${season.trophies} 🏆`;
+        seasonsList.appendChild(seasonItem);
+      });
+
+      if (seasons.length > 5) {
+        const moreItem = document.createElement("li");
+        moreItem.textContent = `+${seasons.length - 5} more`;
+        seasonsList.appendChild(moreItem);
+      }
+
+      badgeEl.style.display = "flex"; // Show badge
+    }
+  }
+
+  // Integrate into initProfilePage
+  async function initProfilePage(tag) {
+    const rankData = await fetchRankData(tag);
+    renderRank1Badge(rankData);
+  }
+
   try {
     const profile = await fetchPlayerProfile(tag);
     renderProfile(profile);
