@@ -4,6 +4,7 @@ import { showNotification } from "./notifications.js";
 
 let rawLeaderboardData = [];
 let filteredData = [];
+let rankChanges = {};
 let displayedCount = 50;
 const PAGE_SIZE = 50;
 
@@ -47,6 +48,7 @@ async function loadLeaderboardData(country = "") {
   try {
     showNotification("Fetching leaderboard...", "info");
     rawLeaderboardData = await fetchLeaderboard(country, 200);
+    await fetchRankChanges();
 
     filteredData = [...rawLeaderboardData];
     displayedCount = PAGE_SIZE;
@@ -57,6 +59,20 @@ async function loadLeaderboardData(country = "") {
     console.error("Leaderboard load error:", error);
     showState("error");
     showNotification("Failed to load leaderboard.", "error");
+  }
+}
+
+async function fetchRankChanges() {
+  try {
+    const response = await fetch("/api/rank-changes");
+    if (!response.ok) {
+      throw new Error(`Rank changes request failed: ${response.status}`);
+    }
+    const data = await response.json();
+    rankChanges = data.changes || {};
+  } catch (error) {
+    console.warn("Rank changes unavailable:", error);
+    rankChanges = {};
   }
 }
 
@@ -99,17 +115,16 @@ function renderTable() {
     const wrClass =
       winRateValue === null ? "" : winRateValue >= 50 ? "is-good" : "is-bad";
 
+    const change = rankChanges[player.tag];
     let movementHTML = "";
-    let change = player.rankChange;
-    if (typeof change !== "number") {
-      change = deriveRankChange(player.rank);
-    }
     if (change > 0) {
-      movementHTML = `<span class="rank-move up" title="Climbed ${change}"><span class="rank-move-arrow">▲</span><span class="rank-move-value">${change}</span></span>`;
+      movementHTML = `<span class="rank-change up" title="Climbed ${change}">▲ ${change}</span>`;
     } else if (change < 0) {
-      movementHTML = `<span class="rank-move down" title="Fell ${Math.abs(change)}"><span class="rank-move-arrow">▼</span><span class="rank-move-value">${Math.abs(change)}</span></span>`;
+      movementHTML = `<span class="rank-change down" title="Fell ${Math.abs(change)}">▼ ${Math.abs(change)}</span>`;
+    } else if (change === 0) {
+      movementHTML = `<span class="rank-change even" title="No change">—</span>`;
     } else {
-      movementHTML = `<span class="rank-move steady" title="No change">—</span>`;
+      movementHTML = `<span class="rank-change new">NEW</span>`;
     }
 
     const tagHTML = escapeHTML(player.tag);
@@ -187,7 +202,10 @@ function handleCopyTag(btn, tag) {
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
 
   const doCopy = navigator.clipboard
-    ? navigator.clipboard.writeText(tag).then(() => true).catch(() => fallbackCopy(tag))
+    ? navigator.clipboard
+        .writeText(tag)
+        .then(() => true)
+        .catch(() => fallbackCopy(tag))
     : Promise.resolve(fallbackCopy(tag));
 
   doCopy.then(() => {
@@ -207,7 +225,9 @@ function fallbackCopy(text) {
   ta.style.cssText = "position:fixed;opacity:0";
   document.body.appendChild(ta);
   ta.select();
-  try { document.execCommand("copy"); } catch {}
+  try {
+    document.execCommand("copy");
+  } catch {}
   document.body.removeChild(ta);
 }
 
@@ -383,21 +403,17 @@ function resolveCloneMeta(cardName) {
   const key = cloneKeyForName(cardName);
   return (
     Object.values(CLONE_META).find(
-      (m) =>
-        m.file &&
-        cloneKeyForName(m.file.replace(/\.png$/, "")) === key,
+      (m) => m.file && cloneKeyForName(m.file.replace(/\.png$/, "")) === key,
     ) || null
   );
 }
-
 function resolveCloneByUnit(unit) {
   // Prefer the numeric unit id — it maps directly to CLONE_META keys
   if (unit && unit.id != null && CLONE_META[unit.id]) {
     const meta = CLONE_META[unit.id];
     return {
       file: `assets/clones/${meta.file}`,
-      label:
-        unit.displayName || unit.name || meta.file.replace(/\.png$/, ""),
+      label: unit.displayName || unit.name || meta.file.replace(/\.png$/, ""),
     };
   }
   const meta = resolveCloneMeta(unit?.name);
@@ -473,11 +489,4 @@ function escapeHTML(str) {
         '"': "&quot;",
       })[tag] || tag,
   );
-}
-
-function deriveRankChange(rank) {
-  const mod = rank % 7;
-  if (mod === 0) return 0; // steady
-  if (mod <= 3) return mod; // climbed
-  return -(mod - 3); // fell
 }
