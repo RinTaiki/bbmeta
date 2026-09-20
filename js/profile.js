@@ -104,15 +104,12 @@ async function initProfilePage(tag) {
     }
   }
 
-  // Integrate into initProfilePage
-  async function initProfilePage(tag) {
-    const rankData = await fetchRankData(tag);
-    renderRank1Badge(rankData);
-  }
-
   try {
     const profile = await fetchPlayerProfile(tag);
     renderProfile(profile);
+
+    const rankData = await fetchRankData(tag);
+    renderRank1Badge(rankData);
 
     loadingState.classList.add("hidden");
     profileContent.classList.remove("hidden");
