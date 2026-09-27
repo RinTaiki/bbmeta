@@ -7,9 +7,14 @@ const supabase = createClient(
 
 export default async function handler(req, res) {
   const authHeader = req.headers.authorization || "";
-  const cronSecret = process.env.CRON_SECRET;
+  const adminSecret = process.env.ADMIN_SECRET;
 
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+  // Only accept POST (prevents accidental GET calls)
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Use POST to end a season" });
+  }
+
+  if (!adminSecret || authHeader !== `Bearer ${adminSecret}`) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
@@ -103,7 +108,6 @@ export default async function handler(req, res) {
       trophies: champion.trophies,
     });
 
-    // 23505 = unique violation (already recorded — fine)
     if (rank1Error && rank1Error.code !== "23505") {
       return res.status(500).json({ error: rank1Error.message });
     }
