@@ -34,8 +34,7 @@
 body {
   background:
     linear-gradient(rgba(40, 24, 10, 0.45), rgba(40, 24, 10, 0.45)),
-    url("../assets/backgrounds/holiday_eggopening.png") center/cover no-repeat
-      fixed;
+    url("../assets/backgrounds/holiday_eggopening.webp") center/cover no-repeat;
   color: var(--text-dark);
   font-family:
     "Inter",
@@ -85,8 +84,6 @@ body {
   padding: 14px 16px;
   margin-bottom: 24px;
   background: rgba(255, 250, 240, 0.9);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   border: 2px solid var(--border-gold);
   border-radius: 14px;
   box-shadow: 0 6px 20px rgba(40, 24, 10, 0.18);
@@ -234,7 +231,6 @@ body {
   );
   transform: translate3d(-100%, 0, 0);
   animation: shimmer 1.4s ease-in-out infinite;
-  will-change: transform;
 }
 @keyframes shimmer {
   100% {
@@ -265,12 +261,12 @@ body {
   outline: none;
 
   contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: 280px;
 
   transition:
     transform 0.22s var(--ease-out),
     box-shadow 0.22s var(--ease-out);
-  animation: cardIn 0.4s var(--ease-out) backwards;
-  animation-delay: calc(var(--i, 0) * 28ms);
 }
 
 .clone-card:hover,
@@ -533,7 +529,9 @@ body {
 /* ============================================================
    Modal — liquid glass clone info card
    ============================================================ */
-body.modal-open { overflow: hidden; }
+body.modal-open {
+  overflow: hidden;
+}
 
 .modal-overlay {
   position: fixed;
@@ -544,16 +542,23 @@ body.modal-open { overflow: hidden; }
   justify-content: center;
   padding: 20px;
 
-  background:
-    radial-gradient(ellipse at 50% 40%, rgba(40, 24, 10, 0.55), rgba(10, 6, 2, 0.85));
-  backdrop-filter: blur(10px) saturate(120%);
-  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    rgba(40, 24, 10, 0.55),
+    rgba(10, 6, 2, 0.85)
+  );
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   animation: overlayIn 0.22s ease;
 }
 
 @keyframes overlayIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ---------- The glass card ---------- */
@@ -568,10 +573,13 @@ body.modal-open { overflow: hidden; }
   overflow: hidden;
 
   /* Liquid glass surface */
-  background:
-    linear-gradient(135deg, rgba(255, 248, 235, 0.16), rgba(255, 248, 235, 0.05));
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 248, 235, 0.16),
+    rgba(255, 248, 235, 0.05)
+  );
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
 
   border: 1px solid rgba(255, 255, 255, 0.28);
 
@@ -584,7 +592,6 @@ body.modal-open { overflow: hidden; }
 
   color: #fdf6ea;
   isolation: isolate;
-  will-change: transform, opacity;
   animation: modalPop 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 
@@ -592,7 +599,9 @@ body.modal-open { overflow: hidden; }
 .modal-card::before {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 1px;
   background: linear-gradient(
     90deg,
@@ -621,8 +630,14 @@ body.modal-open { overflow: hidden; }
 }
 
 @keyframes modalPop {
-  from { transform: translateY(14px) scale(0.96); opacity: 0; }
-  to   { transform: translateY(0)    scale(1);    opacity: 1; }
+  from {
+    transform: translateY(14px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 
 /* ---------- Close button ---------- */
@@ -649,7 +664,9 @@ body.modal-open { overflow: hidden; }
 
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  transition: background 0.15s ease, transform 0.22s var(--ease-out);
+  transition:
+    background 0.15s ease,
+    transform 0.22s var(--ease-out);
 }
 .modal-close:hover,
 .modal-close:focus-visible {
@@ -688,7 +705,11 @@ body.modal-open { overflow: hidden; }
   align-items: center;
   justify-content: center;
 
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06));
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.06)
+  );
   border: 1px solid rgba(255, 255, 255, 0.28);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.45),
@@ -731,7 +752,7 @@ body.modal-open { overflow: hidden; }
   padding: 3px 10px;
   border-radius: 999px;
   color: #fdf6ea;
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.22);
 }
 
@@ -764,7 +785,7 @@ body.modal-open { overflow: hidden; }
   padding: 3px 10px;
   border-radius: 999px;
   color: #fdf6ea;
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.22);
 }
 .info-heading {
@@ -792,7 +813,9 @@ body.modal-open { overflow: hidden; }
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
 }
-.info-col::-webkit-scrollbar { width: 6px; }
+.info-col::-webkit-scrollbar {
+  width: 6px;
+}
 .info-col::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.22);
   border-radius: 999px;
@@ -802,8 +825,11 @@ body.modal-open { overflow: hidden; }
 .info-panel {
   padding: 12px 14px;
   border-radius: 14px;
-  background:
-    linear-gradient(140deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.03));
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.03)
+  );
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
@@ -825,7 +851,9 @@ body.modal-open { overflow: hidden; }
   color: rgba(253, 246, 234, 0.55);
   font-style: italic;
 }
-.panel-empty.small { font-size: 0.72rem; }
+.panel-empty.small {
+  font-size: 0.72rem;
+}
 
 /* ---------- Base stats grid ---------- */
 .stats-grid {
@@ -839,7 +867,7 @@ body.modal-open { overflow: hidden; }
   padding: 8px 10px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .stat-cell dt {
   font-size: 0.66rem;
@@ -858,8 +886,12 @@ body.modal-open { overflow: hidden; }
 }
 
 /* ---------- Meta performance bars ---------- */
-.info-bar-row { margin-bottom: 10px; }
-.info-bar-row:last-of-type { margin-bottom: 4px; }
+.info-bar-row {
+  margin-bottom: 10px;
+}
+.info-bar-row:last-of-type {
+  margin-bottom: 4px;
+}
 .info-bar-head {
   display: flex;
   justify-content: space-between;
@@ -869,10 +901,19 @@ body.modal-open { overflow: hidden; }
   color: rgba(253, 246, 234, 0.78);
   margin-bottom: 5px;
 }
-.info-bar-head strong { font-family: "Baloo 2", "Fredoka", "Inter", sans-serif; font-size: 0.98rem; }
-.info-bar-head strong.win-high { color: #7bd47f; }
-.info-bar-head strong.win-med  { color: #ffcb66; }
-.info-bar-head strong.win-low  { color: #ff8d7e; }
+.info-bar-head strong {
+  font-family: "Baloo 2", "Fredoka", "Inter", sans-serif;
+  font-size: 0.98rem;
+}
+.info-bar-head strong.win-high {
+  color: #7bd47f;
+}
+.info-bar-head strong.win-med {
+  color: #ffcb66;
+}
+.info-bar-head strong.win-low {
+  color: #ff8d7e;
+}
 
 .info-bar-track {
   height: 8px;
@@ -889,17 +930,28 @@ body.modal-open { overflow: hidden; }
   animation: barGrow 0.6s var(--ease-out) backwards;
   animation-delay: 0.12s;
 }
-.info-bar-fill.usage-fill    { background: linear-gradient(90deg, var(--accent-gold), #ffcf6a); }
-.info-bar-fill.win-high-fill { background: linear-gradient(90deg, #1f8a3a, #52d46b); }
-.info-bar-fill.win-med-fill  { background: linear-gradient(90deg, #d99400, #ffcb66); }
-.info-bar-fill.win-low-fill  { background: linear-gradient(90deg, #c0392b, #ff7663); }
+.info-bar-fill.usage-fill {
+  background: linear-gradient(90deg, var(--accent-gold), #ffcf6a);
+}
+.info-bar-fill.win-high-fill {
+  background: linear-gradient(90deg, #1f8a3a, #52d46b);
+}
+.info-bar-fill.win-med-fill {
+  background: linear-gradient(90deg, #d99400, #ffcb66);
+}
+.info-bar-fill.win-low-fill {
+  background: linear-gradient(90deg, #c0392b, #ff7663);
+}
 
 .sample-line {
   font-size: 0.74rem;
   color: rgba(253, 246, 234, 0.6);
   margin-top: 8px;
 }
-.sample-line strong { color: #fffaf0; font-weight: 700; }
+.sample-line strong {
+  color: #fffaf0;
+  font-weight: 700;
+}
 
 /* ---------- Combos ---------- */
 .combo-list {
@@ -930,9 +982,15 @@ body.modal-open { overflow: hidden; }
   flex: 0 0 auto;
 }
 
-.combo-name { font-weight: 700; }
-.combo-arrow { color: rgba(253, 246, 234, 0.45); }
-.combo-effect { color: rgba(253, 246, 234, 0.75); }
+.combo-name {
+  font-weight: 700;
+}
+.combo-arrow {
+  color: rgba(253, 246, 234, 0.45);
+}
+.combo-effect {
+  color: rgba(253, 246, 234, 0.75);
+}
 
 /* ---------- Top decks ---------- */
 .deck-list {
@@ -952,7 +1010,7 @@ body.modal-open { overflow: hidden; }
   padding: 8px 10px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .deck-icons {
@@ -979,10 +1037,19 @@ body.modal-open { overflow: hidden; }
   color: rgba(253, 246, 234, 0.65);
   flex: 0 0 auto;
 }
-.deck-meta strong { font-size: 0.92rem; font-family: "Baloo 2", "Fredoka", "Inter", sans-serif; }
-.deck-meta strong.win-high { color: #7bd47f; }
-.deck-meta strong.win-med  { color: #ffcb66; }
-.deck-meta strong.win-low  { color: #ff8d7e; }
+.deck-meta strong {
+  font-size: 0.92rem;
+  font-family: "Baloo 2", "Fredoka", "Inter", sans-serif;
+}
+.deck-meta strong.win-high {
+  color: #7bd47f;
+}
+.deck-meta strong.win-med {
+  color: #ffcb66;
+}
+.deck-meta strong.win-low {
+  color: #ff8d7e;
+}
 
 /* ---------- Mini placeholder for missing images ---------- */
 .clone-icon-placeholder.spotlight-placeholder {
@@ -1007,13 +1074,21 @@ body.modal-open { overflow: hidden; }
     max-height: 90vh;
     width: 100%;
   }
-  .modal-body { padding: 18px 16px 20px; overflow-y: auto; }
+  .modal-body {
+    padding: 18px 16px 20px;
+    overflow-y: auto;
+  }
   .info-body {
     grid-template-columns: 1fr;
     overflow: visible;
   }
-  .info-col { overflow: visible; }
-  .info-avatar { width: 68px; height: 68px; }
+  .info-col {
+    overflow: visible;
+  }
+  .info-avatar {
+    width: 68px;
+    height: 68px;
+  }
 }
 
 /* ---------- Utility / responsive ---------- */
@@ -1027,8 +1102,13 @@ body.modal-open { overflow: hidden; }
     grid-template-columns: 1fr;
   }
 
-  .modal-overlay { padding: 12px; }
-  .deck-mini { width: 22px; height: 22px; }
+  .modal-overlay {
+    padding: 12px;
+  }
+  .deck-mini {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

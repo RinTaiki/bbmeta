@@ -212,22 +212,21 @@ function applyFiltersAndRender() {
 
 function renderGrid(clones) {
   const parts = new Array(clones.length);
-  for (let i = 0; i < clones.length; i++) parts[i] = cardHTML(clones[i], i);
+  for (let i = 0; i < clones.length; i++) parts[i] = cardHTML(clones[i]);
   gridContainer.innerHTML = parts.join("");
 }
 
 /* ------------------------------------------------------------------ */
 /*  Card template — now a modal trigger, not a link                    */
 /* ------------------------------------------------------------------ */
-function cardHTML(c, i) {
+function cardHTML(c) {
   const wrClass = getWinRateClass(c.winRate);
-  const usageW  = Math.min(c.usage, 100);
-  const winW    = Math.min(c.winRate, 100);
-  const delay   = Math.min(i, 20);
-  const aria    = `${c.name} — usage ${pct1Fmt.format(c.usage)} percent, win rate ${pct1Fmt.format(c.winRate)} percent. Open details.`;
+  const usageW = Math.min(c.usage, 100);
+  const winW = Math.min(c.winRate, 100);
+  const aria = `${c.name} — usage ${pct1Fmt.format(c.usage)} percent, win rate ${pct1Fmt.format(c.winRate)} percent. Open details.`;
 
   return `<article class="clone-card rarity-${c.rarity}" role="button" tabindex="0"
-            data-id="${escapeHtml(c.id)}" style="--i:${delay}" aria-label="${escapeHtml(aria)}">
+            data-id="${escapeHtml(c.id)}" aria-label="${escapeHtml(aria)}">
     <div class="card-header">
       <div class="clone-avatar-container">
         <img class="clone-icon" src="${escapeHtml(c.imgSrc)}" alt="" data-initial="${escapeHtml(c.initial)}" loading="lazy" decoding="async" draggable="false" />
@@ -256,8 +255,8 @@ function cardHTML(c, i) {
 /* ------------------------------------------------------------------ */
 /*  Modal — liquid-glass clone info card                               */
 /* ------------------------------------------------------------------ */
-const modalEl    = document.getElementById("clone-modal");
-const modalBody  = document.getElementById("modal-body");
+const modalEl = document.getElementById("clone-modal");
+const modalBody = document.getElementById("modal-body");
 const modalClose = document.getElementById("modal-close");
 
 let lastFocused = null;
@@ -312,8 +311,8 @@ function renderStatsPanel(stats) {
   const rows = [
     ["Health", stats.hp ?? stats.health],
     ["Damage", stats.damage],
-    ["Speed",  stats.speed],
-    ["Range",  stats.range],
+    ["Speed", stats.speed],
+    ["Range", stats.range],
     ["Hit Speed", stats.hitSpeed],
     ["Targets", stats.targets],
   ].filter(([, v]) => v != null && v !== "");
@@ -323,11 +322,15 @@ function renderStatsPanel(stats) {
   }
 
   return `<dl class="stats-grid">
-    ${rows.map(([k, v]) => `
+    ${rows
+      .map(
+        ([k, v]) => `
       <div class="stat-cell">
         <dt>${escapeHtml(k)}</dt>
         <dd>${escapeHtml(fmtStat(v))}</dd>
-      </div>`).join("")}
+      </div>`,
+      )
+      .join("")}
   </dl>`;
 }
 
@@ -336,16 +339,21 @@ function renderCombosPanel(combos) {
     return `<div class="panel-empty">No known combos yet.</div>`;
   }
   return `<ul class="combo-list">
-    ${combos.slice(0, 6).map((c) => {
-      const withName = c.with || c.name || c.partner || "";
-      const effect   = c.effect || c.note || c.description || "";
-      const withIcon = c.withId ? `<img class="combo-icon" src="${escapeHtml(iconFor(c.withId, withName))}" alt="" loading="lazy" decoding="async" draggable="false" />` : "";
-      return `<li class="combo-row">
+    ${combos
+      .slice(0, 6)
+      .map((c) => {
+        const withName = c.with || c.name || c.partner || "";
+        const effect = c.effect || c.note || c.description || "";
+        const withIcon = c.withId
+          ? `<img class="combo-icon" src="${escapeHtml(iconFor(c.withId, withName))}" alt="" loading="lazy" decoding="async" draggable="false" />`
+          : "";
+        return `<li class="combo-row">
         ${withIcon}
         <span class="combo-name">${escapeHtml(withName)}</span>
         ${effect ? `<span class="combo-arrow">→</span><span class="combo-effect">${escapeHtml(effect)}</span>` : ""}
       </li>`;
-    }).join("")}
+      })
+      .join("")}
   </ul>`;
 }
 
@@ -354,42 +362,52 @@ function renderTopDecksPanel(decks) {
     return `<div class="panel-empty">No deck data yet.</div>`;
   }
   return `<ul class="deck-list">
-    ${decks.slice(0, 4).map((d) => {
-      const win  = typeof d.winRate === "number" ? d.winRate : parseFloat(d.winRate) || 0;
-      const uses = d.uses ?? d.matches ?? d.sampleSize ?? 0;
-      const cards = Array.isArray(d.cards) ? d.cards.slice(0, 8) : [];
-      const deckIcons = cards.map((card) => {
-        const cid  = String(card.id || card.unitId || card.name || "");
-        const cname = card.name || cid;
-        return `<img class="deck-mini" src="${escapeHtml(iconFor(cid, cname))}" alt="" loading="lazy" decoding="async" draggable="false" />`;
-      }).join("");
-      const wrClass = getWinRateClass(win);
-      return `<li class="deck-row">
+    ${decks
+      .slice(0, 4)
+      .map((d) => {
+        const win =
+          typeof d.winRate === "number"
+            ? d.winRate
+            : parseFloat(d.winRate) || 0;
+        const uses = d.uses ?? d.matches ?? d.sampleSize ?? 0;
+        const cards = Array.isArray(d.cards) ? d.cards.slice(0, 8) : [];
+        const deckIcons = cards
+          .map((card) => {
+            const cid = String(card.id || card.unitId || card.name || "");
+            const cname = card.name || cid;
+            return `<img class="deck-mini" src="${escapeHtml(iconFor(cid, cname))}" alt="" loading="lazy" decoding="async" draggable="false" />`;
+          })
+          .join("");
+        const wrClass = getWinRateClass(win);
+        return `<li class="deck-row">
         <div class="deck-icons">${deckIcons || '<span class="panel-empty small">No deck list</span>'}</div>
         <div class="deck-meta">
           <strong class="${wrClass}">${pct1Fmt.format(win)}%</strong>
           <span>${numFmt.format(uses)} uses</span>
         </div>
       </li>`;
-    }).join("")}
+      })
+      .join("")}
   </ul>`;
 }
 
 function buildModalHTML(clone) {
-  const meta      = CLONE_META[clone.id] || {};
-  const roles     = meta.roles || [];
-  const arena     = meta.arena ?? meta.arenaName ?? null;
-  const mana      = clone.mana ?? meta.mana ?? null;
-  const stats     = meta.stats || meta.baseStats || null;
-  const combos    = meta.combos || meta.synergies || [];
-  const topDecks  = meta.topDecks || meta.decks || [];
+  const meta = CLONE_META[clone.id] || {};
+  const roles = meta.roles || [];
+  const arena = meta.arena ?? meta.arenaName ?? null;
+  const mana = clone.mana ?? meta.mana ?? null;
+  const stats = meta.stats || meta.baseStats || null;
+  const combos = meta.combos || meta.synergies || [];
+  const topDecks = meta.topDecks || meta.decks || [];
 
   const wrClass = getWinRateClass(clone.winRate);
   const metaLine = [
     `<span class="rarity-badge rarity-${clone.rarity}">${escapeHtml(clone.rarity)}</span>`,
     arena ? `<span class="info-arena">${escapeHtml(arena)}</span>` : "",
     renderManaBadge(mana),
-  ].filter(Boolean).join("");
+  ]
+    .filter(Boolean)
+    .join("");
 
   return `
     <header class="info-hero rarity-${clone.rarity}">
@@ -496,9 +514,11 @@ document.addEventListener(
   (e) => {
     const img = e.target;
     if (!(img instanceof HTMLImageElement)) return;
-    const isCard     = img.classList.contains("clone-icon");
+    const isCard = img.classList.contains("clone-icon");
     const isSpotlight = img.classList.contains("info-avatar-img");
-    const isMini     = img.classList.contains("deck-mini") || img.classList.contains("combo-icon");
+    const isMini =
+      img.classList.contains("deck-mini") ||
+      img.classList.contains("combo-icon");
     if (!isCard && !isSpotlight && !isMini) return;
 
     const ph = document.createElement("div");
@@ -508,7 +528,7 @@ document.addEventListener(
     ph.textContent = (img.dataset.initial || "?").charAt(0).toUpperCase();
     img.replaceWith(ph);
   },
-  true
+  true,
 );
 
 /* Keep a snapshot of last-rendered clones for modal lookups after re-render */

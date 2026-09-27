@@ -142,9 +142,9 @@ function renderTable() {
 
     if (change !== null && change !== undefined) {
       if (change > 0) {
-        movementHTML = `<span class="rank-change up" title="Climbed ${change}">▲ ${change}</span>`;
+        movementHTML = `<span class="rank-change up" title="Climbed ${change}"><img class="rank-change-icon" src="assets/icons/leaderboardup.png" alt="" width="12" height="14" decoding="async" /> ${change}</span>`;
       } else if (change < 0) {
-        movementHTML = `<span class="rank-change down" title="Fell ${Math.abs(change)}">▼ ${Math.abs(change)}</span>`;
+        movementHTML = `<span class="rank-change down" title="Fell ${Math.abs(change)}"><img class="rank-change-icon" src="assets/icons/leadeboarddown.png" alt="" width="12" height="14" decoding="async" /> ${Math.abs(change)}</span>`;
       } else {
         movementHTML = `<span class="rank-change even" title="No change">—</span>`;
       }
@@ -168,7 +168,7 @@ function renderTable() {
                 ${movementHTML}
             </td>
             <td class="col-trophies">
-                <img class="trophy-icon" src="assets/icons/trophiestotal.png" alt="Trophies" />
+                <img class="trophy-icon" src="assets/icons/trophiestotal.png" alt="" aria-hidden="true" width="22" height="22" decoding="async" />
                 ${player.trophies.toLocaleString()}
             </td>
             <td class="col-clan">${escapeHTML(clanName)}</td>
@@ -401,6 +401,9 @@ function updateDeckCell(tag, deck) {
     img.src = file;
     img.alt = label;
     img.loading = "lazy";
+    img.decoding = "async";
+    img.width = 26;
+    img.height = 26;
     img.onerror = () => {
       slot.classList.add("is-fallback");
       slot.dataset.fallback = (label || "?").charAt(0).toUpperCase();

@@ -41,9 +41,7 @@ async function initProfilePage(tag) {
     }
 
     try {
-      const response = await fetch(
-        `/api/rank1?tag=${encodeURIComponent(tag)}`,
-      );
+      const response = await fetch(`/api/rank1?tag=${encodeURIComponent(tag)}`);
       if (!response.ok) throw new Error("API Error");
 
       const data = await response.json();
@@ -382,6 +380,9 @@ function buildTeamSegment(side, team, opts = {}) {
       trophyIcon.src = "assets/icons/trophiestotal.png";
       trophyIcon.alt = "";
       trophyIcon.loading = "lazy";
+      trophyIcon.decoding = "async";
+      trophyIcon.width = 18;
+      trophyIcon.height = 16;
 
       const trophyVal = document.createElement("span");
       trophyVal.className = "battle-trophy-value";
@@ -423,6 +424,7 @@ function buildTeamSegment(side, team, opts = {}) {
       img.className = "battle-deck-img";
       img.alt = cardName;
       img.loading = "lazy";
+      img.decoding = "async";
       img.src = resolveCloneIconByUnit(card);
       img.onerror = () => {
         img.style.display = "none";

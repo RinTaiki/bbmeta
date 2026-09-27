@@ -365,12 +365,31 @@ function getMostUsedCloneName(battleHistory) {
   return topCloneName;
 }
 
+function isLadder1v1Battle(battle) {
+  const mode = String(battle?.mode || "")
+    .trim()
+    .toLowerCase();
+  const teamSize = Number(battle?.teamSize ?? 1);
+
+  if (teamSize !== 1) return false;
+  if (mode === "survival" || mode === "event") return false;
+  if (mode === "2v2") return false;
+
+  return (
+    mode === "1v1" ||
+    mode === "ranked" ||
+    mode === "pvp" ||
+    mode === "ladder" ||
+    mode === ""
+  );
+}
+
 function getCurrentSeasonBattles(battles) {
   const now = new Date();
   return battles.filter((battle) => {
     const timestamp = new Date(battle.timestamp);
     return (
-      (battle.teamSize === 1 || battle.mode === "1v1") &&
+      isLadder1v1Battle(battle) &&
       !Number.isNaN(timestamp.getTime()) &&
       timestamp.getFullYear() === now.getFullYear() &&
       timestamp.getMonth() === now.getMonth()
@@ -493,6 +512,9 @@ function buildTeamSegment(side, team, opts = {}) {
       trophyIcon.src = "assets/icons/trophiestotal.png";
       trophyIcon.alt = "";
       trophyIcon.loading = "lazy";
+      trophyIcon.decoding = "async";
+      trophyIcon.width = 18;
+      trophyIcon.height = 16;
 
       const trophyVal = document.createElement("span");
       trophyVal.className = "battle-trophy-value";
@@ -534,6 +556,7 @@ function buildTeamSegment(side, team, opts = {}) {
       img.className = "battle-deck-img";
       img.alt = cardName;
       img.loading = "lazy";
+      img.decoding = "async";
       img.src = resolveCloneIconByUnit(card);
       img.onerror = () => {
         img.style.display = "none";

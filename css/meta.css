@@ -1,15 +1,13 @@
-
 .meta-page {
   min-height: 100vh;
   position: relative;
   padding-top: 100px;
   padding-bottom: 60px;
-  background-image: url("../assets/backgrounds/frozen_dawn.jpg");
+  background-image: url("../assets/backgrounds/frozen_dawn.webp");
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
+  background-attachment: scroll;
 }
-
 
 .meta-page::before {
   content: "";
@@ -20,7 +18,6 @@
     rgba(225, 240, 255, 0.35) 0%,
     rgba(200, 225, 245, 0.55) 100%
   );
-  backdrop-filter: blur(2px);
   pointer-events: none;
   z-index: 1;
 }
@@ -36,7 +33,6 @@
   padding: 0 24px;
 }
 
-
 .section-header {
   text-align: center;
   margin-bottom: 32px;
@@ -49,7 +45,6 @@
   margin: 0 auto 8px;
   display: block;
   transform-origin: bottom center;
-  animation: emote-breathe 13s ease-in-out infinite;
   filter: drop-shadow(0 6px 10px rgba(40, 80, 120, 0.35));
 }
 
@@ -68,7 +63,6 @@
   font-weight: 600;
   text-shadow: 0 1px 6px rgba(255, 255, 255, 0.6);
 }
-
 
 .controls-bar {
   display: flex;
@@ -111,7 +105,6 @@
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  backdrop-filter: blur(8px);
   transition:
     background 0.2s ease,
     transform 0.2s ease,
@@ -146,20 +139,17 @@
   background-repeat: no-repeat;
   background-position: right 18px center;
   box-shadow: 0 4px 16px rgba(40, 90, 140, 0.18);
-  backdrop-filter: blur(8px);
 }
-
 
 .glass-panel {
   background: rgba(255, 255, 255, 0.45);
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 18px;
   box-shadow: 0 12px 40px rgba(40, 90, 140, 0.22);
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(8px);
   overflow: hidden;
   padding: 24px;
 }
-
 
 .decks-grid {
   display: grid;
@@ -271,13 +261,21 @@
   background: linear-gradient(90deg, #2bb673, #1f8f5b);
 }
 
-
 .state-container {
   padding: 60px 24px;
   text-align: center;
   color: #1f4a6b;
   font-size: 1.1rem;
   font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .glass-panel,
+  .control-select,
+  .filter-chip {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 .hidden {
@@ -322,7 +320,6 @@
   transform: translateY(-1px);
 }
 
-
 @keyframes emote-breathe {
   0% {
     transform: scale(1);
@@ -341,7 +338,6 @@
     transform: scale(1);
   }
 }
-
 
 @media (max-width: 640px) {
   .page-title {
