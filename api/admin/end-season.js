@@ -5,11 +5,25 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY,
 );
 
+/**
+ * Compute the next season ID from the current one.
+ * Example: "2026-09" → "2026-10", "2026-12" → "2027-01"
+ */
+function getNextSeasonId(currentId) {
+  const [year, month] = currentId.split("-").map(Number);
+  let nextYear = year;
+  let nextMonth = month + 1;
+  if (nextMonth > 12) {
+    nextMonth = 1;
+    nextYear += 1;
+  }
+  return `${nextYear}-${String(nextMonth).padStart(2, "0")}`;
+}
+
 export default async function handler(req, res) {
   const authHeader = req.headers.authorization || "";
   const adminSecret = process.env.ADMIN_SECRET;
 
-  // Only accept POST (prevents accidental GET calls)
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Use POST to end a season" });
   }
@@ -19,7 +33,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Find the active season
+    // 1. Find active season
     const { data: active } = await supabase
       .from("seasons")
       .select("*")
@@ -30,7 +44,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "No active season to end" });
     }
 
-    // 2. Get the last snapshot group from this season
+    // 2. Get final Top 10
     const { data: latestRow } = await supabase
       .from("leaderboard_snapshots")
       .select("captured_at")
@@ -54,13 +68,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Empty final top 10" });
     }
 
-    // 3. Determine champion (rank 1)
+    // 3. Determine champion
     const champion = finalTop10.find((p) => p.rank === 1);
     if (!champion) {
       return res.status(400).json({ error: "No rank 1 in final top 10" });
     }
 
-    // 4. Fetch champion's current deck
+    // 4. Fetch champion's deck
     const apiKey = process.env.API_KEY;
     let championDeck = [];
     try {
@@ -100,7 +114,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: updateError.message });
     }
 
-    // 6. Record the #1 finish
+    // 6. Record #1 finish
     const { error: rank1Error } = await supabase.from("rank1_finishes").insert({
       player_tag: champion.player_tag,
       player_name: champion.player_name,
@@ -110,6 +124,19 @@ export default async function handler(req, res) {
 
     if (rank1Error && rank1Error.code !== "23505") {
       return res.status(500).json({ error: rank1Error.message });
+    }
+
+    // 7. Auto-create next season
+    const nextSeasonId = getNextSeasonId(active.id);
+    const { error: nextSeasonError } = await supabase.from("seasons").insert({
+      id: nextSeasonId,
+      started_at: new Date().toISOString(),
+      is_current: true,
+    });
+
+    if (nextSeasonError) {
+      console.error("Next season insert failed:", nextSeasonError);
+      // Don't fail the whole request — archive succeeded
     }
 
     return res.status(200).json({
@@ -122,6 +149,7 @@ export default async function handler(req, res) {
       },
       finalTop10Size: finalPayload.length,
       deckSize: championDeck.length,
+      nextSeason: nextSeasonId,
     });
   } catch (err) {
     console.error("End-season error:", err);
