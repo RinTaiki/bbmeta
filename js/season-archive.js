@@ -196,7 +196,6 @@
   function standingsRowHTML(entry) {
     const medal = RANK_MEDALS[entry.rank] || "";
     const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : "";
-    const isChampion = entry.rank === 1;
 
     return `
       <tr>
@@ -209,7 +208,7 @@
         </td>
         <td class="trophy-cell">${trophyCountHTML(entry.trophies)}</td>
         <td class="clan-cell">${escapeHtml(entry.clan || "—")}</td>
-        <td class="deck-cell">${isChampion ? deckIconsHTML(entry.deck) : '<span class="deck-empty">—</span>'}</td>
+        <td class="deck-cell">${deckIconsHTML(entry.deck)}</td>
       </tr>
     `;
   }
@@ -227,12 +226,19 @@
     const imgSrc = `/assets/clones/${fileName}.png`;
     const firstLetter = displayName.charAt(0).toUpperCase();
     const color = colorFromString(displayName);
+    const level = Number(clone.level);
+    const levelBadge =
+      Number.isFinite(level) && level > 0
+        ? `<span class="clone-level">${level}</span>`
+        : "";
+    const title = levelBadge ? `${displayName} (Lv.${level})` : displayName;
 
     return `
-      <div class="clone-icon" style="--clone-color: ${color}" title="${escapeAttr(displayName)} (Lv.${clone.level})">
-        <img src="${imgSrc}" alt="${escapeAttr(displayName)}" width="32" height="32" loading="lazy" decoding="async"
+      <div class="clone-icon" style="--clone-color: ${color}" title="${escapeAttr(title)}">
+        <img src="${imgSrc}" alt="${escapeAttr(displayName)}" width="26" height="26" loading="lazy" decoding="async"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
         <span class="clone-fallback" style="display:none;">${firstLetter}</span>
+        ${levelBadge}
       </div>
     `;
   }

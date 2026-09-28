@@ -933,6 +933,34 @@
   padding: 0;
 }
 
+.standings-table .deck-cell {
+  min-width: 230px;
+}
+
+.standings-table .deck-icons {
+  grid-template-columns: repeat(8, 26px);
+  grid-auto-rows: 26px;
+  gap: 2px;
+}
+
+.standings-table .clone-icon {
+  width: 26px;
+  height: 26px;
+}
+
+.standings-table .clone-level {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 0 2px;
+  color: #fff;
+  background: rgba(13, 43, 69, 0.8);
+  border-radius: 2px 0 0;
+  font-size: 0.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
 .clone-fallback {
   color: #0d2b45;
   border-radius: 6px;
