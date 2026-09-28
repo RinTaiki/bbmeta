@@ -1,9 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
-import { errors } from "@upstash/redis";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
+  process.env.SUPABASE_SERVICE_KEY,
 );
 
 export default async function handler(req, res) {
@@ -39,7 +38,7 @@ async function listSeasons(res) {
     return res.status(500).json({ error: "Failed to fetch seasons" });
   }
 
-  res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600");
+  res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
   return res.status(200).json({ seasons: data || [] });
 }
 
@@ -82,6 +81,6 @@ async function getSeasonDetail(res, id) {
     final_top_10: finalTop10,
   };
 
-  res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600");
+  res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
   return res.status(200).json({ season });
 }
