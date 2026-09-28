@@ -74,19 +74,25 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "No rank 1 in final top 10" });
     }
 
-    // 4. Fetch champion's deck
+    // 4. Fetch decks for all Top 10 players
     const apiKey = process.env.API_KEY;
-    let championDeck = [];
-    try {
-      const profileRes = await fetch(
-        `https://api.badlandbrawl.com/v1/players/${encodeURIComponent(champion.player_tag)}`,
-        { headers: { Authorization: `Bearer ${apiKey}` } },
-      );
-      const profile = await profileRes.json();
-      championDeck = profile.currentDeck || [];
-    } catch (e) {
-      console.error("Deck fetch failed:", e.message);
-    }
+    const decks = {};
+
+    await Promise.all(
+      finalTop10.map(async (p) => {
+        try {
+          const res = await fetch(
+            `https://api.badlandbrawl.com/v1/players/${encodeURIComponent(p.player_tag)}`,
+            { headers: { Authorization: `Bearer ${apiKey}` } },
+          );
+          const profile = await res.json();
+          decks[p.player_tag] = profile.currentDeck || [];
+        } catch (e) {
+          console.error(`Deck fetch failed for ${p.player_tag}:`, e.message);
+          decks[p.player_tag] = [];
+        }
+      }),
+    );
 
     // 5. Archive the season
     const finalPayload = finalTop10.map((p) => ({
@@ -95,7 +101,7 @@ export default async function handler(req, res) {
       name: p.player_name,
       trophies: p.trophies,
       clan: p.clan_name,
-      deck: p.rank === 1 ? championDeck : [],
+      deck: decks[p.player_tag] || [],
     }));
 
     const { error: updateError } = await supabase
@@ -148,7 +154,7 @@ export default async function handler(req, res) {
         trophies: champion.trophies,
       },
       finalTop10Size: finalPayload.length,
-      deckSize: championDeck.length,
+      totalDecks: Object.values(decks).filter((d) => d.length > 0).length,
       nextSeason: nextSeasonId,
     });
   } catch (err) {
