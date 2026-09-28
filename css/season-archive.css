@@ -938,9 +938,10 @@
 }
 
 .standings-table .deck-icons {
-  grid-template-columns: repeat(8, 26px);
+  grid-template-columns: repeat(4, 26px);
   grid-auto-rows: 26px;
-  gap: 2px;
+  gap: 3px;
+  max-width: 132px;
 }
 
 .standings-table .clone-icon {

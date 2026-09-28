@@ -25,6 +25,60 @@
   };
 
   const RANK_MEDALS = { 1: "🥇", 2: "🥈", 3: "🥉" };
+  const CLONE_FILE_MAP = {
+    Arrows: "arrows",
+    Ballon: "balloon",
+    Balloon: "balloon",
+    "Anti-Gravity": "antigravity",
+    "Big Bouncy Bomb": "bigbouncybomb",
+    "Big Frost": "bigfrost",
+    "Big Smith": "bigsmith",
+    "Blast Bot": "blastbot",
+    "Blast Fish": "blastfish",
+    "Blast Grenade": "blastgrenade",
+    "Blast Mine": "blastmine",
+    "Blast Rocket": "blastrocket",
+    "Bomb Birds": "bombbirds",
+    "Bomb Drone": "bombdrone",
+    "Bomb Fly": "bombfly",
+    "Bomb Frog": "bombfrog",
+    "Bomb Golem": "bombgolem",
+    "Bomb Spider": "bombspider",
+    "Bouncy Bomb": "bouncybomb",
+    "Bouncy Doom": "fankit_bouncydoom_card",
+    "Cluster Bomb": "clusterbomb",
+    "Core Bomber": "corebomber",
+    "Core Freezer": "corefreezer",
+    "Core Lightning": "corelightning",
+    "Core Tri Bomb": "coretribomb",
+    "Doggo House": "doggohouse",
+    "Doggo Horde": "doggohorde",
+    Doggos: "doggos",
+    "Fire Birds": "firebirds",
+    Fireball: "fireball",
+    "Floating Bomb": "floatingbomb",
+    "Flying Barrel": "flyingbarrel",
+    "Flying Doggos": "flyingdoggos",
+    Icicle: "icicle",
+    "Laser Bunnies": "laserbunnies",
+    Lumberjackie: "lumberjackie",
+    Magnet: "magnet",
+    "Mind Tick": "mindtick",
+    "Mini Bomb": "minibomb",
+    Overseer: "overseer",
+    "Plain Bomb": "plainbomb",
+    "Puffer Bug": "pufferbug",
+    "Radioactive Bomb": "radioactivebomb",
+    "Replicant Saw": "replica_saw_card",
+    Snatcher: "snatcher",
+    Spiky: "spiky",
+    "Spinning Saw": "spinningsaw",
+    "Sticky Bomb": "stickybomb",
+    "Striker Boy": "strikerboy",
+    Tornado: "tornado",
+    Wildfire: "wildfire",
+    "Brawl Ball": "brawlball",
+  };
 
   init();
 
@@ -222,25 +276,26 @@
 
   function cloneIconHTML(clone) {
     const displayName = clone.displayName || "Unknown";
-    const fileName = displayName.toLowerCase().replace(/ /g, "_");
+    const fileName = getCloneFileName(displayName);
     const imgSrc = `/assets/clones/${fileName}.png`;
     const firstLetter = displayName.charAt(0).toUpperCase();
     const color = colorFromString(displayName);
-    const level = Number(clone.level);
-    const levelBadge =
-      Number.isFinite(level) && level > 0
-        ? `<span class="clone-level">${level}</span>`
-        : "";
-    const title = levelBadge ? `${displayName} (Lv.${level})` : displayName;
 
     return `
-      <div class="clone-icon" style="--clone-color: ${color}" title="${escapeAttr(title)}">
+      <div class="clone-icon" style="--clone-color: ${color}" title="${escapeAttr(displayName)}">
         <img src="${imgSrc}" alt="${escapeAttr(displayName)}" width="26" height="26" loading="lazy" decoding="async"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
         <span class="clone-fallback" style="display:none;">${firstLetter}</span>
-        ${levelBadge}
       </div>
     `;
+  }
+
+  function getCloneFileName(displayName) {
+    if (!displayName) return null;
+    if (Object.hasOwn(CLONE_FILE_MAP, displayName)) {
+      return CLONE_FILE_MAP[displayName];
+    }
+    return displayName.toLowerCase().replace(/[\s_-]/g, "");
   }
 
   // ---------------------------------------------------------
