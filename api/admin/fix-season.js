@@ -40,12 +40,15 @@ export default async function handler(req, res) {
     if (
       typeof entry.rank !== "number" ||
       !entry.tag ||
-      !entry.name ||
       typeof entry.trophies !== "number"
     ) {
       return res.status(400).json({
-        error: "Each entry needs rank (number), tag, name, trophies (number)",
+        error: "Each entry needs rank (number), tag, trophies (number)",
       });
+    }
+    // Allow empty names but normalize them
+    if (!entry.name || !entry.name.trim()) {
+      entry.name = "\u3164"; // Invisible character fallback
     }
   }
 
