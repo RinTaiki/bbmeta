@@ -1,4 +1,3 @@
-import { jsx } from "react/jsx-runtime";
 import {
   fetchPlayerProfile,
   fetchBattleHistory,
@@ -29,6 +28,7 @@ async function initProfilePage(tag) {
   const profileContent = document.getElementById("profile-content");
 
   showNotification("Loading profile...", "info");
+  let battlesRequest;
 
   async function fetchRankData(tag) {
     const cacheKey = `rank1_${tag}`;
@@ -105,19 +105,40 @@ async function initProfilePage(tag) {
   }
 
   try {
+    battlesRequest = fetchBattleHistory(tag, 30).catch((error) => {
+      console.warn("Battle history unavailable", error);
+      return [];
+    });
     const profile = await fetchPlayerProfile(tag);
+
+    if (!profile.name || profile.trophies == null) {
+      const battles = await battlesRequest;
+      const player = battles.find(
+        (battle) => battle.player?.name && battle.player.name !== "You",
+      )?.player;
+      if (!profile.name && player?.name) profile.name = player.name;
+      if (profile.trophies == null && player?.trophies != null) {
+        profile.trophies = player.trophies;
+      }
+    }
+
     renderProfile(profile);
 
-    fetch("/api/track-visit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tag: profile.tag,
-        rank: profile.rank || null,
-        trophies: profile.trophies || null,
-        exp_level: profile.expLevel || null,
-      }),
-    }).catch(() => {});
+    const isLocal =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+    if (!isLocal) {
+      fetch("/api/track-visit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tag: profile.tag,
+          rank: profile.rank || null,
+          trophies: profile.trophies || null,
+          exp_level: profile.expLevel || null,
+        }),
+      }).catch(() => {});
+    }
 
     const rankData = await fetchRankData(tag);
     renderRank1Badge(rankData);
@@ -140,7 +161,7 @@ async function initProfilePage(tag) {
     return;
   }
 
-  loadBattleHistory(tag);
+  loadBattleHistory(tag, battlesRequest);
 
   loadTrophyChart(tag);
 
@@ -242,13 +263,16 @@ function renderProfile(data) {
   }
 }
 
-async function loadBattleHistory(tag) {
+async function loadBattleHistory(
+  tag,
+  battlesRequest = fetchBattleHistory(tag, 30),
+) {
   const loadingEl = document.getElementById("battles-loading");
   const errorEl = document.getElementById("battles-error");
   const container = document.getElementById("battles-list");
 
   try {
-    const battles = await fetchBattleHistory(tag, 30);
+    const battles = await battlesRequest;
     loadingEl.classList.add("hidden");
 
     if (!battles || battles.length === 0) {

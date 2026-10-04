@@ -11,6 +11,7 @@ const PATH_PREFIX = "/api";
 let requestCount = 0;
 let lastReset = Date.now();
 let lastRequestTime = 0;
+const CLIENT_REQUEST_LIMIT = 50;
 
 // Serial queue so concurrent callers share one throttling chain
 // instead of each independently waiting the same full delay.
@@ -35,7 +36,7 @@ async function _throttledFetch(url, options) {
   }
 
   // If we're approaching the per-minute cap, pause until the window resets
-  if (requestCount >= 80) {
+  if (requestCount >= CLIENT_REQUEST_LIMIT) {
     const waitTime = 60000 - (Date.now() - lastReset) + 200;
     console.warn(`[API] Rate limit window full, waiting ${waitTime}ms`);
     await new Promise((r) => setTimeout(r, waitTime));
@@ -230,8 +231,11 @@ export async function fetchPlayerProfile(tag) {
     const response = await safeFetch(url);
     const data = await response.json();
 
+    if (response.status === 429) throw new Error("RATE_LIMIT");
     if (!response.ok || data?.error || data?.detail) {
-      return data;
+      throw new Error(
+        data?.error || data?.detail || `API error: ${response.status}`,
+      );
     }
 
     setCachedData(cacheKey, data);
@@ -245,6 +249,9 @@ export async function fetchPlayerProfile(tag) {
 export async function fetchBattleLog(tag, limit = 10) {
   const url = `${API_BASE}${PATH_PREFIX}/v1/players/${encodeURIComponent(tag)}/battlelog?limit=${limit}`;
   const response = await safeFetch(url);
+  if (!response.ok) {
+    throw new Error(`Battle log API error: ${response.status}`);
+  }
   const data = await response.json();
 
   return Array.isArray(data) ? data : data?.items || [];
@@ -351,7 +358,8 @@ function normalizeUnits(units) {
 export async function fetchBattleHistory(tag, limit = 10) {
   const cacheKey = `battle_history_${tag}_${limit}`;
   const cached = getCachedData(cacheKey);
-  if (cached) return cached;
+  if (Array.isArray(cached) && cached.length > 0) return cached;
+  if (Array.isArray(cached)) localStorage.removeItem(cacheKey);
 
   const raw = await fetchBattleLog(tag, limit);
   const battles = Array.isArray(raw) ? raw : raw?.items || raw?.battles || [];
