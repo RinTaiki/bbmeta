@@ -1,7 +1,7 @@
+import { jsx } from "react/jsx-runtime";
 import {
   fetchPlayerProfile,
   fetchBattleHistory,
-  fetchTrophyHistory,
   fetchLeaderboard,
 } from "./api.js";
 import { CLONE_META } from "./clone-meta.js";
@@ -108,6 +108,17 @@ async function initProfilePage(tag) {
     const profile = await fetchPlayerProfile(tag);
     renderProfile(profile);
 
+    fetch("/api/track-visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tag: profile.tag,
+        rank: profile.rank || null,
+        trophies: profile.trophies || null,
+        exp_level: profile.expLevel || null,
+      }),
+    }).catch(() => {});
+
     const rankData = await fetchRankData(tag);
     renderRank1Badge(rankData);
 
@@ -188,11 +199,41 @@ function renderProfile(data) {
     data.expLevel || data.level || 1;
   document.getElementById("stat-tribe").textContent = data.clan?.name || "None";
 
-  const copyBtn = document.getElementById("copy-tag-btn");
-  copyBtn.addEventListener("click", () => {
-    navigator.clipboard.writeText(data.tag).then(() => {
+  const tagEl = document.getElementById("player-tag");
+  const originalTag = data.tag || "";
+  let copyResetTimer = null;
+
+  const handleCopyTag = async () => {
+    if (tagEl.dataset.copied === "true") return;
+
+    try {
+      await navigator.clipboard.writeText(originalTag);
       showNotification("Copied to clipboard!", "success");
-    });
+
+      tagEl.dataset.copied = "true";
+      tagEl.textContent = "Copied";
+      tagEl.title = "Copied!";
+      tagEl.classList.add("is-copied");
+
+      clearTimeout(copyResetTimer);
+      copyResetTimer = setTimeout(() => {
+        tagEl.textContent = originalTag;
+        tagEl.title = "Click to copy";
+        tagEl.classList.remove("is-copied");
+        delete tagEl.dataset.copied;
+      }, 1200);
+    } catch (err) {
+      console.error("Clipboard write failed:", err);
+      showNotification("Couldn't copy - try manually", "error");
+    }
+  };
+
+  tagEl.addEventListener("click", handleCopyTag);
+  tagEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleCopyTag;
+    }
   });
 
   const recapBtn = document.getElementById("season-recap-btn");
@@ -635,21 +676,55 @@ async function loadTrophyChart(tag) {
   const errorEl = document.getElementById("chart-error");
   const container = document.getElementById("chart-container");
 
-  try {
-    const history = await fetchTrophyHistory(tag);
-    loadingEl.classList.add("hidden");
+  const cacheKey = `history_${tag}`;
+  let data = null;
 
-    if (!history || !history.dates || history.dates.length === 0) {
+  try {
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Date.now() - parsed.timestamp < 5 * 60 * 1000) {
+        data = parsed.data;
+      }
+    }
+  } catch {}
+
+  if (!data) {
+    try {
+      const response = await fetch(
+        `/api/history?tag=${encodeURIComponent(tag)}&days=30`,
+      );
+      if (!response.ok) throw new Error("API Error");
+
+      data = await response.json();
+      localStorage.setItem(
+        cacheKey,
+        JSON.stringify({ timestamp: Date.now(), data }),
+      );
+    } catch (err) {
+      console.warn("Trophy history fetch failed:", err);
+      loadingEl.classList.add("hidden");
+      errorEl.textContent = "History unavailable.";
       errorEl.classList.remove("hidden");
       return;
     }
-
-    container.classList.remove("hidden");
-    renderChart(history.dates, history.trophies);
-  } catch (err) {
-    loadingEl.classList.add("hidden");
-    errorEl.classList.remove("hidden");
   }
+
+  loadingEl.classList.add("hidden");
+
+  const points = Array.isArray(data?.points) ? data.points : [];
+
+  if (points.length === 0) {
+    errorEl.textContent = "No history data yet. Come back after a few hours.";
+    errorEl.classList.remove("hidden");
+    return;
+  }
+
+  const dates = points.map((p) => p.captured_at);
+  const trophies = points.map((p) => p.trophies ?? 0);
+
+  container.classList.remove("hidden");
+  renderChart(dates, trophies);
 }
 
 function formatChartLabel(raw) {
