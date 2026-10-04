@@ -66,6 +66,22 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: insertError.message });
     }
 
+    const playerSnapshots = players.map((p) => ({
+      player_tag: p.tag,
+      rank: p.rank,
+      trophies: p.trophies,
+      exp_level: p.expLevel,
+      source: "cron",
+    }));
+
+    const { error: snapError } = await supabase
+      .from("player_snapshots")
+      .insert(playerSnapshots);
+
+    if (snapError) {
+      console.error("player_snapshots insert error:", snapError);
+    }
+
     return res.status(200).json({
       ok: true,
       captured: rows.length,

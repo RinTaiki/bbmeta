@@ -134,6 +134,8 @@ async function initProfilePage(tag) {
   loadTrophyChart(tag);
 
   loadGlobalRank(tag);
+
+  loadSeasonHistory(tag);
 }
 
 async function loadGlobalRank(tag) {
@@ -778,4 +780,128 @@ function getRelativeTime(timestamp) {
   if (elapsed < 3600) return `${Math.floor(elapsed / 60)}m ago`;
   if (elapsed < 86400) return `${Math.floor(elapsed / 3600)}h ago`;
   return `${Math.floor(elapsed / 86400)}d ago`;
+}
+
+async function loadSeasonHistory(tag) {
+  const section = document.getElementById("season-history-section");
+  const loadingEl = document.getElementById("season-history-loading");
+  const listEl = document.getElementById("season-history-list");
+  const statsEl = document.getElementById("season-history-stats");
+
+  if (!section || !listEl || !statsEl) return;
+
+  const cacheKey = `season_history_${tag}`;
+  let data = null;
+
+  try {
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Date.now() - parsed.timestamp < 5 * 60 * 1000) {
+        data = parsed.data;
+      }
+    }
+  } catch {}
+
+  if (!data) {
+    section.classList.remove("hidden");
+    loadingEl.classList.remove("hidden");
+    listEl.innerHTML = "";
+    statsEl.innerHTML = "";
+
+    try {
+      const response = await fetch(
+        `/api/season-history?tag=${encodeURIComponent(tag)}`,
+      );
+      if (!response.ok) throw new Error("API Error");
+
+      data = await response.json();
+      localStorage.setItem(
+        cacheKey,
+        JSON.stringify({ timestamp: Date.now(), data }),
+      );
+    } catch (err) {
+      console.error("season-history fetch failed:", err);
+      loadingEl.classList.add("hidden");
+      section.classList.add("hidden");
+      return;
+    }
+  }
+
+  loadingEl.classList.add("hidden");
+
+  if (!data || !data.totalSeasons || !Array.isArray(data.history)) {
+    section.classList.add("hidden");
+    return;
+  }
+
+  section.classList.remove("hidden");
+  renderSeasonHistory(data, listEl, statsEl);
+}
+
+function renderSeasonHistory(data, listEl, statsEl) {
+  const { totalSeasons = 0, championCount = 0, bestRank, history = [] } = data;
+
+  statsEl.innerHTML = "";
+
+  const statDefs = [
+    { label: "Seasons", value: totalSeasons },
+    { label: "Championships", value: championCount },
+    { label: "Best Rank", value: bestRank ? `#${bestRank}` : "—" },
+  ];
+
+  statDefs.forEach(({ label, value }) => {
+    const pill = document.createElement("span");
+    pill.className = "season-stat";
+    pill.innerHTML = `${label}: <strong>${value}</strong>`;
+    statsEl.appendChild(pill);
+  });
+
+  listEl.innerHTML = "";
+
+  history.forEach((row) => {
+    const link = document.createElement("a");
+    link.className = `season-history-row${row.isChampion ? " champion" : ""}`;
+    link.href = `season-archive.html?id=${encodeURIComponent(row.season)}`;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+
+    const seasonEl = document.createElement("div");
+    seasonEl.className = "season-history-season";
+    if (row.isChampion) {
+      const crown = document.createElement("span");
+      crown.className = "season-crown";
+      crown.textContent = "👑";
+      crown.setAttribute("aria-hidden", "true");
+      seasonEl.appendChild(crown);
+    }
+    const seasonText = document.createElement("span");
+    seasonText.textContent = row.season;
+    seasonEl.appendChild(seasonText);
+
+    const rankEl = document.createElement("div");
+    rankEl.className = "season-history-rank";
+    const medal =
+      row.rank === 1
+        ? "🥇"
+        : row.rank === 2
+          ? "🥈"
+          : row.rank === 3
+            ? "🥉"
+            : "";
+    rankEl.textContent = medal
+      ? `${medal} Rank #${row.rank}`
+      : `Rank #${row.rank}`;
+
+    // Trophies
+    const trophiesEl = document.createElement("div");
+    trophiesEl.className = "season-history-trophies";
+    trophiesEl.textContent = `${(row.trophies || 0).toLocaleString()} 🏆`;
+
+    link.appendChild(seasonEl);
+    link.appendChild(rankEl);
+    link.appendChild(trophiesEl);
+
+    listEl.appendChild(link);
+  });
 }

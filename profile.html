@@ -30,11 +30,15 @@
         };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
-  <script>
-  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
-</head>
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+  </head>
   <body class="fade-in">
     <div class="profile-bg"></div>
     <div class="profile-bg-deco">
@@ -202,6 +206,23 @@
               </div>
             </section>
           </div>
+
+          <section
+            id="season-history-section"
+            class="season-history-section hidden"
+          >
+            <div class="section-header-strip season-history-header">
+              <h2 class="section-title">🏆 Season History</h2>
+              <div id="season-history-stats" class="season-history-stats"></div>
+            </div>
+
+            <div id="season-history-loading" class="sub-loading">
+              <div class="spinner-small"></div>
+              <span>Loading season history...</span>
+            </div>
+
+            <div id="season-history-list" class="season-history-list"></div>
+          </section>
         </div>
       </div>
     </main>

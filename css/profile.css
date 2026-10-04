@@ -250,3 +250,181 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.season-history-section {
+  margin-top: 28px;
+}
+
+.season-history-header {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.season-history-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.season-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: rgba(201, 136, 31, 0.1);
+  border: 1px solid rgba(201, 136, 31, 0.3);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.season-stat strong {
+  color: var(--accent-gold);
+  font-weight: 800;
+}
+
+.season-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---------- Row ---------- */
+
+.season-history-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  background: rgba(255, 250, 240, 0.85);
+  border: 2px solid rgba(201, 136, 31, 0.2);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text-main);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.season-history-row:hover {
+  transform: translateY(-2px);
+  border-color: rgba(201, 136, 31, 0.5);
+  box-shadow: 0 10px 24px -14px rgba(80, 56, 20, 0.45);
+}
+
+.season-history-row:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
+/* ---------- Champion variant ---------- */
+
+.season-history-row.champion {
+  border-color: #c9881f;
+  background: rgba(201, 136, 31, 0.08);
+  box-shadow: 0 0 12px rgba(201, 136, 31, 0.2);
+}
+
+.season-history-row.champion:hover {
+  box-shadow:
+    0 0 18px rgba(201, 136, 31, 0.32),
+    0 10px 24px -14px rgba(80, 56, 20, 0.45);
+}
+
+/* ---------- Cells ---------- */
+
+.season-history-season {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text-main);
+}
+
+.season-crown {
+  font-size: 1.1rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(201, 136, 31, 0.5));
+}
+
+.season-history-rank {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.season-history-row.champion .season-history-rank {
+  color: var(--accent-gold);
+}
+
+.season-history-trophies {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* ---------- Section loading spinner (small) ---------- */
+
+.spinner-small {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(201, 136, 31, 0.25);
+  border-top-color: var(--accent-gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex: 0 0 auto;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 640px) {
+  .season-history-header {
+    align-items: flex-start;
+  }
+
+  .season-history-stats {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .season-history-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "season season"
+      "rank   trophies";
+    gap: 6px 12px;
+    padding: 12px 14px;
+  }
+
+  .season-history-season {
+    grid-area: season;
+    font-size: 0.95rem;
+  }
+
+  .season-history-rank {
+    grid-area: rank;
+    font-size: 0.78rem;
+  }
+
+  .season-history-trophies {
+    grid-area: trophies;
+    font-size: 0.82rem;
+    text-align: right;
+  }
+}
