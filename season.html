@@ -43,11 +43,15 @@
         };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
-  <script>
-  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
-</head>
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+  </head>
   <body class="fade-in">
     <canvas id="confetti-canvas"></canvas>
 
@@ -123,83 +127,96 @@
 
         <!-- Content -->
         <div id="season-content" class="hidden">
-          <div class="recap-layout">
-            <!-- ============ SIDEBAR ============ -->
-            <aside class="recap-side">
-              <!-- ============ SEASON STATS ============ -->
-              <section class="side-panel stats-recap">
-                <header class="stats-heading">
-                  <div>
-                    <span class="section-eyebrow">Season stats</span>
-                    <h2 class="section-title" id="stat-name-heading">
-                      Your numbers
-                    </h2>
-                    <p class="stats-player-meta">
-                      <span id="stat-tag-heading">--</span>
-                      <span aria-hidden="true">•</span>
-                      <span id="stat-month-heading">--</span>
-                    </p>
-                  </div>
-                  <span class="stats-icon">📊</span>
-                </header>
+          <!-- ══════════ WOOD CARD ══════════ -->
+          <article class="season-card" id="season-card">
+            <!-- ── CARD HEADER ── -->
+            <header class="season-card-head">
+              <span class="season-card-kicker">Season Stats</span>
+              <h2 class="season-card-title" id="season-card-name">—</h2>
+              <p class="season-card-subtitle">
+                <span
+                  id="season-card-tag"
+                  class="season-card-tag"
+                  role="button"
+                  tabindex="0"
+                  title="Click to copy"
+                  aria-label="Copy player tag"
+                  >—</span
+                >
+                <span class="season-card-dot" aria-hidden="true">·</span>
+                <span id="season-card-month">—</span>
+              </p>
+            </header>
 
-                <div class="stats-grid">
-                  <div class="stat-box">
-                    <span class="stat-label">Best Rank</span
-                    ><strong id="stat-best-rank-row">--</strong>
-                  </div>
-                  <div class="stat-box">
-                    <span class="stat-label">Final Rank</span
-                    ><strong id="stat-final-rank-row">--</strong>
-                  </div>
-                  <div class="stat-box">
-                    <span class="stat-label">Win Rate</span
-                    ><strong id="stat-winrate-row">--</strong>
-                  </div>
-                  <div class="stat-box">
-                    <span class="stat-label">Battles</span
-                    ><strong id="stat-battles-row">--</strong>
-                  </div>
-                  <div class="stat-box">
-                    <span class="stat-label">Wins</span
-                    ><strong id="stat-wins-row">--</strong>
-                  </div>
-                  <div class="stat-box">
-                    <span class="stat-label">Losses</span
-                    ><strong id="stat-losses-row">--</strong>
-                  </div>
-                  <div class="stat-box">
-                    <span class="stat-label">#1 Finishes</span
-                    ><strong id="stat-first-row">--</strong>
-                  </div>
-                  <div class="stat-box">
-                    <span class="stat-label">Signature Clone</span
-                    ><strong id="stat-clone-row">--</strong>
-                  </div>
-                </div>
+            <!-- ── STATS GRID (2×3) ── -->
+            <div class="season-stats-grid">
+              <div class="season-stat" data-stat="rank">
+                <span class="season-stat-label">Last Season Rank</span>
+                <span class="season-stat-value" id="stat-rank">—</span>
+              </div>
 
-                <div class="stats-share" data-html2canvas-ignore="true">
-                  <button
-                    id="btn-download"
-                    class="btn-share btn-share--primary"
-                    type="button"
-                  >
-                    Download PNG
-                  </button>
-                  <button id="btn-copy-link" class="btn-share" type="button">
-                    Copy Link
-                  </button>
-                </div>
-              </section>
-            </aside>
-          </div>
+              <div class="season-stat" data-stat="winrate">
+                <span class="season-stat-label">Win Rate</span>
+                <span class="season-stat-value" id="stat-winrate">—</span>
+              </div>
 
-          <!-- ============ RECENT 1V1 BATTLES (battle-card layout) ============ -->
+              <div class="season-stat" data-stat="battles">
+                <span class="season-stat-label">Battles</span>
+                <span class="season-stat-value" id="stat-battles">—</span>
+              </div>
+
+              <div class="season-stat" data-stat="wins">
+                <span class="season-stat-label">Wins</span>
+                <span class="season-stat-value" id="stat-wins">—</span>
+              </div>
+
+              <div class="season-stat" data-stat="losses">
+                <span class="season-stat-label">Losses</span>
+                <span class="season-stat-value" id="stat-losses">—</span>
+              </div>
+
+              <div class="season-stat season-stat-clone" data-stat="clone">
+                <span class="season-stat-label">Favorite Clone</span>
+                <span class="season-stat-value season-stat-clone-value">
+                  <img
+                    id="stat-clone-icon"
+                    class="season-stat-clone-icon"
+                    alt=""
+                    width="32"
+                    height="32"
+                    decoding="async"
+                    hidden
+                  />
+                  <span id="stat-clone-name">—</span>
+                </span>
+              </div>
+            </div>
+
+            <!-- ── ACTIONS ── -->
+            <div class="season-card-actions" data-html2canvas-ignore="true">
+              <button
+                id="btn-download"
+                class="btn-wood btn-wood--gold"
+                type="button"
+              >
+                📤 Download PNG
+              </button>
+              <button
+                id="btn-copy-link"
+                class="btn-wood btn-wood--glass"
+                type="button"
+              >
+                🔗 Copy Link
+              </button>
+            </div>
+          </article>
+
+          <!-- ══════════ RECENT 1v1 BATTLES ══════════ -->
           <section class="battles-recap battles-recap--wide">
             <header class="battles-heading">
               <div>
                 <span class="section-eyebrow">Battle log</span>
-                <h2 class="section-title">Recent 1v1 Battles</h2>
+                <h2 class="section-title">Season 1v1 Battles</h2>
               </div>
               <span class="live-dot">Latest 5</span>
             </header>

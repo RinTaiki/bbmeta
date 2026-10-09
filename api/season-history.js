@@ -59,9 +59,31 @@ export default async function handler(req, res) {
 
     const totalSeasons = history.length;
     const championCount = history.filter((h) => h.isChampion).length;
-    const bestRank = history.length
+    const trackedBestRank = history.length
       ? Math.min(...history.map((h) => h.rank))
       : null;
+
+    // ── Authoritative all-time best rank from the profile API ──
+    // Falls back to the computed (tracked-only) value if the API is
+    // unavailable, so the endpoint never hard-fails on this lookup.
+    const apiKey = process.env.API_KEY;
+    let trueBestRank = null;
+    try {
+      const profileRes = await fetch(
+        `https://api.badlandbrawl.com/v1/players/${encodeURIComponent(tag)}`,
+        { headers: { Authorization: `Bearer ${apiKey}` } },
+      );
+      if (profileRes.ok) {
+        const profile = await profileRes.json();
+        trueBestRank = profile.bestSeasonRank || null;
+      }
+    } catch (e) {
+      // Silent fail — we still return tracked data below
+      console.warn("bestSeasonRank lookup failed:", e?.message || e);
+    }
+
+    const bestRank = trueBestRank ?? trackedBestRank;
+    const bestRankSource = trueBestRank != null ? "api" : "tracked";
 
     res.setHeader(
       "Cache-Control",
@@ -72,6 +94,7 @@ export default async function handler(req, res) {
       totalSeasons,
       championCount,
       bestRank,
+      bestRankSource,
       history,
     });
   } catch (err) {

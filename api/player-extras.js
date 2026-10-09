@@ -102,7 +102,10 @@ async function handleFavoriteDeck(tag, res) {
     const units = battle.team?.[0]?.units || [];
     if (units.length !== 8) continue;
 
-    const key = units.map((unit) => unit.id || unit.displayName).sort().join("|");
+    const key = units
+      .map((unit) => unit.id || unit.displayName)
+      .sort()
+      .join("|");
     const deck = units.map((unit) => ({
       id: unit.id,
       displayName: unit.displayName || unit.name,

@@ -4,3 +4,5 @@ pkill -f omniroute
 npm run dev
 then open:
 http://127.0.0.1:3002
+
+#2Y9G8L2V

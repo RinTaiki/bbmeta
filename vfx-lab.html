@@ -1,0 +1,42 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CHAMPION — Cosmic Collection</title>
+<link rel="stylesheet" href="css/vfx-lab.css"><script src="js/vfx-lab.js" defer></script>
+</head>
+<body><main class="lab">
+<header><p class="eyebrow">BBmeta / Cosmic Champion Collection</p><h1>Written in the stars.</h1><p>Your first #1 leaderboard finish. One permanent title. Eight cosmic signatures.</p></header>
+<section class="signature-picker" aria-labelledby="picker-heading"><div class="collection-heading"><h2 id="picker-heading">Choose your signature</h2><span>08 COSMIC SIGNATURES</span></div><div id="preset-grid" class="preset-grid"></div></section>
+<section id="preview" class="preview" data-background="dark" aria-labelledby="preview-heading">
+<div class="preview-top"><h2 id="preview-heading">The champion’s signature</h2><span>01 / COSMIC COLLECTION</span></div>
+<div class="preview-stage"><div id="title-effects" class="title-effects has-shimmer has-sweep has-glow has-spectacle">
+<span class="cosmic-core" aria-hidden="true"></span><span class="cosmic-orbit" aria-hidden="true"></span><span class="cosmic-orbit orbit-secondary" aria-hidden="true"></span><span class="cosmic-ribbon" aria-hidden="true"></span><span class="cosmic-ribbon ribbon-secondary" aria-hidden="true"></span><span class="cosmic-ribbon ribbon-third" aria-hidden="true"></span><span class="vfx-particles" aria-hidden="true"></span>
+<span class="achievement-title"><span class="title-text">CHAMPION</span><span class="light-sweep" aria-hidden="true">CHAMPION</span></span></div></div>
+<p id="signature-name" class="signature-name" aria-live="polite">Nebula Sovereign</p>
+<p class="achievement-caption">FIRST #1 LEADERBOARD FINISH · BADLAND BRAWL</p>
+<div class="preview-bottom"><span id="signature-tagline">A NEW NAME IN THE COSMOS.</span><span id="active-count" aria-live="polite">4 layers active</span></div>
+</section>
+<section class="effect-notes" aria-label="Signature details">
+<article><span>01</span><h2>Nebula veil</h2><p>Violet and pink clouds drift behind a pearlescent title.</p></article>
+<article><span>02</span><h2>Pearlescent metal</h2><p>Lavender, rose and icy blue catch the light.</p></article>
+<article><span>03</span><h2>Stardust</h2><p>Quiet stars twinkle through a living cloud.</p></article>
+</section>
+<form id="controls" class="controls">
+<fieldset><legend>The treatment</legend><div class="effect-grid">
+<label><input type="checkbox" name="shimmer" checked> Gradient shimmer</label>
+<label><input type="checkbox" name="sweep" checked> Elegant light sweep</label>
+<label><input type="checkbox" name="glow" checked> Breathing glow</label>
+<label><input type="checkbox" name="spectacle" checked> Cosmic spectacle</label>
+</div></fieldset>
+<div class="control-columns"><fieldset><legend>Fine-tune</legend>
+<div class="slider-row"><label for="speed">Speed</label><input id="speed" name="speed" type="range" min="0.5" max="2" step="0.1" value="1"><output id="speed-value" for="speed">1.0×</output></div>
+<div class="slider-row"><label for="intensity">Glow</label><input id="intensity" name="intensity" type="range" min="0" max="2" step="1" value="1"><output id="intensity-value" for="intensity">Soft</output></div>
+</fieldset><fieldset><legend>Backdrop</legend><div class="background-options">
+<label><input type="radio" name="background" value="dark" checked> Deep space</label>
+<label><input type="radio" name="background" value="dusk"> Dusk</label>
+<label><input type="radio" name="background" value="light"> Lunar</label>
+</div></fieldset></div>
+<div class="footer-row"><button type="button" id="replay">Replay entrance</button><button type="button" id="pause" aria-pressed="false">Pause motion</button><button type="reset">Reset signature</button><p>Copy the URL to share your settings.</p></div>
+</form></main></body></html>
+

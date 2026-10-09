@@ -9,6 +9,13 @@ import { showNotification } from "./notifications.js";
 let trophyChartInstance = null;
 let allBattles = [];
 let activeFilter = "all";
+const WIN_RATE_MODES = [
+  { key: "1v1", label: "1v1 Ladder" },
+  { key: "2v2", label: "2v2" },
+  { key: "survival", label: "Survival" },
+];
+let winRateModes = null;
+let activeWinRateMode = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -20,6 +27,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   initProfilePage(tag);
+  document
+    .getElementById("win-rate-mode-toggle")
+    ?.addEventListener("click", () => {
+      activeWinRateMode = (activeWinRateMode + 1) % WIN_RATE_MODES.length;
+      renderActiveWinRate();
+    });
 });
 
 async function initProfilePage(tag) {
@@ -29,80 +42,6 @@ async function initProfilePage(tag) {
 
   showNotification("Loading profile...", "info");
   let battlesRequest;
-
-  async function fetchRankData(tag) {
-    const cacheKey = `rank1_${tag}`;
-    const cachedData = localStorage.getItem(cacheKey);
-    if (
-      cachedData &&
-      Date.now() - JSON.parse(cachedData).timestamp < 5 * 60 * 1000
-    ) {
-      return JSON.parse(cachedData).data;
-    }
-
-    try {
-      const response = await fetch(`/api/rank1?tag=${encodeURIComponent(tag)}`);
-      if (!response.ok) throw new Error("API Error");
-
-      const data = await response.json();
-      localStorage.setItem(
-        cacheKey,
-        JSON.stringify({ timestamp: Date.now(), data }),
-      );
-      return data;
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
-  }
-
-  function determineTier(count) {
-    if (count === 0) return { tier: null }; // Hide case
-    if (count >= 20) return { tier: "mythic", icon: "👑", label: "Mythic" };
-    if (count >= 10) return { tier: "immortal", icon: "💎", label: "Immortal" };
-    if (count >= 5) return { tier: "legend", icon: "🥇", label: "Legend" };
-    if (count >= 3) return { tier: "warlord", icon: "🥈", label: "Warlord" };
-    if (count >= 1) return { tier: "champion", icon: "🥉", label: "Champion" };
-  }
-
-  function renderRank1Badge(data) {
-    const badgeEl = document.getElementById("rank1-badge");
-    if (!data || data.count === 0) {
-      badgeEl.style.display = "none"; // Hide badge
-      return;
-    }
-
-    const { count, seasons } = data;
-    const { tier, icon, label } = determineTier(count);
-
-    if (tier) {
-      badgeEl.className = `rank1-badge tier-${tier}`;
-      badgeEl.querySelector(".rank1-icon").textContent = icon;
-      badgeEl.querySelector(".rank1-label").textContent =
-        `${label} · ${count}×`;
-
-      // Tooltip
-      const tooltipTitle = `${icon} ${label} — ${count}× #1 Finishes`;
-      badgeEl.querySelector(".rank1-tooltip-title").textContent = tooltipTitle;
-
-      const seasonsList = badgeEl.querySelector(".rank1-seasons");
-      seasonsList.innerHTML = "";
-      const recentSeasons = seasons.slice(0, 5);
-      recentSeasons.forEach((season) => {
-        const seasonItem = document.createElement("li");
-        seasonItem.textContent = `Season ${season.season} — ${season.trophies} 🏆`;
-        seasonsList.appendChild(seasonItem);
-      });
-
-      if (seasons.length > 5) {
-        const moreItem = document.createElement("li");
-        moreItem.textContent = `+${seasons.length - 5} more`;
-        seasonsList.appendChild(moreItem);
-      }
-
-      badgeEl.style.display = "flex"; // Show badge
-    }
-  }
 
   try {
     battlesRequest = fetchBattleHistory(tag, 30).catch((error) => {
@@ -140,9 +79,6 @@ async function initProfilePage(tag) {
       }).catch(() => {});
     }
 
-    const rankData = await fetchRankData(tag);
-    renderRank1Badge(rankData);
-
     loadingState.classList.add("hidden");
     profileContent.classList.remove("hidden");
     showNotification("Player found!", "success");
@@ -168,6 +104,239 @@ async function initProfilePage(tag) {
   loadGlobalRank(tag);
 
   loadSeasonHistory(tag);
+  loadPlayerExtras(tag);
+  checkSeasonRecapVisibility();
+}
+
+async function loadPlayerExtras(tag) {
+  const cacheKey = `player_extras_${tag}`;
+  let data = null;
+
+  try {
+    const cached = JSON.parse(localStorage.getItem(cacheKey) || "null");
+    if (cached && Date.now() - cached.timestamp < 5 * 60 * 1000) {
+      data = cached.data;
+    }
+  } catch {}
+
+  if (!data) {
+    const encodedTag = encodeURIComponent(tag);
+    const types = ["top10", "deck", "winrates"];
+    const results = await Promise.allSettled(
+      types.map(async (type) => {
+        const response = await fetch(
+          `/api/player-extras?type=${type}&tag=${encodedTag}`,
+        );
+        if (!response.ok) throw new Error(`Extras ${type}: ${response.status}`);
+        return [type, await response.json()];
+      }),
+    );
+
+    data = {};
+    for (const result of results) {
+      if (result.status === "rejected") {
+        console.warn("Player extras unavailable", result.reason);
+        continue;
+      }
+      const [type, value] = result.value;
+      data[type] = value;
+    }
+
+    if (Object.keys(data).length > 0) {
+      try {
+        localStorage.setItem(
+          cacheKey,
+          JSON.stringify({ timestamp: Date.now(), data }),
+        );
+      } catch {}
+    }
+  }
+
+  if (data.top10) renderTop10Extras(data.top10);
+  if (data.deck) renderFavoriteDeck(data.deck);
+  if (data.winrates) renderModeWinRates(data.winrates);
+}
+
+function renderTop10Extras(data) {
+  const rank1Badge = document.getElementById("rank1-badge");
+  const badge = document.getElementById("top10-badge");
+  const count = document.getElementById("top10-count");
+  const title = document.getElementById("top10-tooltip-title");
+  const seasonsList = document.getElementById("top10-seasons-list");
+  const rank1Count = document.getElementById("rank1-count");
+  const rank1TooltipTitle = document.getElementById("rank1-tooltip-title");
+  const rank1SeasonsList = document.getElementById("rank1-seasons-list");
+  const titleBadge = document.getElementById("achievement-title");
+  const titleText = document.getElementById("achievement-title-text");
+  const titleSweep = titleBadge?.querySelector(".profile-title-sweep");
+  const titleEmbers = titleBadge?.querySelector(".profile-title-embers");
+  const titleTooltip = document.getElementById("title-tooltip-title");
+  const titleSeasonsList = document.getElementById("title-seasons-list");
+  const achievementRow = document.getElementById("achievement-badges");
+  if (
+    !rank1Badge ||
+    !badge ||
+    !count ||
+    !title ||
+    !seasonsList ||
+    !rank1Count ||
+    !rank1TooltipTitle ||
+    !rank1SeasonsList ||
+    !titleBadge ||
+    !titleText ||
+    !titleSweep ||
+    !titleEmbers ||
+    !titleTooltip ||
+    !titleSeasonsList
+  )
+    return;
+
+  const seasons = Array.isArray(data.seasons) ? data.seasons : [];
+  const top10Count = Number(data.top10Count) || 0;
+  const champions = Number(data.championCount) || 0;
+  const championSeasons = seasons.filter((season) => Number(season.rank) === 1);
+  const titleTier =
+    champions >= 20
+      ? "MYTHIC"
+      : champions >= 10
+        ? "IMMORTAL"
+        : champions >= 5
+          ? "LEGEND"
+          : champions >= 3
+            ? "WARLORD"
+            : champions > 0
+              ? "CHAMPION"
+              : "";
+
+  rank1Count.textContent = `${champions}×`;
+  rank1TooltipTitle.textContent = `${champions}× #1 Season Finishes`;
+  rank1Badge.dataset.tooltipSeasons = championSeasons
+    .map((season) => season.season)
+    .join(", ");
+  rank1Badge.setAttribute("aria-label", rank1TooltipTitle.textContent);
+  rank1Badge.hidden = champions === 0;
+  rank1SeasonsList.replaceChildren();
+  appendSeasonItems(rank1SeasonsList, championSeasons, false);
+
+  titleText.textContent = titleTier;
+  titleSweep.textContent = titleTier;
+  if (titleEmbers.childElementCount === 0) {
+    for (let i = 0; i < 24; i++) {
+      const ember = document.createElement("i");
+      ember.style.setProperty("--x", `${(i * 43) % 101}%`);
+      ember.style.setProperty("--delay", `${-(i * 0.37)}s`);
+      ember.style.setProperty("--duration", `${3 + (i % 5) * 0.6}s`);
+      ember.style.setProperty(
+        "--drift",
+        `${(i % 2 ? 1 : -1) * (12 + (i % 6) * 6)}px`,
+      );
+      ember.style.setProperty("--size", `${2 + (i % 4)}px`);
+      titleEmbers.append(ember);
+    }
+  }
+  titleTooltip.textContent = `${champions}× #1 Season Finishes`;
+  titleBadge.dataset.tooltipSeasons = rank1Badge.dataset.tooltipSeasons;
+  titleBadge.className = `achievement-title has-inferno-vfx tier-${titleTier.toLowerCase()}`;
+  titleBadge.setAttribute(
+    "aria-label",
+    `${titleTier}: ${titleTooltip.textContent}`,
+  );
+  titleBadge.hidden = !titleTier;
+  titleSeasonsList.replaceChildren();
+  appendSeasonItems(titleSeasonsList, championSeasons, false);
+
+  count.textContent = `${top10Count}×`;
+  title.textContent = `${top10Count}× Top 10 Finishes`;
+  badge.dataset.tooltipSeasons = seasons
+    .map((season) => `${season.season} #${season.rank}`)
+    .join(", ");
+  badge.setAttribute("aria-label", title.textContent);
+  seasonsList.replaceChildren();
+  appendSeasonItems(seasonsList, seasons, true);
+  badge.hidden = top10Count === 0;
+  achievementRow.hidden = champions === 0 && top10Count === 0;
+}
+
+function appendSeasonItems(list, seasons, includeRank) {
+  for (const season of seasons) {
+    const item = document.createElement("li");
+    item.textContent = includeRank
+      ? `${season.season} — Rank #${season.rank}`
+      : season.season;
+    list.appendChild(item);
+  }
+}
+
+function renderFavoriteDeck(data) {
+  const section = document.getElementById("favorite-deck-block");
+  const grid = document.getElementById("favorite-deck-grid");
+  const meta = document.getElementById("favorite-deck-meta");
+  if (!section || !grid || !meta) return;
+
+  const deck = Array.isArray(data.deck) ? data.deck.slice(0, 8) : [];
+  if (deck.length === 0) return;
+
+  grid.replaceChildren();
+  for (const unit of deck) {
+    const name = unit.displayName || unit.name || "Clone";
+    const slot = document.createElement("div");
+    slot.className = "favorite-deck-slot";
+
+    const image = document.createElement("img");
+    image.className = "favorite-deck-img";
+    image.alt = name;
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.src =
+      name === "Sticky Doom"
+        ? "assets/clones/fankit_stockydoom_card.png"
+        : resolveCloneIconByUnit({ ...unit, name });
+    image.addEventListener(
+      "error",
+      () => {
+        image.remove();
+        slot.classList.add("is-fallback");
+        slot.dataset.fallback = name.charAt(0).toUpperCase();
+      },
+      { once: true },
+    );
+    slot.appendChild(image);
+    grid.appendChild(slot);
+  }
+
+  const source = data.source === "current" ? "Current" : data.source || "";
+  meta.textContent =
+    data.matchCount > 0
+      ? `${source} · ${data.matchCount}/${data.totalMatches}`
+      : source;
+  section.hidden = false;
+}
+
+function renderModeWinRates(data) {
+  if (!data.modes) return;
+  winRateModes = data.modes;
+  renderActiveWinRate();
+}
+
+function renderActiveWinRate() {
+  const mode = WIN_RATE_MODES[activeWinRateMode];
+  const values = winRateModes?.[mode.key];
+  const value = document.getElementById("stat-win-rate");
+  const label = document.getElementById("win-rate-mode");
+  const button = document.getElementById("win-rate-mode-toggle");
+  const dots = document.getElementById("win-rate-dots");
+  if (!value || !label || !button || !dots) return;
+
+  const hasData = Number(values?.total) > 0 && values.winRate != null;
+  value.textContent = hasData ? `${Number(values.winRate).toFixed(1)}%` : "—";
+  label.textContent = mode.label;
+  button.setAttribute(
+    "aria-label",
+    `Win rate: ${mode.label}. Activate to change mode.`,
+  );
+  dots.querySelectorAll("span").forEach((dot, index) => {
+    dot.classList.toggle("is-active", index === activeWinRateMode);
+  });
 }
 
 async function loadGlobalRank(tag) {
@@ -211,10 +380,6 @@ function renderProfile(data) {
 
   const wins = data.recentWins || data.wins || 0;
   const losses = data.recentLosses || data.losses || 0;
-  const total = wins + losses;
-  const winRate = total > 0 ? ((wins / total) * 100).toFixed(1) : 0;
-
-  document.getElementById("stat-win-rate").textContent = `${winRate}%`;
   document.getElementById("stat-wl").textContent = `${wins} / ${losses}`;
   document.getElementById("stat-level").textContent =
     data.expLevel || data.level || 1;
@@ -253,7 +418,7 @@ function renderProfile(data) {
   tagEl.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      handleCopyTag;
+      handleCopyTag();
     }
   });
 
@@ -758,6 +923,32 @@ function formatChartLabel(raw) {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
+function buildChartLabels(dates, maxLabels = 6) {
+  const firstIndexByDate = new Map();
+  dates.forEach((date, index) => {
+    const label = formatChartLabel(date);
+    if (!firstIndexByDate.has(label)) firstIndexByDate.set(label, index);
+  });
+
+  const uniqueDates = Array.from(firstIndexByDate, ([label, index]) => ({
+    label,
+    index,
+  }));
+  const labels = dates.map(() => "");
+  const labelCount = Math.min(maxLabels, uniqueDates.length);
+
+  for (let i = 0; i < labelCount; i++) {
+    const dateIndex =
+      labelCount === 1
+        ? 0
+        : Math.round((i * (uniqueDates.length - 1)) / (labelCount - 1));
+    const entry = uniqueDates[dateIndex];
+    labels[entry.index] = entry.label;
+  }
+
+  return labels;
+}
+
 function renderChart(dates, trophies) {
   const ctx = document.getElementById("trophyChart").getContext("2d");
 
@@ -779,18 +970,18 @@ function renderChart(dates, trophies) {
   trophyChartInstance = new Chart(ctx, {
     type: "line",
     data: {
-      labels: dates.map(formatChartLabel),
+      labels: buildChartLabels(dates),
       datasets: [
         {
           label: "Trophies",
           data: trophies,
           borderColor: "#c9881f",
-          borderWidth: 2.5,
+          borderWidth: 2,
           backgroundColor: gradient,
           fill: true,
-          tension: 0.35,
-          pointRadius: 3,
-          pointHoverRadius: 6,
+          tension: 0.2,
+          pointRadius: 0,
+          pointHoverRadius: 5,
           pointBackgroundColor: "#fffaf0",
           pointBorderColor: "#c9881f",
           pointBorderWidth: 2,
@@ -817,6 +1008,8 @@ function renderChart(dates, trophies) {
           cornerRadius: 8,
           displayColors: false,
           callbacks: {
+            title: (items) =>
+              items.length ? formatChartLabel(dates[items[0].dataIndex]) : "",
             label: (item) => {
               const val = item.parsed.y;
               const prev = trophies[item.dataIndex - 1];
@@ -834,14 +1027,19 @@ function renderChart(dates, trophies) {
         x: {
           ticks: {
             color: "#7c6a4f",
-            maxTicksLimit: 8,
+            maxTicksLimit: 6,
             maxRotation: 0,
-            autoSkip: true,
+            autoSkip: false,
+            padding: 8,
+            font: { size: 10 },
           },
-          grid: { color: "rgba(184, 146, 63, 0.12)" },
+          grid: {
+            drawOnChartArea: false,
+            drawTicks: false,
+          },
         },
         y: {
-          ticks: { color: "#7c6a4f" },
+          ticks: { color: "#7c6a4f", maxTicksLimit: 6 },
           grid: { color: "rgba(184, 146, 63, 0.12)" },
         },
       },
@@ -939,14 +1137,26 @@ async function loadSeasonHistory(tag) {
 }
 
 function renderSeasonHistory(data, listEl, statsEl) {
-  const { totalSeasons = 0, championCount = 0, bestRank, history = [] } = data;
+  const {
+    totalSeasons = 0,
+    championCount = 0,
+    bestRank,
+    bestRankSource,
+    history = [],
+  } = data;
 
   statsEl.innerHTML = "";
 
   const statDefs = [
     { label: "Seasons", value: totalSeasons },
     { label: "Championships", value: championCount },
-    { label: "Best Rank", value: bestRank ? `#${bestRank}` : "—" },
+    {
+      label:
+        bestRankSource === "api"
+          ? "Best Rank (all-time)"
+          : "Best Rank (tracked)",
+      value: bestRank ? `#${bestRank}` : "—",
+    },
   ];
 
   statDefs.forEach(({ label, value }) => {
@@ -1003,4 +1213,35 @@ function renderSeasonHistory(data, listEl, statsEl) {
 
     listEl.appendChild(link);
   });
+}
+
+async function checkSeasonRecapVisibility() {
+  const btn = document.getElementById("season-recap-btn");
+  if (!btn) return;
+
+  try {
+    const res = await fetch("/api/seasons");
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const seasons = Array.isArray(data?.seasons) ? data.seasons : [];
+
+    if (seasons.length === 0) {
+      btn.style.display = "none";
+      return;
+    }
+
+    const mostRecent = seasons[0];
+    const endedAt = new Date(mostRecent.ended_at);
+    if (isNaN(endedAt.getTime())) return;
+
+    const daysSince = (Date.now() - endedAt.getTime()) / 86400000;
+
+    // Keep the recap visible for 2 days after the season ends.
+    if (daysSince > 2) {
+      btn.style.display = "none";
+    }
+  } catch (err) {
+    console.warn("Season recap visibility check failed:", err);
+  }
 }
