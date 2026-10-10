@@ -27,16 +27,24 @@
     <link rel="stylesheet" href="css/components/footer.css" />
     <link rel="stylesheet" href="css/components/notifications.css" />
     <link rel="stylesheet" href="css/landing.css" />
-  <script>
-  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
-<script>
-  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
-</head>
-  <body class="fade-in">
+    <script>
+      window.va =
+        window.va ||
+        function () {
+          (window.vaq = window.vaq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+  </head>
+  <body class="home-body">
     <header class="site-header">
       <div class="header-container">
         <a href="index.html" class="logo"
@@ -55,47 +63,205 @@
     </header>
 
     <main>
-      <section class="hero">
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-          <h1 class="hero-title">Badland Brawl Stats & Community</h1>
-          <p class="hero-subtitle">
-            Track your progress, explore the meta, and build better decks.
-          </p>
-
-          <form id="search-form" class="search-box">
-            <input
-              type="text"
-              id="player-tag-input"
-              class="search-input"
-              placeholder="Enter player tag (e.g., #ABCDEFG)"
-              required
-              autocomplete="off"
+      <section class="hero" aria-labelledby="home-title">
+        <div class="home-container hero-layout">
+          <div class="hero-content">
+            <span class="home-eyebrow"
+              >THE UNOFFICIAL BADLAND BRAWL COMPANION</span
+            >
+            <h1 class="hero-title" id="home-title">
+              Your next brawl.<br /><em>Your best yet.</em>
+            </h1>
+            <p class="hero-subtitle">
+              Know your clones. Find your winning deck. Follow your climb.
+              <br />Your corner of the Badland Brawl universe starts here.
+            </p>
+            <div class="search-panel">
+              <label for="player-tag-input">LET’S FIND YOUR BRAWLER</label>
+              <form id="search-form" class="search-box">
+                <input
+                  type="text"
+                  id="player-tag-input"
+                  class="search-input"
+                  placeholder="# Your player tag"
+                  required
+                  autocomplete="off"
+                  spellcheck="false"
+                  aria-describedby="tag-help"
+                  maxlength="32"
+                />
+                <button type="submit" class="search-button">
+                  Find player <span aria-hidden="true">↗</span>
+                </button>
+              </form>
+              <p id="tag-help">
+                Find it on your in-game profile.
+                <a href="#find-player-tag">Show me how →</a>
+              </p>
+            </div>
+            <div class="hero-shortcuts">
+              <a href="leaderboard.html">See the leaderboard ↗</a><span>•</span
+              ><a href="meta.html">Explore the meta ↗</a>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="hero-ring"></div>
+            <img
+              class="hero-bomb"
+              src="assets/emotes/bouncybomb-disco.png"
+              alt=""
+              width="140"
+              height="140"
             />
-            <button type="submit" class="search-button">Search</button>
-          </form>
+            <img
+              class="hero-king"
+              src="assets/king/King_00.png"
+              alt=""
+              fetchpriority="high"
+              width="420"
+              height="420"
+            />
+            <img
+              class="hero-doggo"
+              src="assets/emotes/drdoggo-madscientist.png"
+              alt=""
+              width="135"
+              height="135"
+            />
+            <div class="hero-stamp">
+              <span>BUILT FOR BRAWLERS</span
+              ><strong>Play smarter.<br />Brawl bigger.</strong>
+            </div>
+          </div>
+        </div>
+        <div class="home-container hero-ribbon">
+          <span>PLAYER PROFILES</span><i>✦</i><span>CLONE STATS</span><i>✦</i
+          ><span>META DECKS</span><i>✦</i><span>COMMUNITY</span>
         </div>
       </section>
 
-      <section class="creators-section" id="creators-section" style="display: none;" aria-labelledby="creators-title">
+      <section
+        class="creators-section"
+        id="creators-section"
+        style="display: none"
+        aria-labelledby="creators-title"
+      >
         <div class="creators-header">
           <h2 id="creators-title">Community Creators</h2>
           <p>Watch the best Badland Brawl content on YouTube</p>
         </div>
         <div class="creators-grid" id="creators-grid"></div>
         <div class="creators-cta">
-          Want to be featured? <a href="https://discord.gg/TghyMJsTNB" target="_blank" rel="noopener noreferrer">Join our Discord &rarr;</a>
+          Want to be featured?
+          <a
+            href="https://discord.gg/TghyMJsTNB"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Join our Discord &rarr;</a
+          >
         </div>
       </section>
 
-      <section class="howto-player-tag">
+      <section
+        class="home-explore home-container"
+        aria-labelledby="explore-title"
+      >
+        <div class="home-section-heading">
+          <div>
+            <span class="home-eyebrow">A LITTLE INTEL. A BIG ADVANTAGE.</span>
+            <h2 id="explore-title">Find your edge.</h2>
+          </div>
+          <p>Everything you need for your next great brawl.</p>
+        </div>
+        <div class="feature-grid">
+          <a class="home-feature feature-leaders" href="leaderboard.html"
+            ><span class="feature-number">01 / THE CLIMB</span
+            ><img
+              src="assets/emotes/king-angrygolden.png"
+              alt=""
+              loading="lazy"
+              width="160"
+              height="160"
+            />
+            <div>
+              <h3>Meet the legends.</h3>
+              <p>Explore the rankings and scout the players at the top.</p>
+              <span class="feature-link">Leaderboard ↗</span>
+            </div></a
+          >
+          <a class="home-feature feature-clones" href="clones.html"
+            ><span class="feature-number">02 / THE COLLECTION</span
+            ><img
+              src="assets/emotes/electromancer-strong.png"
+              alt=""
+              loading="lazy"
+              width="160"
+              height="160"
+            />
+            <div>
+              <h3>Know your clones.</h3>
+              <p>Compare performance and discover your next favorite.</p>
+              <span class="feature-link">Clone collection ↗</span>
+            </div></a
+          >
+          <a class="home-feature feature-meta" href="meta.html"
+            ><span class="feature-number">03 / THE PLAYBOOK</span
+            ><img
+              src="assets/emotes/king-choosingcard.png"
+              alt=""
+              loading="lazy"
+              width="160"
+              height="160"
+            />
+            <div>
+              <h3>Find a winning hand.</h3>
+              <p>Explore the combinations shaping the battlefield.</p>
+              <span class="feature-link">Meta decks ↗</span>
+            </div></a
+          >
+          <a class="home-feature feature-builder" href="deck-builder.html"
+            ><span class="feature-number">04 / THE WORKSHOP</span
+            ><img
+              src="assets/emotes/bigsmith-hammer.png"
+              alt=""
+              loading="lazy"
+              width="160"
+              height="160"
+            />
+            <div>
+              <h3>Make it your own.</h3>
+              <p>Turn your next big idea into an eight-clone strategy.</p>
+              <span class="feature-link">Deck Builder ↗</span>
+            </div></a
+          >
+        </div>
+      </section>
+
+      <section
+        class="howto-player-tag"
+        id="find-player-tag"
+        aria-labelledby="tag-title"
+      >
         <div class="howto-player-tag__container">
-          <h2 class="howto-player-tag__title">How to find your player tag</h2>
+          <div class="home-section-heading">
+            <div>
+              <span class="home-eyebrow">NEW HERE? START WITH YOUR TAG.</span>
+              <h2 class="howto-player-tag__title" id="tag-title">
+                Your brawler, by the numbers.
+              </h2>
+            </div>
+            <p>Two quick taps in the game, then paste your tag above.</p>
+          </div>
 
           <div class="howto-player-tag__cards">
             <article class="howto-player-tag__card">
               <div class="howto-player-tag__image">
-                <img src="assets/image.png" alt="Badland Brawl home screen" />
+                <img
+                  src="assets/image.png"
+                  loading="lazy"
+                  decoding="async"
+                  alt="Badland Brawl home screen"
+                />
               </div>
               <h3><span>1.</span> Select player name</h3>
             </article>
@@ -104,6 +270,8 @@
               <div class="howto-player-tag__image">
                 <img
                   src="assets/imgprofile.png"
+                  loading="lazy"
+                  decoding="async"
                   alt="Badland Brawl player profile screen"
                 />
               </div>
@@ -112,6 +280,26 @@
           </div>
         </div>
       </section>
+      <aside class="home-community home-container">
+        <img
+          src="assets/emotes/bombgolem-celebrating.png"
+          alt=""
+          loading="lazy"
+          width="110"
+          height="110"
+        />
+        <div>
+          <span class="home-eyebrow">BETTER TOGETHER</span>
+          <h2>The brawl doesn’t end here.</h2>
+          <p>Talk strategy, share discoveries, and meet the community.</p>
+        </div>
+        <a
+          href="https://discord.gg/TghyMJsTNB"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Join our Discord ↗</a
+        >
+      </aside>
     </main>
 
     <footer class="site-footer" id="about">

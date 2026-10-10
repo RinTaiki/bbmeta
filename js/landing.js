@@ -3,31 +3,23 @@ import { loadCreators } from "./creators.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   void loadCreators();
-  const searchForm = document.getElementById("search-form");
-  const playerTagInput = document.getElementById("player-tag-input");
-
-  if (searchForm) {
-    searchForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      let tag = playerTagInput.value.trim();
-
-      if (!tag) {
-        showNotification("Please enter a valid player tag.", "warning");
-        return;
-      }
-
-      
-      if (!tag.startsWith("#")) {
-        tag = "#" + tag;
-      }
-
-      showNotification(`Searching for ${tag}...`, "info");
-
-      
-      setTimeout(() => {
-        window.location.href = `profile.html?tag=${encodeURIComponent(tag)}`;
-      }, 600);
-    });
-  }
+  const form = document.getElementById("search-form");
+  const input = document.getElementById("player-tag-input");
+  if (!form || !input) return;
+  input.addEventListener("input", () => input.setCustomValidity(""));
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const value = input.value.trim();
+    if (!/^#?[a-z0-9]+$/i.test(value)) {
+      input.setCustomValidity(
+        "Enter your player tag using letters and numbers, with an optional #.",
+      );
+      input.reportValidity();
+      input.focus();
+      return;
+    }
+    const tag = "#" + value.replace(/^#/, "").toUpperCase();
+    showNotification(`Searching for ${tag}…`, "info");
+    window.location.assign(`profile.html?tag=${encodeURIComponent(tag)}`);
+  });
 });

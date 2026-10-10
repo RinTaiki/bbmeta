@@ -35,4 +35,13 @@ export const NEWS_ITEMS = [
       "Improved some core features, as well refactoring some designs. There will be many changes in the future! Join our Discord Server below to give feedback. Mobile support is also coming in the future. Note: There are some issues with the Api not showing the full leaderboard. We are working on it!",
     read: false,
   },
+  {
+    id: 5,
+    date: "Oct 10, 2026",
+    tag: "Update",
+    title: "Redesigned UI and bug fixes",
+    content:
+      "The user interface has been completely redesigned with a focus on improving usability and visual appeal. Additionally, several bugs have been fixed to enhance the overall performance. We know that there are still some issues with the Api not showing the full leaderboard. We are working on it!",
+    read: false,
+  }
 ];

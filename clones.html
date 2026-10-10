@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Baloo+2:wght@500;600;700;800&family=Fredoka:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
 
@@ -24,9 +24,8 @@
     <link rel="stylesheet" href="css/components/header.css" />
     <link rel="stylesheet" href="css/components/footer.css" />
     <link rel="stylesheet" href="css/components/notifications.css" />
-    <link rel="stylesheet" href="css/components/filter-bar.css" />
-    <link rel="stylesheet" href="css/components/clone-card.css" />
     <link rel="stylesheet" href="css/clones.css" />
+    <link rel="preload" as="image" href="assets/backgrounds/canyon_dawn.webp" />
     <script>
       window.va =
         window.va ||
@@ -35,12 +34,16 @@
         };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
-  <script>
-  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
-</head>
-  <body class="fade-in">
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+  </head>
+  <body class="clones-body">
     <header class="site-header">
       <div class="header-container">
         <a href="index.html" class="logo"
@@ -61,98 +64,199 @@
     <main class="clones-page" aria-busy="true">
       <div class="content-wrapper">
         <section class="page-hero">
-          <h1>Clone Meta</h1>
-          <p>Usage and win rate for every clone in Badland Brawl</p>
-        </section>
-
-        <section class="filter-bar-container" role="search">
-          <div class="filter-group filter-search">
-            <label for="search-input">Search</label>
-            <input
-              type="search"
-              id="search-input"
-              class="filter-input"
-              placeholder="Search clone…"
-              autocomplete="off"
-              spellcheck="false"
-              enterkeyhint="search"
+          <div class="clones-hero-copy">
+            <span class="clones-eyebrow">THE BADLAND ARMORY</span>
+            <h1>Small clones.<br /><span>Massive impact.</span></h1>
+            <p>
+              Find your next game changer. Explore clone usage, compare win
+              rates, and give your deck an edge.
+            </p>
+            <a class="clones-hero-link" href="#clone-library"
+              >Explore the collection <span aria-hidden="true">&darr;</span></a
+            >
+          </div>
+          <div class="clones-hero-art" aria-hidden="true">
+            <span class="hero-art-ring"></span>
+            <img
+              class="hero-clone-main"
+              src="assets/emotes/electromancer-strong.png"
+              alt=""
+              width="280"
+              height="280"
+              fetchpriority="high"
+              decoding="async"
             />
-          </div>
-
-          <div class="filter-group">
-            <label for="trophy-filter">Trophy Range</label>
-            <select id="trophy-filter" class="filter-select">
-              <option value="all">All Trophies</option>
-              <option value="top">6,000+</option>
-              <option value="mid">4,000–5,999</option>
-              <option value="low">&lt; 4,000</option>
-            </select>
-          </div>
-
-          <div class="filter-group">
-            <label for="rarity-filter">Rarity</label>
-            <select id="rarity-filter" class="filter-select">
-              <option value="all">All Rarities</option>
-              <option value="primal">Primal</option>
-              <option value="evolved">Evolved</option>
-              <option value="mythical">Mythical</option>
-              <option value="unreal">Unreal</option>
-            </select>
-          </div>
-
-          <div class="filter-group">
-            <label for="mana-filter">Mana Cost</label>
-            <select id="mana-filter" class="filter-select">
-              <option value="all">Any Mana</option>
-              <option value="1">1 Mana</option>
-              <option value="2">2 Mana</option>
-              <option value="3">3 Mana</option>
-              <option value="4">4 Mana</option>
-              <option value="5">5 Mana</option>
-              <option value="6">6 Mana</option>
-              <option value="7">7 Mana</option>
-              <option value="8">8+ Mana</option>
-            </select>
-          </div>
-
-          <div class="filter-group">
-            <label for="timeframe-filter">Timeframe</label>
-            <select id="timeframe-filter" class="filter-select">
-              <option value="season">Current Season</option>
-              <option value="7d">Last 7 Days</option>
-              <option value="30d">Last 30 Days</option>
-              <option value="all">All Time</option>
-            </select>
-          </div>
-
-          <div class="filter-group">
-            <label for="sort-filter">Sort By</label>
-            <select id="sort-filter" class="filter-select">
-              <option value="usage">Usage (highest)</option>
-              <option value="winRate">Win Rate (highest)</option>
-              <option value="name">Name (A-Z)</option>
-              <option value="sampleSize">Sample Size (highest)</option>
-            </select>
+            <img
+              class="hero-clone-hammer"
+              src="assets/emotes/bigsmith-hammer.png"
+              alt=""
+              width="100"
+              height="100"
+              decoding="async"
+            />
+            <img
+              class="hero-clone-bomb"
+              src="assets/emotes/bouncybomb-disco.png"
+              alt=""
+              width="72"
+              height="72"
+              decoding="async"
+            />
+            <span class="hero-art-label">YOUR DECK. YOUR PLAYSTYLE.</span>
           </div>
         </section>
 
-        <div
-          id="loading-state"
-          class="state-container"
-          aria-live="polite"
-        ></div>
-
-        <div id="error-state" class="state-container hidden">
-          <div class="error-icon">⚠️</div>
-          <p>Failed to load clone stats. Try again.</p>
-          <button id="retry-btn" class="btn-retry">Retry</button>
+        <div class="clones-overview" aria-label="Collection overview">
+          <div>
+            <span class="overview-label">Clones tracked</span
+            ><strong id="clone-total">&mdash;</strong>
+          </div>
+          <div>
+            <span class="overview-label">Most played</span
+            ><strong id="clone-most-used">&mdash;</strong>
+          </div>
+          <div>
+            <span class="overview-label">Battle window</span
+            ><strong id="clone-window">Last 7 days</strong>
+          </div>
+          <a href="deck-builder.html"
+            >Build your next deck <span aria-hidden="true">&nearr;</span></a
+          >
         </div>
 
-        <div id="empty-state" class="state-container hidden">
-          <p>No clone data available for this filter.</p>
-        </div>
+        <section
+          class="clone-library"
+          id="clone-library"
+          aria-labelledby="library-title"
+        >
+          <div class="library-heading">
+            <div>
+              <span class="clones-eyebrow">KNOW YOUR CLONES</span>
+              <h2 id="library-title">The collection</h2>
+            </div>
+            <p id="clone-results" role="status" aria-live="polite">
+              Loading the collection...
+            </p>
+          </div>
+          <section class="filter-bar-container" role="search">
+            <div class="filter-group filter-search">
+              <label for="search-input">Search</label>
+              <input
+                type="search"
+                id="search-input"
+                class="filter-input"
+                placeholder="Search clone…"
+                autocomplete="off"
+                spellcheck="false"
+                enterkeyhint="search"
+              />
+            </div>
 
-        <div id="clone-grid" class="clone-grid hidden"></div>
+            <div class="filter-group">
+              <label for="trophy-filter">Trophy Range</label>
+              <select id="trophy-filter" class="filter-select">
+                <option value="all">All Trophies</option>
+                <option value="top">6,000+</option>
+                <option value="mid">4,000–5,999</option>
+                <option value="low">&lt; 4,000</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="rarity-filter">Rarity</label>
+              <select id="rarity-filter" class="filter-select">
+                <option value="all">All Rarities</option>
+                <option value="primal">Primal</option>
+                <option value="evolved">Evolved</option>
+                <option value="mythical">Mythical</option>
+                <option value="unreal">Unreal</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="mana-filter">Mana Cost</label>
+              <select id="mana-filter" class="filter-select">
+                <option value="all">Any Mana</option>
+                <option value="1">1 Mana</option>
+                <option value="2">2 Mana</option>
+                <option value="3">3 Mana</option>
+                <option value="4">4 Mana</option>
+                <option value="5">5 Mana</option>
+                <option value="6">6 Mana</option>
+                <option value="7">7 Mana</option>
+                <option value="8">8+ Mana</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="timeframe-filter">Timeframe</label>
+              <select id="timeframe-filter" class="filter-select">
+                <option value="7d">Last 7 Days</option>
+                <option value="30d">Last 30 Days</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="sort-filter">Sort By</label>
+              <select id="sort-filter" class="filter-select">
+                <option value="usage">Usage (highest)</option>
+                <option value="winRate">Win Rate (highest)</option>
+                <option value="name">Name (A-Z)</option>
+                <option value="sampleSize">Sample Size (highest)</option>
+              </select>
+            </div>
+          </section>
+
+          <div class="collection-toolbar">
+            <p id="clone-filter-context">All trophies &middot; Last 7 days</p>
+            <button type="button" id="reset-filters" class="reset-filters">
+              Reset filters <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div
+            id="loading-state"
+            class="state-container"
+            aria-live="polite"
+            role="status"
+          ></div>
+
+          <div id="error-state" class="state-container hidden" role="alert">
+            <img
+              class="state-emote"
+              src="assets/emotes/bombgolem-question.png"
+              alt=""
+              width="80"
+              height="80"
+              loading="lazy"
+            />
+            <p>Failed to load clone stats. Try again.</p>
+            <button type="button" id="retry-btn" class="btn-retry">
+              Try again
+            </button>
+          </div>
+
+          <div id="empty-state" class="state-container hidden" role="status">
+            <img
+              class="state-emote"
+              src="assets/emotes/overseer-thinking.png"
+              alt=""
+              width="80"
+              height="80"
+              loading="lazy"
+            />
+            <p>No clone data available for this filter.</p>
+            <p class="empty-help">
+              Try another rarity, mana cost, or battle window.
+            </p>
+          </div>
+
+          <div id="clone-grid" class="clone-grid hidden"></div>
+          <p class="collection-note">
+            Select a clone to explore its details. Usage and win rate reflect
+            the selected trophy range and battle window.
+          </p>
+        </section>
       </div>
     </main>
     <div id="clone-modal" class="modal-overlay hidden" role="presentation">
@@ -162,7 +266,12 @@
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        <button class="modal-close" id="modal-close" aria-label="Close">
+        <button
+          type="button"
+          class="modal-close"
+          id="modal-close"
+          aria-label="Close clone details"
+        >
           &times;
         </button>
         <div class="modal-body" id="modal-body"></div>

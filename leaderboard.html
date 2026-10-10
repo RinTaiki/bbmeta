@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="css/components/footer.css" />
     <link rel="stylesheet" href="css/components/notifications.css" />
     <link rel="stylesheet" href="css/leaderboard.css" />
+    <link rel="preload" as="image" href="assets/backgrounds/frozen_dawn.webp" />
     <script>
       window.va =
         window.va ||
@@ -33,12 +34,16 @@
         };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
-  <script>
-  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
-</head>
-  <body class="fade-in">
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+  </head>
+  <body class="leaderboard-body">
     <header class="site-header">
       <div class="header-container">
         <a href="index.html" class="logo"
@@ -58,84 +63,220 @@
 
     <main class="leaderboard-page">
       <section class="leaderboard-hero">
-        <div class="hero-overlay"></div>
         <div class="leaderboard-container">
           <div class="section-header">
-            <img
-              class="king-stance"
-              src="assets/king/King_00.png"
-              alt="King stance"
-            />
-            <h1 class="page-title">Global Leaderboard</h1>
-            <p class="page-subtitle">Top players worldwide</p>
-          </div>
-
-          <div class="controls-bar">
-            <div class="search-wrapper">
-              <input
-                type="text"
-                id="search-input"
-                class="control-input"
-                placeholder="Search player by name or tag..."
-                autocomplete="off"
+            <div class="hero-copy">
+              <span class="hero-eyebrow"
+                ><span class="eyebrow-line"></span> THE BADLAND ARENA</span
+              >
+              <h1 class="page-title">
+                Legends of<br /><span>the Brawl.</span>
+              </h1>
+              <p class="page-subtitle">
+                Big plays. Bigger rivalries. Meet the players climbing to the
+                top of Badland Brawl.
+              </p>
+              <a class="hero-jump" href="#rankings"
+                >Explore the rankings <span aria-hidden="true">&darr;</span></a
+              >
+            </div>
+            <div class="hero-art" aria-hidden="true">
+              <img
+                class="hero-emote"
+                src="assets/emotes/bouncybomb-disco.png"
+                alt=""
+                width="96"
+                height="96"
+                decoding="async"
               />
-            </div>
-
-            <div class="filter-wrapper">
-              <select id="country-filter" class="control-select">
-                <option value="">Global (All Countries)</option>
-                <option value="US">🇺🇸 United States</option>
-                <option value="DE">🇩🇪 Germany</option>
-                <option value="FR">🇫🇷 France</option>
-                <option value="GB">🇬🇧 United Kingdom</option>
-                <option value="ES">🇪🇸 Spain</option>
-                <option value="BR">🇧🇷 Brazil</option>
-                <option value="JP">🇯🇵 Japan</option>
-                <option value="KR">🇰🇷 South Korea</option>
-                <option value="FI">🇫🇮 Finland</option>
-              </select>
+              <img
+                class="king-stance"
+                src="assets/king/King_00.png"
+                alt=""
+                width="300"
+                height="300"
+                fetchpriority="high"
+              />
+              <span class="hero-art-caption">A crown is earned.</span>
             </div>
           </div>
 
-          <div class="table-card glass-panel">
-            <!-- Loading State -->
-            <div id="loading-state" class="state-container">
-              <img src="assets/cog.png" alt="Loading" class="cog-spinner" />
-              <p>Loading leaderboard...</p>
+          <div class="arena-summary" aria-label="Leaderboard overview">
+            <div>
+              <span class="summary-label">Arena</span
+              ><strong id="arena-region">Worldwide</strong>
             </div>
-
-            <div id="error-state" class="state-container hidden">
-              <div class="error-icon">⚠️</div>
-              <p id="error-message">Failed to load leaderboard. Try again.</p>
-              <button id="retry-btn" class="btn-retry">Retry</button>
+            <div>
+              <span class="summary-label">Ranked players</span
+              ><strong id="arena-count">&mdash;</strong>
             </div>
-
-            <div class="table-responsive">
-              <table class="leaderboard-table" id="leaderboard-table">
-                <thead>
-                  <tr>
-                    <th class="col-rank">Rank</th>
-                    <th class="col-player">Player</th>
-                    <th class="col-trophies">Trophies</th>
-                    <th class="col-clan">Clan</th>
-                    <th class="col-deck">Main Deck</th>
-                    <th class="col-winrate">Win Rate</th>
-                  </tr>
-                </thead>
-                <tbody id="leaderboard-body"></tbody>
-              </table>
+            <div>
+              <span class="summary-label">Leading trophies</span
+              ><strong id="arena-trophies">&mdash;</strong>
             </div>
-
-            <div id="empty-state" class="state-container hidden">
-              <p>No players match your search criteria.</p>
-            </div>
+            <a href="deck-builder.html" class="summary-link"
+              >Build your winning deck
+              <span aria-hidden="true">&nearr;</span></a
+            >
           </div>
+          <section
+            class="podium-section hidden"
+            id="podium-section"
+            aria-labelledby="podium-title"
+          >
+            <div class="podium-heading">
+              <span class="hero-eyebrow">THE FRONT RUNNERS</span>
+              <h2 id="podium-title">A league of their own.</h2>
+              <p id="podium-scope">Top three in the global rankings</p>
+            </div>
+            <div class="podium-grid" id="podium-grid"></div>
+          </section>
+          <section
+            class="rankings-panel"
+            id="rankings"
+            aria-labelledby="rankings-title"
+          >
+            <div class="rankings-heading">
+              <div>
+                <span class="hero-eyebrow">THE CLIMB</span>
+                <h2 id="rankings-title">Player rankings</h2>
+              </div>
+              <span
+                class="results-count"
+                id="results-count"
+                role="status"
+                aria-live="polite"
+                >Loading rankings...</span
+              >
+            </div>
+            <div class="controls-bar">
+              <div class="search-wrapper">
+                <label for="search-input">Find a brawler</label>
+                <div class="search-field">
+                  <input
+                    type="search"
+                    id="search-input"
+                    class="control-input"
+                    placeholder="Search player by name or tag..."
+                    autocomplete="off"
+                  />
+                  <button
+                    type="button"
+                    id="clear-search-btn"
+                    class="clear-search-btn hidden"
+                    aria-label="Clear player search"
+                  >
+                    &times;
+                  </button>
+                </div>
+              </div>
 
-          <div class="pagination-container hidden" id="pagination-container">
-            <button id="load-more-btn" class="btn-load-more">
-              Load More Players
-            </button>
-          </div>
+              <div class="filter-wrapper">
+                <label for="country-filter">Choose your arena</label>
+                <select id="country-filter" class="control-select">
+                  <option value="">Global (All Countries)</option>
+                  <option value="US">🇺🇸 United States</option>
+                  <option value="DE">🇩🇪 Germany</option>
+                  <option value="FR">🇫🇷 France</option>
+                  <option value="GB">🇬🇧 United Kingdom</option>
+                  <option value="ES">🇪🇸 Spain</option>
+                  <option value="BR">🇧🇷 Brazil</option>
+                  <option value="JP">🇯🇵 Japan</option>
+                  <option value="KR">🇰🇷 South Korea</option>
+                  <option value="FI">🇫🇮 Finland</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-card glass-panel">
+              <!-- Loading State -->
+              <div id="loading-state" class="state-container" role="status">
+                <img
+                  src="assets/cog.png"
+                  alt=""
+                  width="56"
+                  height="56"
+                  class="cog-spinner"
+                />
+                <p>Loading leaderboard...</p>
+              </div>
+
+              <div id="error-state" class="state-container hidden" role="alert">
+                <img
+                  class="state-emote"
+                  src="assets/emotes/bombgolem-question.png"
+                  alt=""
+                  width="80"
+                  height="80"
+                  loading="lazy"
+                />
+                <p id="error-message">Failed to load leaderboard. Try again.</p>
+                <button type="button" id="retry-btn" class="btn-retry">
+                  Try again
+                </button>
+              </div>
+
+              <div
+                class="table-responsive hidden"
+                id="table-container"
+                tabindex="0"
+                role="region"
+                aria-label="Player rankings table; scroll horizontally for all columns"
+              >
+                <table class="leaderboard-table" id="leaderboard-table">
+                  <caption class="sr-only">
+                    Badland Brawl player rankings. Open a player profile to
+                    explore their stats.
+                  </caption>
+                  <colgroup>
+                    <col class="col-rank" />
+                    <col class="col-player" />
+                    <col class="col-trophies" />
+                    <col class="col-clan" />
+                    <col class="col-deck" />
+                    <col class="col-winrate" />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th scope="col" class="col-rank">Rank</th>
+                      <th scope="col" class="col-player">Player</th>
+                      <th scope="col" class="col-trophies">Trophies</th>
+                      <th scope="col" class="col-clan">Clan</th>
+                      <th scope="col" class="col-deck">Main Deck</th>
+                      <th scope="col" class="col-winrate">Win Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody id="leaderboard-body"></tbody>
+                </table>
+              </div>
+
+              <div
+                id="empty-state"
+                class="state-container hidden"
+                role="status"
+              >
+                <img
+                  class="state-emote"
+                  src="assets/emotes/overseer-thinking.png"
+                  alt=""
+                  width="80"
+                  height="80"
+                  loading="lazy"
+                />
+                <p>No players match your search criteria.</p>
+              </div>
+            </div>
+
+            <div class="pagination-container hidden" id="pagination-container">
+              <button type="button" id="load-more-btn" class="btn-load-more">
+                Load More Players
+              </button>
+            </div>
+            <p class="rankings-note">
+              Ranked by trophies. Select a player to explore their profile. Win
+              rates and decks load as you browse.
+            </p>
+          </section>
         </div>
       </section>
     </main>

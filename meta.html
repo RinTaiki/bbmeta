@@ -33,12 +33,16 @@
         };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
-  <script>
-  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
-</head>
-  <body class="fade-in">
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+  </head>
+  <body class="meta-body">
     <header class="site-header">
       <div class="header-container">
         <a href="index.html" class="logo"
@@ -57,67 +61,180 @@
     </header>
 
     <main class="meta-page">
-      <section class="meta-hero">
-        <div class="meta-container">
-          <div class="section-header">
-            <img
-              class="king-stance"
-              src="assets/king/King_00.png"
-              alt="King stance"
-            />
-            <h1 class="page-title">Meta Decks</h1>
-            <p class="page-subtitle">Top competitive decks by win rate</p>
+      <div class="meta-container">
+        <section class="meta-hero" aria-labelledby="meta-title">
+          <div class="hero-copy">
+            <span class="eyebrow">THE BRAWLER’S PLAYBOOK</span>
+            <h1 id="meta-title">Find your<br /><em>winning hand.</em></h1>
+            <p>
+              Eight clones. Endless possibilities. Explore the decks behind the
+              battles and find your next combination.
+            </p>
+            <a class="hero-link" href="#deck-library"
+              >Explore the meta <span>↓</span></a
+            >
           </div>
-
+          <div class="hero-art" aria-hidden="true">
+            <div class="art-orbit"></div>
+            <img
+              class="hero-card card-left"
+              src="assets/clones/bigsmith.png"
+              alt=""
+            />
+            <img
+              class="hero-card card-right"
+              src="assets/clones/bouncybomb.png"
+              alt=""
+            />
+            <img
+              class="hero-king"
+              src="assets/emotes/king-choosingcard.png"
+              alt=""
+              fetchpriority="high"
+            />
+            <span class="art-label">BUILD A BETTER BRAWL</span>
+          </div>
+        </section>
+        <section class="meta-summary" aria-label="Deck snapshot">
+          <div>
+            <span>DECKS IN THE MIX</span><strong id="deck-count">—</strong>
+          </div>
+          <div>
+            <span>HIGHEST WIN RATE</span><strong id="best-win">—</strong>
+          </div>
+          <div>
+            <span>BATTLES SAMPLED</span><strong id="sample-count">—</strong>
+          </div>
+          <div class="summary-note">
+            <img src="assets/emotes/grandtrickster-hat.png" alt="" />
+            <p>
+              A strong deck is just the beginning.<br /><b
+                >Make every launch count.</b
+              >
+            </p>
+          </div>
+        </section>
+        <section
+          class="deck-library"
+          id="deck-library"
+          aria-labelledby="library-title"
+        >
+          <div class="library-heading">
+            <div>
+              <span class="eyebrow">SCOUT. COMPARE. EXPERIMENT.</span>
+              <h2 id="library-title">The deck room</h2>
+            </div>
+            <p id="results-label" role="status">Preparing your playbook…</p>
+          </div>
           <div class="controls-bar">
-            <div class="filter-group">
-              <span class="filter-label">Trophy Range</span>
-              <div class="trophy-filter" id="trophy-filter">
-                <button class="filter-chip active" data-min="" data-max="">
-                  All
+            <div class="filter-group trophy-group">
+              <span class="filter-label">Trophy range</span>
+              <div
+                class="trophy-filter"
+                id="trophy-filter"
+                aria-label="Trophy range"
+              >
+                <button
+                  type="button"
+                  class="filter-chip active"
+                  data-min=""
+                  data-max=""
+                  aria-pressed="true"
+                >
+                  All arenas
                 </button>
-                <button class="filter-chip" data-min="6000" data-max="">
+                <button
+                  type="button"
+                  class="filter-chip"
+                  data-min="6000"
+                  data-max=""
+                  aria-pressed="false"
+                >
                   6,000+
                 </button>
-                <button class="filter-chip" data-min="4000" data-max="5999">
+                <button
+                  type="button"
+                  class="filter-chip"
+                  data-min="4000"
+                  data-max="5999"
+                  aria-pressed="false"
+                >
                   4,000–5,999
                 </button>
-                <button class="filter-chip" data-min="" data-max="3999">
+                <button
+                  type="button"
+                  class="filter-chip"
+                  data-min=""
+                  data-max="3999"
+                  aria-pressed="false"
+                >
                   &lt; 4,000
                 </button>
               </div>
             </div>
-
             <div class="filter-group">
-              <span class="filter-label">Sort By</span>
-              <select id="sort-select" class="control-select">
-                <option value="winRate">Win Rate</option>
-                <option value="usageRate">Usage</option>
-                <option value="sampleSize">Sample Size</option>
+              <label class="filter-label" for="timeframe-select"
+                >Battle window</label
+              ><select id="timeframe-select">
+                <option value="7">Last 7 days</option>
+                <option value="30">Last 30 days</option>
               </select>
             </div>
+            <div class="filter-group">
+              <label class="filter-label" for="sort-select">Rank decks by</label
+              ><select id="sort-select">
+                <option value="winRate">Win rate</option>
+                <option value="usageRate">Usage</option>
+                <option value="sampleSize">Battle samples</option>
+              </select>
+            </div>
+            <div class="filter-group search-group">
+              <label class="filter-label" for="deck-search">Find a clone</label
+              ><input
+                id="deck-search"
+                type="search"
+                placeholder="Try Big Smith…"
+                autocomplete="off"
+              />
+            </div>
           </div>
-
-          <div class="table-card glass-panel">
-            <div id="loading-state" class="state-container">
-              <img src="assets/cog.png" alt="Loading" class="cog-spinner" />
-              <p>Loading meta decks...</p>
+          <div class="deck-surface" id="deck-surface" aria-busy="true">
+            <div id="loading-state" class="state-container" role="status">
+              <img src="assets/cog.png" alt="" class="cog-spinner" />
+              <h3>Scouting the battlefield</h3>
+              <p>Finding your next winning combination…</p>
             </div>
-
-            <div id="error-state" class="state-container hidden">
-              <div class="error-icon">⚠️</div>
-              <p id="error-message">Failed to load meta decks. Try again.</p>
-              <button id="retry-btn" class="btn-retry">Retry</button>
+            <div id="error-state" class="state-container hidden" role="alert">
+              <img src="assets/emotes/bombgolem-question.png" alt="" />
+              <h3>The playbook is unavailable</h3>
+              <p>We couldn’t load deck statistics. Please try again.</p>
+              <button type="button" id="retry-btn">Try again</button>
             </div>
-
             <div id="empty-state" class="state-container hidden">
-              <p>No decks match this trophy range.</p>
+              <img src="assets/emotes/king-choosingcard.png" alt="" />
+              <h3>No decks in this hand</h3>
+              <p>Try another trophy range or a different clone name.</p>
             </div>
-
-            <div id="decks-grid" class="decks-grid"></div>
+            <div id="decks-grid" class="decks-grid hidden"></div>
+            <button type="button" id="load-more" class="load-more hidden">
+              Show more decks ↓
+            </button>
           </div>
-        </div>
-      </section>
+          <p class="data-note">
+            Results reflect the selected battle window and trophy range. Win
+            rate is historical performance, not a guarantee.
+          </p>
+        </section>
+        <aside class="builder-cta">
+          <img src="assets/emotes/bigsmith-hammer.png" alt="" loading="lazy" />
+          <div>
+            <span class="eyebrow">YOUR STRATEGY. YOUR RULES.</span>
+            <h2>Make the next great deck.</h2>
+            <p>Take your inspiration to the Deck Builder.</p>
+          </div>
+          <a href="deck-builder.html">Build your deck ↗</a>
+        </aside>
+      </div>
     </main>
 
     <footer class="site-footer" id="about">

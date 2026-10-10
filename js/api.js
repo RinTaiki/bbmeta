@@ -27,6 +27,7 @@ function safeFetch(url, options = {}) {
 }
 
 async function _throttledFetch(url, options) {
+  options.signal?.throwIfAborted();
   const now = Date.now();
 
   // Reset counter every 60 s
@@ -39,7 +40,7 @@ async function _throttledFetch(url, options) {
   if (requestCount >= CLIENT_REQUEST_LIMIT) {
     const waitTime = 60000 - (Date.now() - lastReset) + 200;
     console.warn(`[API] Rate limit window full, waiting ${waitTime}ms`);
-    await new Promise((r) => setTimeout(r, waitTime));
+    await waitForRequestDelay(waitTime, options.signal);
     requestCount = 0;
     lastReset = Date.now();
   }
@@ -48,29 +49,58 @@ async function _throttledFetch(url, options) {
   if (lastRequestTime) {
     const gap = 150 - (Date.now() - lastRequestTime);
     if (gap > 0) {
-      await new Promise((r) => setTimeout(r, gap));
+      await waitForRequestDelay(gap, options.signal);
     }
   }
 
+  options.signal?.throwIfAborted();
   lastRequestTime = Date.now();
   requestCount++;
-  return fetch(url, options);
+  const { timeoutMs, signal, ...fetchOptions } = options;
+  // Start network timeouts after queueing, not while waiting for a rate-limit slot.
+  const timeout = timeoutMs ? AbortSignal.timeout(timeoutMs) : null;
+  const requestSignal =
+    signal && timeout ? AbortSignal.any([signal, timeout]) : signal || timeout;
+  return fetch(url, {
+    ...fetchOptions,
+    ...(requestSignal ? { signal: requestSignal } : {}),
+  });
+}
+
+function waitForRequestDelay(ms, signal) {
+  signal?.throwIfAborted();
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(
+      () => {
+        signal?.removeEventListener("abort", cancel);
+        resolve();
+      },
+      Math.max(0, ms),
+    );
+    function cancel() {
+      clearTimeout(timer);
+      signal.removeEventListener("abort", cancel);
+      reject(signal.reason);
+    }
+    signal?.addEventListener("abort", cancel, { once: true });
+  });
+}
+
+function removeCachedData(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch {}
 }
 
 function getCachedData(key) {
-  const cached = localStorage.getItem(key);
-  if (!cached) return null;
-
   try {
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
     const { timestamp, data } = JSON.parse(cached);
-    const FIVE_MINUTES = 5 * 60 * 1000;
-    if (Date.now() - timestamp < FIVE_MINUTES) {
-      return data;
-    }
-    localStorage.removeItem(key);
-  } catch (e) {
-    localStorage.removeItem(key);
-  }
+    const age = Date.now() - timestamp;
+    if (Number.isFinite(age) && age >= 0 && age < 5 * 60 * 1000) return data;
+  } catch {}
+  removeCachedData(key);
   return null;
 }
 
@@ -100,127 +130,50 @@ const CACHE_PREFIXES = [
 // Entries for filters/players that are never revisited would otherwise
 // linger in localStorage forever (e.g. stale country-filter caches).
 function purgeExpiredCaches() {
-  const MAX_AGE = 5 * 60 * 1000;
-  const now = Date.now();
-  let purged = 0;
-
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (!key || !CACHE_PREFIXES.some((p) => key.startsWith(p))) continue;
-
-    try {
-      const { timestamp } = JSON.parse(localStorage.getItem(key));
-      if (now - timestamp >= MAX_AGE) {
-        localStorage.removeItem(key);
-        purged++;
+  try {
+    // Iterate backwards so deleting an entry doesn't skip its neighbour.
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (!key || !CACHE_PREFIXES.some((prefix) => key.startsWith(prefix)))
+        continue;
+      try {
+        const { timestamp } = JSON.parse(localStorage.getItem(key));
+        const age = Date.now() - timestamp;
+        if (!Number.isFinite(age) || age < 0 || age >= 5 * 60 * 1000)
+          removeCachedData(key);
+      } catch {
+        removeCachedData(key);
       }
-    } catch {
-      // Unparseable entry — treat as corrupt and remove
-      localStorage.removeItem(key);
-      purged++;
     }
-  }
-
-  if (purged > 0) {
-    console.log(
-      `[API] Purged ${purged} expired cache entr${purged === 1 ? "y" : "ies"}`,
-    );
+  } catch {
+    // Browsers may deny storage entirely; API requests must still work.
   }
 }
 
 // Sweep once at module load so stale data never survives a page refresh
 purgeExpiredCaches();
 
-export async function fetchLeaderboard(country = "", limit = 200) {
-  const cacheKey = `leaderboard_data_${country}_${limit}`;
+export async function fetchLeaderboard(
+  country = "",
+  limit = 200,
+  { signal } = {},
+) {
+  // A fresh namespace avoids reusing fabricated rankings cached by the old fallback.
+  const cacheKey = `leaderboard_data_v2_${country}_${limit}`;
   const cached = getCachedData(cacheKey);
-
-  if (cached) {
-    console.log("[API] Returning cached leaderboard data");
-    return cached;
-  }
-
+  if (Array.isArray(cached)) return cached;
   let url = `${API_BASE}${PATH_PREFIX}/v1/rankings/players?limit=${limit}`;
-  if (country) {
-    url += `&country=${encodeURIComponent(country)}`;
-  }
-
-  try {
-    const response = await safeFetch(url);
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
-    }
-
-    const data = await response.json();
-
-    const players = Array.isArray(data) ? data : data?.items || [];
-    setCachedData(cacheKey, players);
-    return players;
-  } catch (error) {
-    console.warn(
-      "[API] Fetch failed, providing fallback mock data for testing.",
-      error,
-    );
-
-    const mockData = generateMockLeaderboard(country, limit);
-    setCachedData(cacheKey, mockData);
-    return mockData;
-  }
-}
-
-function generateMockLeaderboard(country, limit) {
-  const mockNames = [
-    "BrawlMaster",
-    "KingBlast",
-    "Clony",
-    "FrogPower",
-    "CanyonHero",
-    "LavaLord",
-    "ShadowBlade",
-    "Tactician",
-    "StormRider",
-    "BombQueen",
-  ];
-  const mockClans = [
-    "Alpha Tribe",
-    "Badland Kings",
-    "Apex Brawl",
-    "Inferno",
-    "Solo",
-  ];
-
-  const players = [];
-  const maxCount = Math.min(limit, 200);
-
-  for (let i = 1; i <= maxCount; i++) {
-    const baseTrophies = 18500 - i * 35 + Math.floor(Math.random() * 20);
-    const wins = Math.floor(Math.random() * 300) + 100;
-    const losses = Math.floor(Math.random() * 100) + 20;
-    const name = `${mockNames[i % mockNames.length]}_${i}`;
-    const tag = `#${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-
-    const rankChange =
-      i <= 3
-        ? Math.floor(Math.random() * 3) + 1
-        : Math.floor(Math.random() * 11) - 5;
-
-    players.push({
-      rank: i,
-      name: name,
-      tag: tag,
-      trophies: baseTrophies,
-      clan: mockClans[i % mockClans.length],
-      winRate: ((wins / (wins + losses)) * 100).toFixed(1),
-      rankChange: rankChange,
-      country: country || "US",
-    });
-  }
-
+  if (country) url += `&country=${encodeURIComponent(country)}`;
+  const response = await safeFetch(url, { signal, timeoutMs: 20000 });
+  if (!response.ok) throw new Error(`API error: ${response.status}`);
+  const data = await response.json();
+  const players = Array.isArray(data) ? data : data?.items;
+  if (!Array.isArray(players)) throw new Error("Invalid leaderboard response");
+  setCachedData(cacheKey, players);
   return players;
 }
 
-export async function fetchPlayerProfile(tag) {
+export async function fetchPlayerProfile(tag, { signal } = {}) {
   const cacheKey = `player_${tag}`;
   const cached = getCachedData(cacheKey);
   if (cached) return cached;
@@ -228,7 +181,7 @@ export async function fetchPlayerProfile(tag) {
   const url = `${API_BASE}${PATH_PREFIX}/v1/players/${encodeURIComponent(tag)}`;
 
   try {
-    const response = await safeFetch(url);
+    const response = await safeFetch(url, { signal, timeoutMs: 15000 });
     const data = await response.json();
 
     if (response.status === 429) throw new Error("RATE_LIMIT");
@@ -260,11 +213,11 @@ export async function fetchBattleLog(tag, limit = 10) {
 export async function fetchMetaDecks(
   days = 7,
   limit = 50,
-  { minTrophies, maxTrophies } = {},
+  { minTrophies, maxTrophies, signal } = {},
 ) {
-  const cacheKey = `meta_decks_${days}_${limit}_${minTrophies || ""}_${maxTrophies || ""}`;
+  const cacheKey = `meta_decks_v2_${days}_${limit}_${minTrophies ?? ""}_${maxTrophies ?? ""}`;
   const cached = getCachedData(cacheKey);
-  if (cached) return cached;
+  if (Array.isArray(cached)) return cached;
 
   let url = `${API_BASE}${PATH_PREFIX}/v2/meta/decks?days=${days}&limit=${limit}`;
   if (minTrophies != null)
@@ -272,78 +225,46 @@ export async function fetchMetaDecks(
   if (maxTrophies != null)
     url += `&maxTrophies=${encodeURIComponent(maxTrophies)}`;
 
-  const response = await safeFetch(url);
+  const response = await safeFetch(url, { signal, timeoutMs: 20000 });
+  if (!response.ok) throw new Error(`Meta decks API error: ${response.status}`);
   const data = await response.json();
-  setCachedData(cacheKey, data);
-  return data;
+  const items = Array.isArray(data) ? data : data?.items;
+  if (!Array.isArray(items)) throw new Error("Invalid meta decks response");
+  setCachedData(cacheKey, items);
+  return items;
 }
 
-export async function fetchCloneStats(minTrophies = null, maxTrophies = null) {
-  const cacheKey = `clone_stats_${minTrophies || ""}_${maxTrophies || ""}`;
+export async function fetchCloneStats(
+  minTrophies = null,
+  maxTrophies = null,
+  timeframe = "7d",
+  { signal } = {},
+) {
+  const days = { "7d": 7, "30d": 30 }[timeframe];
+  if (!days) throw new Error("Unsupported clone stats timeframe");
+  // Include the window and use a fresh namespace to avoid old mock snapshots.
+  const cacheKey = `clone_stats_v2_${days}_${minTrophies ?? ""}_${maxTrophies ?? ""}`;
   const cached = getCachedData(cacheKey);
-  if (cached) return cached;
-
-  let url = `${API_BASE}${PATH_PREFIX}/v2/meta/units?days=7`;
-  if (minTrophies != null)
-    url += `&minTrophies=${encodeURIComponent(minTrophies)}`;
-  if (maxTrophies != null)
-    url += `&maxTrophies=${encodeURIComponent(maxTrophies)}`;
-
-  try {
-    const response = await safeFetch(url);
-    if (!response.ok) {
-      throw new Error(`API returned status ${response.status}`);
-    }
-
-    const data = await response.json();
-    const units = Array.isArray(data)
-      ? data
-      : data?.items || data?.units || data?.data || [];
-    setCachedData(cacheKey, units);
-    return units;
-  } catch (error) {
-    console.warn(
-      "[API] Clone stats fetch failed, providing fallback mock data.",
-      error,
-    );
-
-    const mock = generateMockCloneStats(minTrophies, maxTrophies);
-    setCachedData(cacheKey, mock);
-    return mock;
-  }
-}
-
-function generateMockCloneStats(minTrophies = null, maxTrophies = null) {
-  const names = [
-    "Bomber",
-    "Cannon",
-    "Healer",
-    "Shieldbearer",
-    "Pyro",
-    "Frost Mage",
-    "Sapper",
-    "Berserker",
-    "Trapper",
-    "Oracle",
-    "Golem",
-    "Scout",
-  ];
-  const rarities = ["primal", "evolved", "mythical", "unreal"];
-
-  return names.map((name, i) => {
-    const usage = Math.round((40 - i * 2.5 + Math.random() * 6) * 10) / 10;
-    const winRate = Math.round((48 + Math.random() * 12) * 10) / 10;
-    const sampleSize = Math.floor(200 + Math.random() * 4800);
-    return {
-      unitId: `unit_${i + 1}`,
-      displayName: name,
-      name,
-      rarity: rarities[i % rarities.length],
-      usage,
-      winRate,
-      sampleSize,
-    };
-  });
+  if (Array.isArray(cached)) return cached;
+  const params = new URLSearchParams({ days: String(days) });
+  if (minTrophies != null) params.set("minTrophies", String(minTrophies));
+  if (maxTrophies != null) params.set("maxTrophies", String(maxTrophies));
+  const response = await safeFetch(
+    `${API_BASE}${PATH_PREFIX}/v2/meta/units?${params}`,
+    {
+      signal,
+      timeoutMs: 20000,
+    },
+  );
+  if (!response.ok)
+    throw new Error(`Clone stats API error: ${response.status}`);
+  const data = await response.json();
+  const units = Array.isArray(data)
+    ? data
+    : (data?.items ?? data?.units ?? data?.data);
+  if (!Array.isArray(units)) throw new Error("Invalid clone stats response");
+  setCachedData(cacheKey, units);
+  return units;
 }
 
 function normalizeUnits(units) {
@@ -359,7 +280,7 @@ export async function fetchBattleHistory(tag, limit = 10) {
   const cacheKey = `battle_history_${tag}_${limit}`;
   const cached = getCachedData(cacheKey);
   if (Array.isArray(cached) && cached.length > 0) return cached;
-  if (Array.isArray(cached)) localStorage.removeItem(cacheKey);
+  if (Array.isArray(cached)) removeCachedData(cacheKey);
 
   const raw = await fetchBattleLog(tag, limit);
   const battles = Array.isArray(raw) ? raw : raw?.items || raw?.battles || [];
