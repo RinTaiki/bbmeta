@@ -3,7 +3,7 @@ import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadEnvFile } from "node:process";
-import creatorsHandler from "./api/creators.js";
+import creatorsHandler from "./lib/creators.js";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 // Match local Vercel environment files without exposing their contents.

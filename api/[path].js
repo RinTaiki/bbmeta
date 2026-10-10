@@ -1,3 +1,5 @@
+import creatorsHandler from "../lib/creators.js";
+
 let redis = null;
 let redisInitialized = false;
 
@@ -29,6 +31,11 @@ const RATE_WINDOW = 60;
 const ALLOWED_DOMAINS = ["bbmeta.vercel.app", "localhost", "127.0.0.1"];
 
 export default async function handler(req, res) {
+  const requestPath = new URL(req.url, "http://localhost").pathname;
+  if (requestPath === "/api/creators") {
+    return creatorsHandler(req, res);
+  }
+
   // CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
