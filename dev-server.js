@@ -2,8 +2,18 @@ import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadEnvFile } from "node:process";
+import creatorsHandler from "./api/creators.js";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
+// Match local Vercel environment files without exposing their contents.
+for (const filename of [".env.local", ".env"]) {
+  try {
+    loadEnvFile(path.join(root, filename));
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+}
 const host = "127.0.0.1";
 const port = Number(process.env.PORT || 3002);
 const apiOrigin = process.env.BBMETA_API_ORIGIN || "https://bbmeta.vercel.app";
@@ -21,6 +31,21 @@ const mimeTypes = {
 
 const server = createServer(async (req, res) => {
   const requestUrl = new URL(req.url || "/", `http://${host}:${port}`);
+
+  if (requestUrl.pathname === "/api/creators") {
+    // Adapt Node's response to the response helpers used by Vercel functions.
+    res.status = (code) => {
+      res.statusCode = code;
+      return res;
+    };
+    res.json = (body) => {
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.end(JSON.stringify(body));
+      return res;
+    };
+    await creatorsHandler(req, res);
+    return;
+  }
 
   const isApiRequest =
     requestUrl.pathname === "/api" || requestUrl.pathname.startsWith("/api/");
@@ -104,6 +129,6 @@ async function proxyApiRequest(req, res) {
 }
 
 server.listen(port, host, () => {
-  console.log(`BBmeta dev server: http://${host}:${port}`);
+  console.log(`BBmeta dev server: http://${host}:${server.address().port}`);
   console.log(`Read-only API proxy: ${apiOrigin}`);
 });

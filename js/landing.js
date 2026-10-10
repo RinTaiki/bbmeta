@@ -1,6 +1,8 @@
 import { showNotification } from "./notifications.js";
+import { loadCreators } from "./creators.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  void loadCreators();
   const searchForm = document.getElementById("search-form");
   const playerTagInput = document.getElementById("player-tag-input");
 

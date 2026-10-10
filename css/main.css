@@ -2,6 +2,7 @@
 
 @import "components/news-button.css";
 @import "components/news-popup.css";
+@import "components/creators.css";
 
 :root {
   --color-accent: #c9a84c;
