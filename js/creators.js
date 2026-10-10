@@ -75,8 +75,8 @@ function creatorCard(creator) {
 
 export async function loadCreators() {
   const section = document.getElementById("creators-section");
-  const scroll = document.getElementById("creators-scroll");
-  if (!section || !scroll) return;
+  const grid = document.getElementById("creators-grid");
+  if (!section || !grid) return;
   section.style.display = "none";
   try {
     const response = await fetch("/api/creators", { signal: AbortSignal.timeout(20000) });
@@ -86,7 +86,8 @@ export async function loadCreators() {
       ? data.creators.filter((creator) => creator && typeof creator === "object") : [];
     const cards = creators.map(creatorCard);
     if (!cards.length) return;
-    scroll.replaceChildren(...cards);
+    section.style.setProperty("--creator-columns", Math.min(cards.length, 4));
+    grid.replaceChildren(...cards);
     section.style.display = "block";
   } catch {
     section.style.display = "none";
