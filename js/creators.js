@@ -24,7 +24,9 @@ function videoLink(className, videoId) {
   return link;
 }
 
-function creatorCard(creator, video) {
+function creatorCard(creator) {
+  const video = Array.isArray(creator.videos) ? creator.videos[0] : null;
+  const hasVideo = video && /^[\w-]{11}$/.test(video.videoId);
   const name = creator.channelName || "Community Creator";
   const card = element("article", "creator-card");
   const header = element("div", "creator-header");
@@ -45,7 +47,9 @@ function creatorCard(creator, video) {
   header.append(avatar, info);
   if (!avatarUrl) avatar.onerror();
 
-  const link = videoLink("creator-video-link", video.videoId);
+  const link = hasVideo
+    ? videoLink("creator-video-link", video.videoId)
+    : element("div", "creator-video-link");
   const videoFrame = element("div", "creator-video");
   const thumbnail = element("img", "video-thumbnail");
   thumbnail.alt = "";
@@ -54,15 +58,18 @@ function creatorCard(creator, video) {
     thumbnail.onerror = () => { thumbnail.hidden = true; };
     thumbnail.src = PLACEHOLDER;
   };
-  thumbnail.src = safeImageUrl(video.thumbnailUrl) || PLACEHOLDER;
+  thumbnail.src = (hasVideo && safeImageUrl(video.thumbnailUrl)) || PLACEHOLDER;
   const overlay = element("span", "video-play-overlay", "▶");
   overlay.setAttribute("aria-hidden", "true");
-  videoFrame.append(thumbnail, overlay);
-  link.append(videoFrame, element("p", "video-title", video.title || "Watch the video"));
+  videoFrame.append(thumbnail);
+  if (hasVideo) videoFrame.append(overlay);
+  link.append(videoFrame, element("p", "video-title", hasVideo ? video.title || "Watch the latest video" : "No videos available yet"));
+  card.append(header, link);
+  if (!hasVideo) return card;
   const button = videoLink("creator-watch-btn", video.videoId);
   button.textContent = "Watch on YouTube →";
   button.setAttribute("aria-label", `Watch ${name} on YouTube`);
-  card.append(header, link, button);
+  card.append(button);
   return card;
 }
 
@@ -75,13 +82,9 @@ export async function loadCreators() {
     const response = await fetch("/api/creators", { signal: AbortSignal.timeout(20000) });
     if (!response.ok) return;
     const data = await response.json();
-    const cards = Array.isArray(data.creators)
-      ? data.creators.flatMap((creator) => {
-          if (!creator || !Array.isArray(creator.videos)) return [];
-          return creator.videos
-            .filter((video) => video && /^[\w-]{11}$/.test(video.videoId))
-            .map((video) => creatorCard(creator, video));
-        }) : [];
+    const creators = Array.isArray(data.creators)
+      ? data.creators.filter((creator) => creator && typeof creator === "object") : [];
+    const cards = creators.map(creatorCard);
     if (!cards.length) return;
     scroll.replaceChildren(...cards);
     section.style.display = "block";
