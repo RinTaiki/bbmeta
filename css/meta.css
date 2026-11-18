@@ -9,9 +9,8 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    linear-gradient(180deg, rgba(24, 15, 10, 0.2), rgba(24, 15, 10, 0.65)),
-    url("../assets/backgrounds/canyon_dawn.webp") center/cover no-repeat;
+  background: url("../assets/backgrounds/canyon_dawn.webp") center/cover
+    no-repeat;
 }
 .meta-page {
   padding: 125px 0 70px;
@@ -435,10 +434,6 @@
   font-size: 0.8rem;
   font-weight: 800;
   text-decoration: none;
-}
-.meta-body .site-header {
-  background: #22150ee8;
-  border-bottom: 1px solid #c9881f30;
 }
 .meta-body .nav-links {
   flex-wrap: wrap;

@@ -42,21 +42,89 @@
         };
     </script>
     <script defer src="/_vercel/speed-insights/script.js"></script>
-  </head>
-  <body class="clones-body">
+    <script src="js/navigation.js" defer></script>
+    <link rel="stylesheet" href="css/scenery.css" />
+    <link rel="stylesheet" href="css/unslop.css" />
+    <link rel="stylesheet" href="css/universal-glass.css" />
+</head>
+  <body class="clones-body" data-scene="clones" data-palette="forest">
     <header class="site-header">
       <div class="header-container">
         <a href="index.html" class="logo"
           >BBmeta<span class="beta-tag">[Beta]</span></a
         >
-        <nav class="nav-links">
+        <button
+          type="button"
+          class="nav-toggle"
+          aria-expanded="false"
+          aria-controls="site-navigation"
+        >
+          <span class="nav-toggle-icon" aria-hidden="true"></span
+          ><span>Menu</span>
+        </button>
+        <nav
+          class="nav-links"
+          id="site-navigation"
+          aria-label="Main navigation"
+        >
           <a href="index.html">Home</a>
-          <a href="leaderboard.html">Leaderboard</a>
-          <a href="clones.html" class="active">Clones</a>
-          <a href="meta.html">Meta</a>
-          <a href="season-archive.html">Seasons</a>
-          <a href="deck-builder.html">Deck Builder</a>
-          <a href="about.html">About</a>
+          <details class="nav-group">
+            <summary>
+              Rankings<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="leaderboard.html"
+                ><strong>Players</strong><span>Follow the trophy climb</span></a
+              ><a href="clans.html"
+                ><strong>Clans</strong
+                ><span>Find your tribe and rivals</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Game<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="clones.html" class="active" aria-current="page"
+                ><strong>Clones</strong><span>Explore your collection</span></a
+              ><a href="meta.html"
+                ><strong>Meta decks</strong
+                ><span>Scout winning combinations</span></a
+              ><a href="deck-builder.html"
+                ><strong>Deck Builder</strong
+                ><span>The brawler’s workshop</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Legacy<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="champions.html"
+                ><strong>Hall of Champions</strong
+                ><span>Meet the legends</span></a
+              ><a href="season-archive.html"
+                ><strong>Seasons</strong><span>Relive past seasons</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              About<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="about.html"
+                ><strong>About BBmeta</strong
+                ><span>The community behind the stats</span></a
+              ><a href="contact.html"
+                ><strong>Contact</strong><span>Get in touch</span></a
+              ><a href="privacy.html"
+                ><strong>Privacy</strong><span>How we handle your data</span></a
+              >
+            </div>
+          </details>
         </nav>
       </div>
     </header>
@@ -65,11 +133,10 @@
       <div class="content-wrapper">
         <section class="page-hero">
           <div class="clones-hero-copy">
-            <span class="clones-eyebrow">THE BADLAND ARMORY</span>
-            <h1>Small clones.<br /><span>Massive impact.</span></h1>
+            <span class="clones-eyebrow">Clone stats</span>
+            <h1>The clones<br /><span>in the arena.</span></h1>
             <p>
-              Find your next game changer. Explore clone usage, compare win
-              rates, and give your deck an edge.
+              Compare clone use and win rates across recent battles.
             </p>
             <a class="clones-hero-link" href="#clone-library"
               >Explore the collection <span aria-hidden="true">&darr;</span></a
@@ -102,7 +169,7 @@
               height="72"
               decoding="async"
             />
-            <span class="hero-art-label">YOUR DECK. YOUR PLAYSTYLE.</span>
+            <span class="hero-art-label">Clone performance</span>
           </div>
         </section>
 
@@ -131,7 +198,7 @@
         >
           <div class="library-heading">
             <div>
-              <span class="clones-eyebrow">KNOW YOUR CLONES</span>
+              <span class="clones-eyebrow">Clone library</span>
               <h2 id="library-title">The collection</h2>
             </div>
             <p id="clone-results" role="status" aria-live="polite">

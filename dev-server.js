@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadEnvFile } from "node:process";
 import creatorsHandler from "./lib/creators.js";
+import championsHandler from "./api/champions.js";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 // Match local Vercel environment files without exposing their contents.
@@ -32,7 +33,13 @@ const mimeTypes = {
 const server = createServer(async (req, res) => {
   const requestUrl = new URL(req.url || "/", `http://${host}:${port}`);
 
-  if (requestUrl.pathname === "/api/creators") {
+  // Without local database credentials, use the deployed feed through the
+  // normal read-only proxy instead of hiding the homepage with a local 503.
+  const useLocalCreators =
+    requestUrl.pathname === "/api/creators" &&
+    process.env.SUPABASE_URL &&
+    process.env.SUPABASE_SERVICE_KEY;
+  if (useLocalCreators || requestUrl.pathname === "/api/champions") {
     // Adapt Node's response to the response helpers used by Vercel functions.
     res.status = (code) => {
       res.statusCode = code;
@@ -43,7 +50,11 @@ const server = createServer(async (req, res) => {
       res.end(JSON.stringify(body));
       return res;
     };
-    await creatorsHandler(req, res);
+    const handler =
+      requestUrl.pathname === "/api/champions"
+        ? championsHandler
+        : creatorsHandler;
+    await handler(req, res);
     return;
   }
 

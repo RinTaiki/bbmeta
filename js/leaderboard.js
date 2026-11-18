@@ -1,5 +1,6 @@
 import { fetchLeaderboard, fetchPlayerProfile } from "./api.js";
 import { CLONE_META } from "./clone-meta.js";
+import { clanBadgePath } from "./clan-badges.js";
 import { showNotification } from "./notifications.js";
 
 const PAGE_SIZE = 50;
@@ -155,6 +156,44 @@ function clanName(player) {
     : String(player.clan?.name || "No Clan");
 }
 
+function buildClanCell(player) {
+  const wrap = document.createElement("span");
+  wrap.className = "clan-cell-wrap";
+
+  const clanObj = typeof player.clan === "object" ? player.clan : null;
+  const badgeFile = clanBadgePath(clanObj?.badge);
+
+  if (badgeFile) {
+    const img = document.createElement("img");
+    img.className = "clan-badge-icon";
+    img.src = badgeFile;
+    img.alt = "";
+    img.width = 20;
+    img.height = 20;
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.onerror = () => {
+      const fallback = document.createElement("span");
+      fallback.className = "clan-badge-fallback";
+      fallback.textContent = "🛡️";
+      img.replaceWith(fallback);
+    };
+    wrap.appendChild(img);
+  } else {
+    const fallback = document.createElement("span");
+    fallback.className = "clan-badge-fallback";
+    fallback.textContent = "🛡️";
+    wrap.appendChild(fallback);
+  }
+
+  const nameEl = document.createElement("span");
+  nameEl.className = "clan-name-text";
+  nameEl.textContent = clanName(player);
+  wrap.appendChild(nameEl);
+
+  return wrap;
+}
+
 function renderPodium(region) {
   const grid = document.getElementById("podium-grid");
   const leaders = [...rawLeaderboardData]
@@ -249,10 +288,11 @@ function renderTable() {
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
           </button></span>${movementHTML(player)}</td>
       <td class="col-trophies"><span class="trophy-count"><img class="trophy-icon" src="assets/icons/trophiestotal.png" alt="" width="22" height="22" decoding="async" />${player.trophies.toLocaleString()}</span></td>
-      <td class="col-clan">${escapeHTML(clanName(player))}</td>
+      <td class="col-clan"></td>
       <td class="col-deck"><div class="deck-cell" data-tag="${tag}" title="Main deck loading"><span class="deck-loading">…</span></div></td>
       <td class="col-winrate"><div class="winrate-wrap"><div class="winrate-bar" aria-hidden="true"><span class="${rateClass}" style="width:${rate ?? 0}%"></span></div>
         <span class="winrate-value ${rateClass}" data-tag="${tag}">${rate === null ? (player.profileLoaded ? "—" : "…") : rate.toFixed(1) + "%"}</span></div></td>`;
+    row.querySelector(".col-clan").replaceChildren(buildClanCell(player));
     row.querySelector(".copy-tag-btn").addEventListener("click", (event) => {
       event.stopPropagation();
       void handleCopyTag(event.currentTarget, player.tag);

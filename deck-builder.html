@@ -6,7 +6,7 @@
     <title>BBmeta — Deck Builder</title>
     <meta
       name="description"
-      content="Build and optimize your 8-clone deck with data-driven insights."
+      content="The BBmeta Deck Builder is under construction. Explore clone stats and meta decks while the workshop takes shape."
     />
 
     <link
@@ -34,125 +34,160 @@
         };
     </script>
     <script defer src="/_vercel/insights/script.js"></script>
-  <script>
-  window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/speed-insights/script.js"></script>
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+    <script src="js/navigation.js" defer></script>
+    <link rel="stylesheet" href="css/scenery.css" />
+    <link rel="stylesheet" href="css/unslop.css" />
+    <link rel="stylesheet" href="css/universal-glass.css" />
 </head>
-  <body class="fade-in">
+  <body class="builder-body" data-scene="deck-builder" data-palette="forest">
     <header class="site-header">
       <div class="header-container">
         <a href="index.html" class="logo"
           >BBmeta<span class="beta-tag">[Beta]</span></a
         >
-        <nav class="nav-links">
+        <button
+          type="button"
+          class="nav-toggle"
+          aria-expanded="false"
+          aria-controls="site-navigation"
+        >
+          <span class="nav-toggle-icon" aria-hidden="true"></span
+          ><span>Menu</span>
+        </button>
+        <nav
+          class="nav-links"
+          id="site-navigation"
+          aria-label="Main navigation"
+        >
           <a href="index.html">Home</a>
-          <a href="leaderboard.html">Leaderboard</a>
-          <a href="clones.html">Clones</a>
-          <a href="meta.html">Meta</a>
-          <a href="season-archive.html">Seasons</a>
-          <a href="deck-builder.html" class="active">Deck Builder</a>
-          <a href="about.html" class="nav-about">About</a>
+          <details class="nav-group">
+            <summary>
+              Rankings<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="leaderboard.html"
+                ><strong>Players</strong><span>Follow the trophy climb</span></a
+              ><a href="clans.html"
+                ><strong>Clans</strong
+                ><span>Find your tribe and rivals</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Game<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="clones.html"
+                ><strong>Clones</strong><span>Explore your collection</span></a
+              ><a href="meta.html"
+                ><strong>Meta decks</strong
+                ><span>Scout winning combinations</span></a
+              ><a href="deck-builder.html" class="active" aria-current="page"
+                ><strong>Deck Builder</strong
+                ><span>The brawler’s workshop</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Legacy<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="champions.html"
+                ><strong>Hall of Champions</strong
+                ><span>Meet the legends</span></a
+              ><a href="season-archive.html"
+                ><strong>Seasons</strong><span>Relive past seasons</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              About<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="about.html"
+                ><strong>About BBmeta</strong
+                ><span>The community behind the stats</span></a
+              ><a href="contact.html"
+                ><strong>Contact</strong><span>Get in touch</span></a
+              ><a href="privacy.html"
+                ><strong>Privacy</strong><span>How we handle your data</span></a
+              >
+            </div>
+          </details>
         </nav>
       </div>
     </header>
 
-    <main>
-      <!-- Background layers -->
-      <div class="db-bg">
-        <img
-          src="assets/backgrounds/canyon_dawn.webp"
-          width="2560"
-          height="1490"
-          decoding="async"
-          alt=""
-          class="db-bg-img"
-        />
-        <div class="db-bg-overlay"></div>
-      </div>
-
-      <!-- Floating decorative emotes -->
-      <div class="db-deco" aria-hidden="true">
-        <img
-          src="assets/emotes/king-choosingcard.png"
-          alt=""
-          class="db-deco-emote db-deco-1"
-        />
-        <img
-          src="assets/emotes/bomb-explosion.png"
-          alt=""
-          class="db-deco-emote db-deco-2"
-        />
-        <img
-          src="assets/emotes/rogue-ready.png"
-          alt=""
-          class="db-deco-emote db-deco-3"
-        />
-        <img
-          src="assets/emotes/king-smile.png"
-          alt=""
-          class="db-deco-emote db-deco-4"
-        />
-      </div>
-
-      <!-- Under Construction Card -->
-      <section class="db-construction">
-        <div class="db-card">
-          <div class="db-stripe" aria-hidden="true"></div>
-
-          <div class="db-card-body">
-            <img
-              src="assets/king/render_d1.png"
-              alt="King holding a card"
-              class="db-king"
-            />
-
-            <div class="db-badge">
-              <svg
-                class="db-badge-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M12 3.2 2.6 19.6c-.5.9.1 2 1.2 2h16.4c1.1 0 1.7-1.1 1.2-2L12 3.2Z"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                />
-                <path
-                  d="M12 9v5.3"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M12 17.8h.01"
-                  stroke="currentColor"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                />
-              </svg>
-              UNDER CONSTRUCTION
-            </div>
-
-            <h1 class="db-title">Deck Builder</h1>
-            <p class="db-desc">
-              We're putting the finishing touches on the deck builder. Pick the
-              perfect 8-clone lineup, test synergies, and share your builds with
-              the community — coming soon.
+    <main class="builder-page">
+      <section class="construction-card" aria-labelledby="builder-title">
+        <div class="construction-stripe" aria-hidden="true"></div>
+        <div class="construction-layout">
+          <div class="construction-copy">
+            <span class="workshop-label">THE BRAWLER’S WORKSHOP</span>
+            <p class="construction-badge">
+              <span aria-hidden="true">✦</span> In development
             </p>
-
-            <!-- Skeleton deck preview -->
-            <div class="db-skeleton" aria-hidden="true">
-              <div class="db-skeleton-slot"></div>
-              <div class="db-skeleton-slot"></div>
-              <div class="db-skeleton-slot"></div>
-              <div class="db-skeleton-slot"></div>
-              <div class="db-skeleton-slot"></div>
-              <div class="db-skeleton-slot"></div>
-              <div class="db-skeleton-slot"></div>
-              <div class="db-skeleton-slot"></div>
+            <h1 id="builder-title">
+              Deck builder<br /><em>coming soon.</em>
+            </h1>
+            <p class="construction-description">
+              The Deck Builder is still taking shape. We’re getting the workshop
+              ready for your next big strategy.
+            </p>
+            <p class="construction-note">
+              Check back soon. There’s plenty to explore in the meantime.
+            </p>
+            <div class="construction-links">
+              <a class="primary-link" href="meta.html">Explore meta decks ↗</a
+              ><a href="clones.html">Meet the clones →</a>
             </div>
+          </div>
+          <div class="workshop-art" aria-hidden="true">
+            <div class="art-ring"></div>
+            <img
+              class="workshop-king"
+              src="assets/emotes/king-choosingcard.png"
+              alt=""
+              width="300"
+              height="300"
+              fetchpriority="high"
+            />
+            <img
+              class="workshop-hammer"
+              src="assets/emotes/bigsmith-hammer.png"
+              alt=""
+              width="110"
+              height="110"
+            />
+            <span class="workshop-stamp"
+              >A LITTLE BUILDING.<br />A LOT OF BRAWLING.</span
+            >
+          </div>
+        </div>
+        <div class="coming-preview" aria-hidden="true">
+          <div class="preview-caption">
+            <span>Deck preview</span><span>COMING SOON</span>
+          </div>
+          <div class="preview-slots">
+            <div><span>01</span><b>+</b></div>
+            <div><span>02</span><b>+</b></div>
+            <div><span>03</span><b>+</b></div>
+            <div><span>04</span><b>+</b></div>
+            <div><span>05</span><b>+</b></div>
+            <div><span>06</span><b>+</b></div>
+            <div><span>07</span><b>+</b></div>
+            <div><span>08</span><b>+</b></div>
           </div>
         </div>
       </section>

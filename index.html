@@ -43,21 +43,90 @@
         };
     </script>
     <script defer src="/_vercel/speed-insights/script.js"></script>
-  </head>
-  <body class="home-body">
+    <script src="js/navigation.js" defer></script>
+    <link rel="stylesheet" href="css/scenery.css" />
+    <link rel="stylesheet" href="css/unslop.css" />
+    <link rel="stylesheet" href="css/universal-glass.css" />
+    <link rel="stylesheet" href="css/home-glass.css" />
+</head>
+  <body class="home-body" data-scene="index" data-palette="sand">
     <header class="site-header">
       <div class="header-container">
         <a href="index.html" class="logo"
           >BBmeta<span class="beta-tag">[Beta]</span></a
         >
-        <nav class="nav-links">
-          <a href="index.html" class="active">Home</a>
-          <a href="leaderboard.html">Leaderboard</a>
-          <a href="clones.html">Clones</a>
-          <a href="meta.html">Meta</a>
-          <a href="season-archive.html">Seasons</a>
-          <a href="deck-builder.html">Deck Builder</a>
-          <a href="about.html" class="nav-about">About</a>
+        <button
+          type="button"
+          class="nav-toggle"
+          aria-expanded="false"
+          aria-controls="site-navigation"
+        >
+          <span class="nav-toggle-icon" aria-hidden="true"></span
+          ><span>Menu</span>
+        </button>
+        <nav
+          class="nav-links"
+          id="site-navigation"
+          aria-label="Main navigation"
+        >
+          <a href="index.html" class="active" aria-current="page">Home</a>
+          <details class="nav-group">
+            <summary>
+              Rankings<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="leaderboard.html"
+                ><strong>Players</strong><span>Follow the trophy climb</span></a
+              ><a href="clans.html"
+                ><strong>Clans</strong
+                ><span>Find your tribe and rivals</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Game<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="clones.html"
+                ><strong>Clones</strong><span>Explore your collection</span></a
+              ><a href="meta.html"
+                ><strong>Meta decks</strong
+                ><span>Scout winning combinations</span></a
+              ><a href="deck-builder.html"
+                ><strong>Deck Builder</strong
+                ><span>The brawler’s workshop</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Legacy<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="champions.html"
+                ><strong>Hall of Champions</strong
+                ><span>Meet the legends</span></a
+              ><a href="season-archive.html"
+                ><strong>Seasons</strong><span>Relive past seasons</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              About<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="about.html"
+                ><strong>About BBmeta</strong
+                ><span>The community behind the stats</span></a
+              ><a href="contact.html"
+                ><strong>Contact</strong><span>Get in touch</span></a
+              ><a href="privacy.html"
+                ><strong>Privacy</strong><span>How we handle your data</span></a
+              >
+            </div>
+          </details>
         </nav>
       </div>
     </header>
@@ -67,14 +136,13 @@
         <div class="home-container hero-layout">
           <div class="hero-content">
             <span class="home-eyebrow"
-              >THE UNOFFICIAL BADLAND BRAWL COMPANION</span
+              >Badland Brawl stats and strategy</span
             >
             <h1 class="hero-title" id="home-title">
-              Your next brawl.<br /><em>Your best yet.</em>
+              The Badlands,<br /><em>by the numbers.</em>
             </h1>
             <p class="hero-subtitle">
-              Know your clones. Find your winning deck. Follow your climb.
-              <br />Your corner of the Badland Brawl universe starts here.
+              Player stats, clone rankings, and the decks shaping the arena.
             </p>
             <div class="search-panel">
               <label for="player-tag-input">LET’S FIND YOUR BRAWLER</label>
@@ -129,14 +197,126 @@
               height="135"
             />
             <div class="hero-stamp">
-              <span>BUILT FOR BRAWLERS</span
-              ><strong>Play smarter.<br />Brawl bigger.</strong>
+              <span>BADLAND BRAWL</span
+              ><strong>Every battle<br />leaves a record.</strong>
             </div>
           </div>
         </div>
         <div class="home-container hero-ribbon">
           <span>PLAYER PROFILES</span><i>✦</i><span>CLONE STATS</span><i>✦</i
           ><span>META DECKS</span><i>✦</i><span>COMMUNITY</span>
+        </div>
+      </section>
+
+      <section class="hall-of-fame-teaser" aria-labelledby="hall-title">
+        <div class="teaser-art" aria-hidden="true">
+          <span class="teaser-orbit"></span
+          ><img
+            src="assets/emotes/king-celebration.png"
+            alt=""
+            width="160"
+            height="160"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div class="teaser-content">
+          <span class="teaser-eyebrow"
+            >Players, clans, and seasons</span
+          >
+          <h2 id="hall-title" class="teaser-title">
+            Hall of <em>Champions.</em>
+          </h2>
+          <p class="teaser-subtitle">
+            Season legends. Weekly Gear Lords.<br />The players who made every
+            brawl count.
+          </p>
+          <div class="teaser-topics">
+            <span>Season titles</span><span>Top 10 finishes</span
+            ><span>Weekly scorers</span>
+          </div>
+        </div>
+        <a
+          href="champions.html"
+          class="btn-teaser"
+          aria-label="Explore the Hall of Champions"
+          ><span>Enter the hall</span
+          ><span class="teaser-arrow" aria-hidden="true">↗</span></a
+        >
+      </section>
+
+      <section
+        class="home-explore home-container"
+        aria-labelledby="explore-title"
+      >
+        <div class="home-section-heading">
+          <div>
+            <span class="home-eyebrow">A LITTLE INTEL. A BIG ADVANTAGE.</span>
+            <h2 id="explore-title">Find your edge.</h2>
+          </div>
+          <p>Everything you need for your next great brawl.</p>
+        </div>
+        <div class="feature-grid">
+          <a class="home-feature feature-leaders" href="leaderboard.html"
+            ><span class="feature-number">01 ? Players</span
+            ><img
+              src="assets/emotes/king-angrygolden.png"
+              alt=""
+              loading="lazy"
+              width="160"
+              height="160"
+            />
+            <div>
+              <h3>Meet the legends.</h3>
+              <p>Explore the rankings and scout the players at the top.</p>
+              <span class="feature-link">Leaderboard ↗</span>
+            </div></a
+          >
+          <a class="home-feature feature-clones" href="clones.html"
+            ><span class="feature-number">02 ? Clones</span
+            ><img
+              src="assets/emotes/electromancer-strong.png"
+              alt=""
+              loading="lazy"
+              width="160"
+              height="160"
+            />
+            <div>
+              <h3>Know your clones.</h3>
+              <p>Compare performance and discover your next favorite.</p>
+              <span class="feature-link">Clone collection ↗</span>
+            </div></a
+          >
+          <a class="home-feature feature-meta" href="meta.html"
+            ><span class="feature-number">03 ? Meta decks</span
+            ><img
+              src="assets/emotes/king-choosingcard.png"
+              alt=""
+              loading="lazy"
+              width="160"
+              height="160"
+            />
+            <div>
+              <h3>Explore popular decks</h3>
+              <p>Explore the combinations shaping the battlefield.</p>
+              <span class="feature-link">Meta decks ↗</span>
+            </div></a
+          >
+          <a class="home-feature feature-builder" href="deck-builder.html"
+            ><span class="feature-number">04 ? Deck builder</span
+            ><img
+              src="assets/emotes/bigsmith-hammer.png"
+              alt=""
+              loading="lazy"
+              width="160"
+              height="160"
+            />
+            <div>
+              <h3>Make it your own.</h3>
+              <p>Turn your next big idea into an eight-clone strategy.</p>
+              <span class="feature-link">Deck Builder ↗</span>
+            </div></a
+          >
         </div>
       </section>
 
@@ -163,81 +343,6 @@
       </section>
 
       <section
-        class="home-explore home-container"
-        aria-labelledby="explore-title"
-      >
-        <div class="home-section-heading">
-          <div>
-            <span class="home-eyebrow">A LITTLE INTEL. A BIG ADVANTAGE.</span>
-            <h2 id="explore-title">Find your edge.</h2>
-          </div>
-          <p>Everything you need for your next great brawl.</p>
-        </div>
-        <div class="feature-grid">
-          <a class="home-feature feature-leaders" href="leaderboard.html"
-            ><span class="feature-number">01 / THE CLIMB</span
-            ><img
-              src="assets/emotes/king-angrygolden.png"
-              alt=""
-              loading="lazy"
-              width="160"
-              height="160"
-            />
-            <div>
-              <h3>Meet the legends.</h3>
-              <p>Explore the rankings and scout the players at the top.</p>
-              <span class="feature-link">Leaderboard ↗</span>
-            </div></a
-          >
-          <a class="home-feature feature-clones" href="clones.html"
-            ><span class="feature-number">02 / THE COLLECTION</span
-            ><img
-              src="assets/emotes/electromancer-strong.png"
-              alt=""
-              loading="lazy"
-              width="160"
-              height="160"
-            />
-            <div>
-              <h3>Know your clones.</h3>
-              <p>Compare performance and discover your next favorite.</p>
-              <span class="feature-link">Clone collection ↗</span>
-            </div></a
-          >
-          <a class="home-feature feature-meta" href="meta.html"
-            ><span class="feature-number">03 / THE PLAYBOOK</span
-            ><img
-              src="assets/emotes/king-choosingcard.png"
-              alt=""
-              loading="lazy"
-              width="160"
-              height="160"
-            />
-            <div>
-              <h3>Find a winning hand.</h3>
-              <p>Explore the combinations shaping the battlefield.</p>
-              <span class="feature-link">Meta decks ↗</span>
-            </div></a
-          >
-          <a class="home-feature feature-builder" href="deck-builder.html"
-            ><span class="feature-number">04 / THE WORKSHOP</span
-            ><img
-              src="assets/emotes/bigsmith-hammer.png"
-              alt=""
-              loading="lazy"
-              width="160"
-              height="160"
-            />
-            <div>
-              <h3>Make it your own.</h3>
-              <p>Turn your next big idea into an eight-clone strategy.</p>
-              <span class="feature-link">Deck Builder ↗</span>
-            </div></a
-          >
-        </div>
-      </section>
-
-      <section
         class="howto-player-tag"
         id="find-player-tag"
         aria-labelledby="tag-title"
@@ -245,7 +350,7 @@
         <div class="howto-player-tag__container">
           <div class="home-section-heading">
             <div>
-              <span class="home-eyebrow">NEW HERE? START WITH YOUR TAG.</span>
+              <span class="home-eyebrow">New to BBmeta? Start with your player tag</span>
               <h2 class="howto-player-tag__title" id="tag-title">
                 Your brawler, by the numbers.
               </h2>
@@ -319,55 +424,97 @@
       </div>
     </footer>
 
-    <!-- Floating News Button -->
     <button
       id="news-trigger-btn"
       class="news-button"
+      type="button"
       aria-label="Open News Feed"
+      aria-haspopup="dialog"
+      aria-controls="news-popup-overlay"
+      aria-expanded="false"
     >
-      <span>📰 News</span>
-      <span id="news-unread-badge" class="badge" style="display: none">0</span>
+      <img
+        src="assets/emotes/grandtrickster-hat.png"
+        alt=""
+        width="32"
+        height="32"
+      /><span>What’s new</span
+      ><span id="news-unread-badge" class="badge" style="display: none">0</span>
     </button>
 
-    <!-- News Popup Modal -->
-    <div id="news-popup-overlay" class="news-popup-overlay">
-      <div class="news-popup">
+    <div id="news-popup-overlay" class="news-popup-overlay" hidden>
+      <section
+        class="news-popup"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="news-title"
+        aria-describedby="news-description"
+      >
         <div class="news-popup-header">
-          <h2>📰 BBmeta Updates</h2>
+          <div class="news-heading">
+            <span class="news-eyebrow">Game news</span>
+            <h2 id="news-title">The Brawl <em>Bulletin.</em></h2>
+            <p id="news-description">
+              New features, fixes, and a little behind-the-scenes.
+            </p>
+          </div>
+          <img
+            class="news-mascot"
+            src="assets/emotes/grandtrickster-hat.png"
+            alt=""
+            aria-hidden="true"
+            width="90"
+            height="90"
+          />
+          <button
+            type="button"
+            id="news-close-btn"
+            class="news-close-btn"
+            aria-label="Close News Feed"
+          >
+            ×
+          </button>
+        </div>
+        <div class="news-toolbar">
+          <span id="news-count" role="status"></span>
           <div class="news-sort" role="group" aria-label="Sort news">
             <button
               type="button"
               class="news-sort-btn is-active"
               data-sort="latest"
+              aria-pressed="true"
             >
-              Latest
-            </button>
-            <button type="button" class="news-sort-btn" data-sort="oldest">
-              Oldest
+              Latest first</button
+            ><button
+              type="button"
+              class="news-sort-btn"
+              data-sort="oldest"
+              aria-pressed="false"
+            >
+              Oldest first
             </button>
           </div>
-          <button
-            id="news-close-btn"
-            class="news-close-btn"
-            aria-label="Close News Feed"
-          >
-            &times;
-          </button>
         </div>
-
-        <div id="news-popup-list" class="news-popup-body"></div>
-
+        <div
+          id="news-popup-list"
+          class="news-popup-body"
+          tabindex="0"
+          aria-label="BBmeta updates"
+        ></div>
         <div class="news-popup-footer">
+          <div>
+            <strong>Got an idea for the next update?</strong
+            ><span>Let’s hear it from the community.</span>
+          </div>
           <a
             href="https://discord.gg/TghyMJsTNB"
             target="_blank"
             rel="noopener noreferrer"
             class="news-discord-link"
+            >Join our Discord ↗</a
           >
-            💬 Join our Discord
-          </a>
         </div>
-      </div>
+      </section>
     </div>
 
     <div id="notification-container" class="toast-container"></div>

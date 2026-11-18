@@ -5,7 +5,13 @@
     "test:leaderboard": "node --test tests/leaderboard.browser.test.js",
     "test:clones": "node --test tests/clones.browser.test.js",
     "test:meta": "node --test tests/meta.browser.test.js",
-    "test:home": "node --test tests/home.browser.test.js"
+    "test:home": "node --test tests/home.browser.test.js",
+    "test:seasons": "node --test tests/seasons.browser.test.js",
+    "test:champions": "node --test tests/champions-api.test.js tests/champions.browser.test.js",
+    "test:news": "node --test tests/news.browser.test.js",
+    "test:clans": "node --test tests/clan-badges.test.js tests/clans.browser.test.js",
+    "test:navigation": "node --test tests/navigation.browser.test.js",
+    "test:profile": "node --test tests/profile.browser.test.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",

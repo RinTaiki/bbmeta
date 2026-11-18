@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hall of Champions — BBmeta</title>
+    <meta
+      name="description"
+      content="The legends of the Badlands — every season champion, immortalized."
+    />
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/emotes/bouncybomb-disco.png"
+    />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/components/header.css" />
+    <link rel="stylesheet" href="css/components/footer.css" />
+    <link rel="stylesheet" href="css/components/notifications.css" />
+    <link rel="stylesheet" href="css/champions.css" />
+
+    <script>
+      window.va =
+        window.va ||
+        function () {
+          (window.vaq = window.vaq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+    <script src="js/navigation.js" defer></script>
+    <link rel="stylesheet" href="css/scenery.css" />
+    <link rel="stylesheet" href="css/unslop.css" />
+    <link rel="stylesheet" href="css/universal-glass.css" />
+    <link rel="stylesheet" href="css/champions-redesign.css" />
+</head>
+  <body class="champions-shell" data-scene="champions" data-palette="ember">
+    <div class="champions-bg"></div>
+    <header class="site-header">
+      <div class="header-container">
+        <a href="index.html" class="logo"
+          >BBmeta<span class="beta-tag">[Beta]</span></a
+        >
+        <button
+          type="button"
+          class="nav-toggle"
+          aria-expanded="false"
+          aria-controls="site-navigation"
+        >
+          <span class="nav-toggle-icon" aria-hidden="true"></span
+          ><span>Menu</span>
+        </button>
+        <nav
+          class="nav-links"
+          id="site-navigation"
+          aria-label="Main navigation"
+        >
+          <a href="index.html">Home</a>
+          <details class="nav-group">
+            <summary>
+              Rankings<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="leaderboard.html"
+                ><strong>Players</strong><span>Follow the trophy climb</span></a
+              ><a href="clans.html"
+                ><strong>Clans</strong
+                ><span>Find your tribe and rivals</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Game<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="clones.html"
+                ><strong>Clones</strong><span>Explore your collection</span></a
+              ><a href="meta.html"
+                ><strong>Meta decks</strong
+                ><span>Scout winning combinations</span></a
+              ><a href="deck-builder.html"
+                ><strong>Deck Builder</strong
+                ><span>The brawler’s workshop</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Legacy<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="champions.html" class="active" aria-current="page"
+                ><strong>Hall of Champions</strong
+                ><span>Meet the legends</span></a
+              ><a href="season-archive.html"
+                ><strong>Seasons</strong><span>Relive past seasons</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              About<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="about.html"
+                ><strong>About BBmeta</strong
+                ><span>The community behind the stats</span></a
+              ><a href="contact.html"
+                ><strong>Contact</strong><span>Get in touch</span></a
+              ><a href="privacy.html"
+                ><strong>Privacy</strong><span>How we handle your data</span></a
+              >
+            </div>
+          </details>
+        </nav>
+      </div>
+    </header>
+
+    <main class="champions-page">
+      <div class="champions-wrapper">
+        <section class="champions-hero" aria-labelledby="champions-title">
+          <div class="hero-copy">
+            <span class="champions-kicker">Season records</span>
+            <h1 id="champions-title" class="champions-title">
+              Champions<br /><em>of the Badlands.</em>
+            </h1>
+            <p class="champions-subtitle">
+              Season champions and this week&#39;s leading gear scorers.
+            </p>
+            <a class="hero-link" href="#hall-sections"
+              >View the records <span>↓</span></a
+            >
+          </div>
+          <div class="hall-art" aria-hidden="true">
+            <div class="hall-orbit"></div>
+            <img
+              class="hall-king"
+              src="assets/emotes/king-celebration.png"
+              alt=""
+              width="300"
+              height="300"
+              fetchpriority="high"
+            /><img
+              class="hall-sidekick"
+              src="assets/emotes/king-omg-legend.png"
+              alt=""
+              width="110"
+              height="110"
+            /><span class="hall-seal">Season winners</span>
+          </div>
+        </section>
+        <div class="hall-snapshot" aria-label="Hall overview">
+          <div>
+            <span>Players in the hall</span><strong id="hall-players">—</strong>
+          </div>
+          <div>
+            <span>Champions</span><strong id="hall-champions">—</strong>
+          </div>
+          <div>
+            <span>Titles recorded</span><strong id="hall-titles">—</strong>
+          </div>
+          <p>
+            Records from every season, gathered in one place.
+          </p>
+        </div>
+        <div class="hall-heading">
+          <div>
+            <span class="champions-kicker">Hall archive</span>
+            <h2>Season records</h2>
+          </div>
+          <a href="season-archive.html">Explore season archives ↗</a>
+        </div>
+        <!-- ── TABS ── -->
+        <div
+          class="champions-tabs"
+          id="hall-sections"
+          role="tablist"
+          aria-label="Hall sections"
+        >
+          <button
+            type="button"
+            class="champions-tab is-active"
+            role="tab"
+            aria-selected="true"
+            id="tab-legends"
+            aria-controls="panel-legends"
+            data-tab="legends"
+          >
+            Legends <span>Season winners</span>
+          </button>
+          <button
+            type="button"
+            class="champions-tab"
+            role="tab"
+            aria-selected="false"
+            id="tab-scorers"
+            tabindex="-1"
+            aria-controls="panel-scorers"
+            data-tab="scorers"
+          >
+            Gear Lords <span>This week</span>
+          </button>
+        </div>
+
+        <!-- ══════════ PANEL: LEGENDS ══════════ -->
+        <section
+          id="panel-legends"
+          class="champions-panel champions-card"
+          role="tabpanel"
+          data-panel="legends"
+          aria-labelledby="tab-legends"
+          aria-busy="true"
+        >
+          <div class="panel-heading">
+            <div>
+              <span class="champions-kicker">All time</span>
+              <h2>Legends of the Badlands</h2>
+            </div>
+            <p>Ranked by recorded season wins.</p>
+          </div>
+          <!-- Loading -->
+          <div id="legends-loading" class="champions-state">
+            <div class="champions-spinner"></div>
+            <p>Summoning the legends…</p>
+          </div>
+
+          <!-- Error -->
+          <div id="legends-error" class="champions-state hidden">
+            <h2>Couldn’t reach the vault</h2>
+            <p>The champion records couldn’t be loaded. Please try again.</p>
+            <button type="button" id="legends-retry" class="hall-retry">
+              Try again
+            </button>
+          </div>
+
+          <!-- Empty (no records at all) -->
+          <div id="legends-empty" class="champions-state hidden">
+            <div class="legacy-icon" aria-hidden="true">🏛️</div>
+            <h2>Building the Legacy</h2>
+            <p>
+              We began tracking champions in September 2026. New champions will appear here as seasons are recorded.
+            </p>
+          </div>
+
+          <!-- Content -->
+          <div id="legends-content" class="hidden">
+            <div id="legacy-banner" class="legacy-banner hidden">
+              <span class="legacy-banner-icon" aria-hidden="true">🏛️</span>
+              <div>
+                <strong>Building the Legacy</strong>
+                <span
+                  >We began tracking champions in September 2026. New champions will appear here as seasons are recorded.</span
+                >
+              </div>
+            </div>
+
+            <div id="podium" class="podium"></div>
+
+            <div
+              id="legends-table-wrap"
+              class="legends-table-wrap hidden"
+            ></div>
+          </div>
+        </section>
+
+        <!-- ══════════ PANEL: GEAR LORDS ══════════ -->
+        <section
+          id="panel-scorers"
+          class="champions-panel champions-card hidden"
+          role="tabpanel"
+          data-panel="scorers"
+          aria-labelledby="tab-scorers"
+        >
+          <div class="scorers-head">
+            <div>
+              <span class="champions-kicker">This week</span>
+              <h2 class="scorers-title">Gear Lords</h2>
+              <p class="scorers-subtitle">
+                Players ranked by gears earned this week.
+              </p>
+            </div>
+            <span class="scorers-feed-label">Weekly ranking</span>
+          </div>
+
+          <div id="scorers-loading" class="champions-state">
+            <div class="champions-spinner"></div>
+            <p>Pulling this week’s scorers…</p>
+          </div>
+
+          <div id="scorers-empty" class="champions-state hidden">
+            <h2>No weekly scorers yet</h2>
+            <p>No ranked gear scores for this week yet.</p>
+          </div>
+
+          <div id="scorers-error" class="champions-state hidden" role="alert">
+            <h2>The gears have stopped turning</h2>
+            <p>Weekly scorer data couldn’t be reached. Please try again.</p>
+            <button type="button" id="scorers-retry" class="hall-retry">
+              Try again
+            </button>
+          </div>
+          <div id="scorers-content" class="hidden">
+            <div id="scorers-meta" class="scorers-meta"></div>
+            <div
+              id="scorers-podium"
+              class="scorers-podium"
+              aria-label="Top three gear scorers"
+            ></div>
+            <section id="scorers-standings" class="scorers-standings hidden">
+              <div class="scorers-standings-heading">
+                <div>
+                  <span class="champions-kicker">Next in line</span>
+                  <h3>Still climbing</h3>
+                </div>
+                <span>Ranks 4–10</span>
+              </div>
+              <div
+                id="scorers-table-wrap"
+                class="legends-table-wrap"
+              ></div>
+            </section>
+          </div>
+        </section>
+        <p class="hall-footnote">
+          Legends reflect archived seasons. Gear Lords reflects the weekly
+          scorer ranking.
+        </p>
+      </div>
+    </main>
+
+    <footer class="site-footer" id="about">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <span class="footer-logo"
+            >BBmeta<span class="beta-tag">[Beta]</span></span
+          >
+          — Unofficial Badland Brawl Stats
+        </div>
+        <ul class="footer-links">
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="privacy.html">Privacy</a></li>
+        </ul>
+        <div class="footer-disclaimer">Game assets © Frogmind</div>
+      </div>
+    </footer>
+
+    <div id="notification-container" class="toast-container"></div>
+    <script type="module" src="js/champions.js"></script>
+  </body>
+</html>

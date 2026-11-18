@@ -1,0 +1,183 @@
+/* Warm glass skin for the homepage. The canyon artwork stays visible beneath each surface. */
+body.home-body {
+  --home-glass: rgb(48 35 28 / 68%);
+  --home-glass-raised: rgb(75 54 40 / 65%);
+  --home-glass-line: rgb(255 235 202 / 22%);
+  --home-glass-highlight: rgb(255 244 220 / 10%);
+  background: #34231b;
+}
+
+body.home-body .site-header.site-header.site-header {
+  background: rgb(39 28 23 / 78%);
+  border-bottom: 1px solid var(--home-glass-line);
+  box-shadow: 0 8px 28px rgb(22 13 9 / 15%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  backdrop-filter: blur(18px) saturate(120%);
+}
+body.home-body .nav-dropdown {
+  background: rgb(51 38 31 / 88%);
+  border-color: var(--home-glass-line);
+  box-shadow: 0 14px 34px rgb(18 11 8 / 27%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  backdrop-filter: blur(18px) saturate(120%);
+}
+body.home-body .nav-dropdown a:hover { background: rgb(255 235 202 / 8%); }
+body.home-body .nav-toggle {
+  border-color: var(--home-glass-line);
+  background: rgb(255 244 220 / 8%);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+body.home-body .hero-content {
+  border: 1px solid var(--home-glass-line);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgb(80 58 43 / 73%), rgb(37 28 24 / 78%));
+  box-shadow: inset 0 1px 0 var(--home-glass-highlight), 0 20px 48px rgb(19 11 7 / 28%);
+  -webkit-backdrop-filter: blur(18px) saturate(118%);
+  backdrop-filter: blur(18px) saturate(118%);
+}
+body.home-body .search-panel {
+  border-color: rgb(255 235 202 / 19%);
+  background: linear-gradient(135deg, rgb(29 23 21 / 55%), rgb(39 28 23 / 42%));
+  box-shadow: inset 0 1px 0 rgb(255 244 220 / 7%), 0 8px 22px rgb(16 10 7 / 13%);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+body.home-body .search-input {
+  border-color: rgb(255 255 255 / 44%);
+  background: rgb(255 249 239 / 92%);
+  box-shadow: inset 0 1px 2px rgb(25 18 14 / 10%);
+}
+body.home-body .search-button,
+body.home-body .home-community > a {
+  background: linear-gradient(135deg, #f3ca7c, #d9a347);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 35%), 0 5px 16px rgb(17 10 6 / 18%);
+}
+body.home-body .hero-stamp {
+  border-color: rgb(255 239 208 / 28%);
+  background: linear-gradient(135deg, rgb(97 70 49 / 72%), rgb(45 34 29 / 78%));
+  box-shadow: inset 0 1px 0 var(--home-glass-highlight), 0 10px 24px rgb(18 11 8 / 24%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+  backdrop-filter: blur(14px) saturate(115%);
+}
+body.home-body .hero-ribbon {
+  border-color: rgb(255 235 202 / 19%);
+  background: linear-gradient(90deg, transparent, rgb(41 30 25 / 30%), transparent);
+}
+
+body.home-body .hall-of-fame-teaser {
+  border-color: var(--home-glass-line);
+  background: linear-gradient(120deg, rgb(93 67 46 / 68%), rgb(41 30 25 / 76%));
+  box-shadow: inset 0 1px 0 var(--home-glass-highlight), 0 18px 42px rgb(18 11 8 / 24%);
+  -webkit-backdrop-filter: blur(17px) saturate(118%);
+  backdrop-filter: blur(17px) saturate(118%);
+}
+body.home-body .hall-of-fame-teaser::before { opacity: .035; }
+body.home-body .teaser-topics span {
+  border-color: rgb(255 235 202 / 20%);
+  background: rgb(255 244 220 / 7%);
+  color: #ead4b3;
+}
+body.home-body .btn-teaser {
+  border-color: rgb(255 236 196 / 62%);
+  background: linear-gradient(135deg, #f1cb83, #d8a34d);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 35%), 0 7px 18px rgb(18 11 8 / 18%);
+}
+
+body.home-body .home-explore { position: relative; }
+body.home-body .feature-grid { gap: 16px; }
+body.home-body .home-feature {
+  border-color: var(--home-glass-line);
+  background: linear-gradient(145deg, rgb(83 61 45 / 69%), rgb(38 29 25 / 77%));
+  box-shadow: inset 0 1px 0 var(--home-glass-highlight), 0 14px 34px rgb(18 11 8 / 22%);
+  -webkit-backdrop-filter: blur(15px) saturate(115%);
+  backdrop-filter: blur(15px) saturate(115%);
+}
+body.home-body .home-feature:hover {
+  border-color: rgb(245 185 66 / 68%);
+  background: linear-gradient(145deg, rgb(101 74 51 / 75%), rgb(43 32 26 / 80%));
+  box-shadow: inset 0 1px 0 rgb(255 244 220 / 14%), 0 18px 38px rgb(18 11 8 / 28%);
+}
+body.home-body .feature-link { border-color: rgb(255 235 202 / 17%); }
+
+body.home-body .creators-section {
+  border-color: var(--home-glass-line);
+  background: linear-gradient(145deg, rgb(48 35 29 / 58%), rgb(35 27 24 / 68%));
+  -webkit-backdrop-filter: blur(14px) saturate(112%);
+  backdrop-filter: blur(14px) saturate(112%);
+}
+body.home-body .creator-card {
+  border-color: rgb(255 235 202 / 20%);
+  background: linear-gradient(145deg, rgb(87 63 45 / 76%), rgb(40 30 25 / 82%));
+  box-shadow: inset 0 1px 0 var(--home-glass-highlight), 0 12px 28px rgb(18 11 8 / 22%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+  backdrop-filter: blur(14px) saturate(115%);
+}
+body.home-body .creator-card:hover {
+  border-color: rgb(245 185 66 / 64%);
+  box-shadow: inset 0 1px 0 rgb(255 244 220 / 12%), 0 16px 34px rgb(18 11 8 / 27%);
+}
+body.home-body .creator-watch-btn {
+  background: linear-gradient(135deg, #e9bd70, #c98d38);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 24%);
+}
+
+body.home-body .howto-player-tag {
+  border-color: var(--home-glass-line);
+  background: linear-gradient(135deg, rgb(50 37 31 / 73%), rgb(38 30 26 / 79%));
+  -webkit-backdrop-filter: blur(15px) saturate(112%);
+  backdrop-filter: blur(15px) saturate(112%);
+}
+body.home-body .howto-player-tag__card {
+  border-color: rgb(255 235 202 / 25%);
+  background: linear-gradient(145deg, rgb(245 231 208 / 94%), rgb(221 201 171 / 95%));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 50%), 0 12px 26px rgb(18 11 8 / 20%);
+}
+body.home-body .howto-player-tag__image { background: rgb(35 28 24 / 65%); }
+
+body.home-body .home-community {
+  border: 1px solid var(--home-glass-line);
+  border-radius: 18px;
+  background: linear-gradient(125deg, rgb(91 66 48 / 68%), rgb(39 30 26 / 76%));
+  box-shadow: inset 0 1px 0 var(--home-glass-highlight), 0 18px 40px rgb(18 11 8 / 24%);
+  -webkit-backdrop-filter: blur(17px) saturate(118%);
+  backdrop-filter: blur(17px) saturate(118%);
+}
+body.home-body .site-footer {
+  background: rgb(35 26 22 / 78%);
+  border-color: var(--home-glass-line);
+  -webkit-backdrop-filter: blur(16px) saturate(115%);
+  backdrop-filter: blur(16px) saturate(115%);
+}
+body.home-body .news-button {
+  border-color: var(--home-glass-line);
+  background: rgb(51 39 32 / 78%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+  backdrop-filter: blur(14px) saturate(115%);
+}
+body.home-body .news-popup {
+  border-color: var(--home-glass-line);
+  background: linear-gradient(145deg, rgb(74 55 43 / 92%), rgb(37 29 25 / 94%));
+  box-shadow: 0 24px 70px rgb(12 8 6 / 42%);
+  -webkit-backdrop-filter: blur(22px) saturate(120%);
+  backdrop-filter: blur(22px) saturate(120%);
+}
+
+@media (max-width: 820px) {
+  body.home-body .site-header .nav-links {
+    background: rgb(39 28 23 / 91%);
+    border-color: var(--home-glass-line);
+    box-shadow: 0 16px 36px rgb(18 11 8 / 30%);
+    -webkit-backdrop-filter: blur(20px) saturate(120%);
+    backdrop-filter: blur(20px) saturate(120%);
+  }
+  body.home-body .hero-content { -webkit-backdrop-filter: blur(14px) saturate(115%); backdrop-filter: blur(14px) saturate(115%); }
+  body.home-body .home-feature { -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  body.home-body :is(.site-header, .nav-dropdown, .hero-content, .search-panel, .hero-stamp, .hall-of-fame-teaser, .home-feature, .creators-section, .creator-card, .howto-player-tag, .home-community, .site-footer, .news-button, .news-popup) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

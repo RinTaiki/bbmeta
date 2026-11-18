@@ -26,9 +26,8 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    linear-gradient(180deg, #26181380, #27130c26 45%, #1f1619b3),
-    url("../assets/backgrounds/canyon_dawn.webp") center / cover no-repeat;
+  background: url("../assets/backgrounds/canyon_dawn.webp") center / cover
+    no-repeat;
 }
 .clones-page {
   padding: 122px 24px 64px;
@@ -866,7 +865,6 @@
 @media (max-width: 640px) {
   .clones-body .site-header {
     position: relative;
-    background: #2b201b;
   }
   .clones-body .nav-links {
     justify-content: center;

@@ -1,0 +1,227 @@
+/* Each route owns a distinct landscape; all imagery stays undimmed.
+   Compressed static backgrounds avoid scroll listeners, blur and parallax. */
+body[data-scene="index"] {
+  --scene-image: url("../assets/backgrounds/canyon_noon.webp");
+}
+body[data-scene="leaderboard"] {
+  --scene-image: url("../assets/backgrounds/frozen_dawn.webp");
+}
+body[data-scene="clones"] {
+  --scene-image: url("../assets/backgrounds/jungle_dawn.webp");
+}
+body[data-scene="meta"] {
+  --scene-image: url("../assets/backgrounds/inferno_dawn.webp");
+}
+body[data-scene="clans"] {
+  --scene-image: url("../assets/backgrounds/jungle_noon.webp");
+}
+body[data-scene="champions"] {
+  --scene-image: url("../assets/backgrounds/inferno_dusk.webp");
+}
+body[data-scene="season-archive"] {
+  --scene-image: url("../assets/backgrounds/frozen_dusk.webp");
+}
+body[data-scene="deck-builder"] {
+  --scene-image: url("../assets/backgrounds/jungle_eggopening.webp");
+}
+body[data-scene="profile"] {
+  --scene-image: url("../assets/backgrounds/canyon_dusk.webp");
+}
+body[data-scene="season"] {
+  --scene-image: url("../assets/backgrounds/holiday-night.webp");
+}
+body[data-scene="about"] {
+  --scene-image: url("../assets/backgrounds/canyon_dawn.webp");
+}
+body[data-scene="contact"] {
+  --scene-image: url("../assets/backgrounds/jungle_night.webp");
+}
+body[data-scene="privacy"] {
+  --scene-image: url("../assets/backgrounds/frozen_night.webp");
+}
+body[data-scene="vfx-lab"] {
+  --scene-image: url("../assets/backgrounds/halloween_cavern.webp");
+}
+
+body[data-scene] {
+  --scene-base: #34231b;
+  --scene-panel: #3c2b21;
+  --scene-deep: #281c17;
+  --scene-line: #c6a06b66;
+  --scene-paper: #ecdbbd;
+  --scene-paper-end: #dcc6a2;
+  --scene-accent: #f5cd82;
+  isolation: isolate;
+  /* Keep the fixed landscape out of whole-page fade animations. */
+  animation: none;
+  background: var(--scene-base);
+}
+body[data-palette="ice"] {
+  --scene-base: #1d343c;
+  --scene-panel: #304a50;
+  --scene-deep: #1b3037;
+  --scene-line: #9bc9cd66;
+  --scene-paper: #dce6df;
+  --scene-paper-end: #c2d6d0;
+  --scene-accent: #e8d49a;
+}
+body[data-palette="forest"] {
+  --scene-base: #25341f;
+  --scene-panel: #35432a;
+  --scene-deep: #222f20;
+  --scene-line: #b9c38166;
+  --scene-paper: #e5e3c7;
+  --scene-paper-end: #cfd3ae;
+  --scene-accent: #e8d78c;
+}
+body[data-palette="ember"] {
+  --scene-base: #3a2423;
+  --scene-panel: #4d3029;
+  --scene-deep: #302022;
+  --scene-line: #dfab8266;
+  --scene-paper: #eed9c6;
+  --scene-paper-end: #dfbea7;
+  --scene-accent: #ffd099;
+}
+body[data-palette="violet"] {
+  --scene-base: #332b42;
+  --scene-panel: #42364e;
+  --scene-deep: #2c2638;
+  --scene-line: #c3abcf66;
+  --scene-paper: #e5dce2;
+  --scene-paper-end: #d3c5d5;
+  --scene-accent: #eed1a2;
+}
+body[data-palette="teal"] {
+  --scene-base: #17383c;
+  --scene-panel: #254448;
+  --scene-deep: #173035;
+  --scene-line: #8cbdb666;
+  --scene-paper: #dbe4d6;
+  --scene-paper-end: #bfd2c8;
+  --scene-accent: #e2d496;
+}
+body[data-scene]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--scene-image) center / cover no-repeat;
+}
+/* Retire legacy full-screen layers so only one landscape is painted. */
+body[data-scene]
+  :is(
+    .profile-bg,
+    .profile-bg-deco,
+    .champions-bg,
+    .season-bg,
+    .season-bg-glow
+  ) {
+  display: none;
+}
+body[data-scene] .site-header.site-header.site-header,
+body[data-scene] .site-footer {
+  background: var(--scene-deep);
+  border-color: var(--scene-line);
+}
+body[data-scene] .nav-dropdown {
+  background: var(--scene-panel);
+  border-color: var(--scene-line);
+}
+/* Local surfaces borrow the scenery's hue while retaining gold and wood details. */
+body[data-scene]
+  :is(
+    .rankings-panel,
+    .podium-card,
+    .clones-overview,
+    .clone-library,
+    .clone-card,
+    .meta-summary,
+    .deck-card,
+    .clans-summary,
+    .clans-table-card,
+    .archive-snapshot,
+    .season-card,
+    .champions-panel,
+    .hall-snapshot,
+    .construction-card,
+    .creator-card
+  ) {
+  background: linear-gradient(135deg, var(--scene-panel), var(--scene-deep));
+  border-color: var(--scene-line);
+}
+body[data-scene]
+  :is(
+    .hero-copy,
+    .hero-content,
+    .clones-hero-copy,
+    .clans-hero-copy,
+    .profile-masthead
+  ) {
+  padding: clamp(20px, 3vw, 34px);
+  border: 1px solid var(--scene-line);
+  border-radius: 20px;
+  background: linear-gradient(130deg, var(--scene-panel), var(--scene-deep));
+  box-shadow: 0 12px 30px #111a1720;
+}
+body[data-scene]
+  :is(.card-content, .deck-details, .clans-table, .season-card-bottom) {
+  background: linear-gradient(
+    130deg,
+    var(--scene-paper),
+    var(--scene-paper-end)
+  );
+}
+body[data-scene="profile"] .player-card {
+  background: linear-gradient(125deg, var(--scene-panel), var(--scene-deep));
+  border-color: var(--scene-line);
+}
+body[data-scene="profile"] .chart-card {
+  background: linear-gradient(
+    125deg,
+    var(--scene-paper),
+    var(--scene-paper-end)
+  );
+}
+body[data-scene] .info-page {
+  background: transparent;
+}
+body[data-scene] .info-page__container {
+  padding: clamp(24px, 5vw, 52px);
+  background: linear-gradient(135deg, var(--scene-panel), var(--scene-deep));
+  border: 1px solid var(--scene-line);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px #10202533;
+}
+body[data-scene] .info-page :is(h2, a, .info-page__eyebrow) {
+  color: var(--scene-accent);
+}
+body[data-scene] .info-page :is(p, li) {
+  color: #e3e2d7;
+}
+@media (max-width: 820px) {
+  body[data-scene] .site-header.site-header .nav-links {
+    background: var(--scene-deep);
+  }
+}
+
+body[data-scene="season"] .season-heading {
+  padding: 24px;
+  border-radius: 24px;
+  background: linear-gradient(
+    130deg,
+    var(--scene-paper),
+    var(--scene-paper-end)
+  );
+  border: 1px solid var(--scene-line);
+}
+body[data-scene="season"] {
+  --glass: #dce6dfed;
+  --glass-strong: #dce6dff5;
+}
+body[data-scene="vfx-lab"] .lab > header {
+  padding: 24px;
+  background: var(--scene-deep);
+  border-radius: 20px;
+}

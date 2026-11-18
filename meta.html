@@ -41,21 +41,89 @@
         };
     </script>
     <script defer src="/_vercel/speed-insights/script.js"></script>
-  </head>
-  <body class="meta-body">
+    <script src="js/navigation.js" defer></script>
+    <link rel="stylesheet" href="css/scenery.css" />
+    <link rel="stylesheet" href="css/unslop.css" />
+    <link rel="stylesheet" href="css/universal-glass.css" />
+</head>
+  <body class="meta-body" data-scene="meta" data-palette="ember">
     <header class="site-header">
       <div class="header-container">
         <a href="index.html" class="logo"
           >BBmeta<span class="beta-tag">[Beta]</span></a
         >
-        <nav class="nav-links">
+        <button
+          type="button"
+          class="nav-toggle"
+          aria-expanded="false"
+          aria-controls="site-navigation"
+        >
+          <span class="nav-toggle-icon" aria-hidden="true"></span
+          ><span>Menu</span>
+        </button>
+        <nav
+          class="nav-links"
+          id="site-navigation"
+          aria-label="Main navigation"
+        >
           <a href="index.html">Home</a>
-          <a href="leaderboard.html">Leaderboard</a>
-          <a href="clones.html">Clones</a>
-          <a href="meta.html" class="active">Meta</a>
-          <a href="season-archive.html">Seasons</a>
-          <a href="deck-builder.html">Deck Builder</a>
-          <a href="about.html" class="nav-about">About</a>
+          <details class="nav-group">
+            <summary>
+              Rankings<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="leaderboard.html"
+                ><strong>Players</strong><span>Follow the trophy climb</span></a
+              ><a href="clans.html"
+                ><strong>Clans</strong
+                ><span>Find your tribe and rivals</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Game<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="clones.html"
+                ><strong>Clones</strong><span>Explore your collection</span></a
+              ><a href="meta.html" class="active" aria-current="page"
+                ><strong>Meta decks</strong
+                ><span>Scout winning combinations</span></a
+              ><a href="deck-builder.html"
+                ><strong>Deck Builder</strong
+                ><span>The brawler’s workshop</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Legacy<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="champions.html"
+                ><strong>Hall of Champions</strong
+                ><span>Meet the legends</span></a
+              ><a href="season-archive.html"
+                ><strong>Seasons</strong><span>Relive past seasons</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              About<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="about.html"
+                ><strong>About BBmeta</strong
+                ><span>The community behind the stats</span></a
+              ><a href="contact.html"
+                ><strong>Contact</strong><span>Get in touch</span></a
+              ><a href="privacy.html"
+                ><strong>Privacy</strong><span>How we handle your data</span></a
+              >
+            </div>
+          </details>
         </nav>
       </div>
     </header>
@@ -65,10 +133,9 @@
         <section class="meta-hero" aria-labelledby="meta-title">
           <div class="hero-copy">
             <span class="eyebrow">THE BRAWLER’S PLAYBOOK</span>
-            <h1 id="meta-title">Find your<br /><em>winning hand.</em></h1>
+            <h1 id="meta-title">See what?s<br /><em>winning now.</em></h1>
             <p>
-              Eight clones. Endless possibilities. Explore the decks behind the
-              battles and find your next combination.
+              Compare the most successful decks by arena, clone, and recent battles.
             </p>
             <a class="hero-link" href="#deck-library"
               >Explore the meta <span>↓</span></a
@@ -97,7 +164,7 @@
         </section>
         <section class="meta-summary" aria-label="Deck snapshot">
           <div>
-            <span>DECKS IN THE MIX</span><strong id="deck-count">—</strong>
+            <span>Decks sampled</span><strong id="deck-count">—</strong>
           </div>
           <div>
             <span>HIGHEST WIN RATE</span><strong id="best-win">—</strong>
@@ -228,7 +295,7 @@
         <aside class="builder-cta">
           <img src="assets/emotes/bigsmith-hammer.png" alt="" loading="lazy" />
           <div>
-            <span class="eyebrow">YOUR STRATEGY. YOUR RULES.</span>
+            <span class="eyebrow">Explore by strategy</span>
             <h2>Make the next great deck.</h2>
             <p>Take your inspiration to the Deck Builder.</p>
           </div>

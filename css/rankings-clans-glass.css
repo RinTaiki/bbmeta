@@ -1,0 +1,223 @@
+/* Shared warm glass surfaces for player rankings and clans. */
+body.leaderboard-body,
+body.clans-shell {
+  --rank-glass: rgb(35 42 41 / 70%);
+  --rank-glass-raised: rgb(49 54 48 / 70%);
+  --rank-glass-line: rgb(255 235 202 / 20%);
+  --rank-glass-highlight: rgb(255 244 220 / 9%);
+}
+body.leaderboard-body .site-header.site-header.site-header,
+body.clans-shell .site-header.site-header.site-header {
+  background: rgb(32 37 35 / 78%);
+  border-bottom-color: var(--rank-glass-line);
+  box-shadow: 0 8px 28px rgb(13 18 17 / 18%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  backdrop-filter: blur(18px) saturate(120%);
+}
+body.leaderboard-body .nav-dropdown,
+body.clans-shell .nav-dropdown {
+  background: rgb(40 46 42 / 91%);
+  border-color: var(--rank-glass-line);
+  box-shadow: 0 14px 34px rgb(12 16 15 / 30%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  backdrop-filter: blur(18px) saturate(120%);
+}
+body.leaderboard-body .nav-dropdown a:hover,
+body.clans-shell .nav-dropdown a:hover { background: rgb(255 235 202 / 8%); }
+body.leaderboard-body .nav-toggle,
+body.clans-shell .nav-toggle {
+  border-color: var(--rank-glass-line);
+  background: rgb(255 244 220 / 8%);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+body.leaderboard-body .hero-copy {
+  border: 1px solid var(--rank-glass-line);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgb(57 68 67 / 74%), rgb(27 36 37 / 80%));
+  box-shadow: inset 0 1px 0 var(--rank-glass-highlight), 0 20px 48px rgb(9 15 16 / 27%);
+  -webkit-backdrop-filter: blur(18px) saturate(118%);
+  backdrop-filter: blur(18px) saturate(118%);
+}
+body.leaderboard-body .arena-summary,
+body.leaderboard-body .rankings-panel {
+  border-color: var(--rank-glass-line);
+  background: linear-gradient(130deg, rgb(45 57 56 / 72%), rgb(25 34 35 / 80%));
+  box-shadow: inset 0 1px 0 var(--rank-glass-highlight), 0 16px 40px rgb(9 15 16 / 24%);
+  -webkit-backdrop-filter: blur(16px) saturate(116%);
+  backdrop-filter: blur(16px) saturate(116%);
+}
+body.leaderboard-body .podium-card,
+body.leaderboard-body .podium-card.podium-1 {
+  border-color: var(--rank-glass-line);
+  background: linear-gradient(145deg, rgb(70 68 54 / 74%), rgb(36 38 34 / 80%));
+  box-shadow: inset 0 1px 0 var(--rank-glass-highlight), 0 13px 32px rgb(9 15 16 / 23%);
+  -webkit-backdrop-filter: blur(14px) saturate(116%);
+  backdrop-filter: blur(14px) saturate(116%);
+}
+body.leaderboard-body .podium-card.podium-1 {
+  border-color: rgb(240 196 119 / 48%);
+  background: linear-gradient(145deg, rgb(119 91 53 / 78%), rgb(53 43 32 / 83%));
+}
+body.leaderboard-body .podium-card:hover {
+  border-color: rgb(240 196 119 / 62%);
+  box-shadow: inset 0 1px 0 rgb(255 244 220 / 13%), 0 17px 36px rgb(9 15 16 / 28%);
+}
+body.leaderboard-body .table-card {
+  border-color: rgb(255 235 202 / 18%);
+  background: rgb(20 29 30 / 60%);
+  box-shadow: inset 0 1px 0 rgb(255 244 220 / 7%), 0 12px 30px rgb(9 15 16 / 20%);
+}
+body.leaderboard-body .leaderboard-table { background: rgb(28 38 38 / 57%); }
+body.leaderboard-body .leaderboard-table th {
+  background: rgb(22 31 31 / 82%);
+  color: #e2ceb0;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+body.leaderboard-body .leaderboard-table td { border-color: rgb(255 235 202 / 12%); }
+body.leaderboard-body .leaderboard-table tbody tr:nth-child(even) { background: rgb(255 240 218 / 5%); }
+body.leaderboard-body .leaderboard-table tbody tr:hover { background: rgb(240 196 119 / 11%); }
+body.leaderboard-body .table-responsive {
+  scrollbar-color: #a98755 rgb(35 42 40 / 75%);
+}
+body.leaderboard-body .control-input,
+body.leaderboard-body .control-select {
+  border-color: rgb(255 235 202 / 25%);
+  background: rgb(245 237 222 / 94%);
+  box-shadow: inset 0 1px 2px rgb(17 24 23 / 12%);
+}
+body.leaderboard-body .pagination-container .btn-load-more,
+body.leaderboard-body .btn-retry {
+  border-color: rgb(255 236 196 / 50%);
+  background: linear-gradient(135deg, #e9c47d, #c9954c);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 25%), 0 8px 20px rgb(9 15 16 / 18%);
+}
+
+body.clans-shell .clans-hero-copy {
+  border-color: var(--rank-glass-line);
+  background: linear-gradient(145deg, rgb(68 77 53 / 75%), rgb(35 43 32 / 82%));
+  box-shadow: inset 0 1px 0 var(--rank-glass-highlight), 0 20px 48px rgb(13 18 10 / 28%);
+  -webkit-backdrop-filter: blur(18px) saturate(118%);
+  backdrop-filter: blur(18px) saturate(118%);
+}
+body.clans-shell .clans-search-form,
+body.clans-shell .clans-summary,
+body.clans-shell .clans-search-status {
+  border-color: var(--rank-glass-line);
+  background: linear-gradient(130deg, rgb(66 75 51 / 73%), rgb(34 42 32 / 81%));
+  box-shadow: inset 0 1px 0 var(--rank-glass-highlight), 0 14px 34px rgb(13 18 10 / 22%);
+  -webkit-backdrop-filter: blur(16px) saturate(116%);
+  backdrop-filter: blur(16px) saturate(116%);
+}
+body.clans-shell .clans-search-input {
+  border: 1px solid rgb(255 255 255 / 42%);
+  background: rgb(246 239 224 / 94%);
+}
+body.clans-shell .clans-search-btn,
+body.clans-shell .clans-primary-btn {
+  border-color: rgb(255 236 196 / 48%);
+  background: linear-gradient(135deg, #e9c47d, #c9954c);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 24%), 0 6px 16px rgb(13 18 10 / 16%);
+}
+body.clans-shell .clans-hero-crest {
+  border-color: rgb(255 235 202 / 36%);
+  background: linear-gradient(145deg, rgb(136 107 65 / 65%), rgb(45 43 34 / 74%));
+  box-shadow: inset 0 1px 0 rgb(255 244 220 / 15%), 0 16px 32px rgb(13 18 10 / 26%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+  backdrop-filter: blur(14px) saturate(115%);
+}
+body.clans-shell .clans-art-label {
+  border-color: var(--rank-glass-line);
+  background: rgb(39 47 35 / 76%);
+  box-shadow: 0 8px 18px rgb(13 18 10 / 20%);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+body.clans-shell .clans-summary > div { border-color: rgb(255 235 202 / 15%); }
+body.clans-shell .clans-table-card {
+  border-color: var(--rank-glass-line);
+  background: rgb(34 42 32 / 66%);
+  box-shadow: inset 0 1px 0 var(--rank-glass-highlight), 0 16px 38px rgb(13 18 10 / 24%);
+}
+body.clans-shell .clans-table {
+  color: #f2e8d7;
+  background: rgb(49 59 43 / 57%);
+}
+body.clans-shell .clans-table th {
+  color: #ead7b2;
+  background: rgb(32 40 31 / 82%);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+body.clans-shell .clans-table td { border-color: rgb(255 235 202 / 12%); }
+body.clans-shell .clans-table tbody tr:nth-child(even) { background: rgb(255 240 218 / 5%); }
+body.clans-shell .clans-table tbody tr:hover { background: rgb(240 196 119 / 10%); }
+body.clans-shell .clans-rank-badge {
+  border-color: rgb(255 235 202 / 20%);
+  color: #f1e4cf;
+  background: rgb(255 240 218 / 8%);
+}
+body.clans-shell .clans-clan-name { color: #f3e8d6; }
+body.clans-shell .clans-clan-tag,
+body.clans-shell .clans-trophies-cell,
+body.clans-shell .clans-members-cell { color: #ddc797; }
+body.clans-shell .clans-badge-icon {
+  border-color: rgb(255 235 202 / 24%);
+  background: linear-gradient(145deg, rgb(124 103 66 / 66%), rgb(43 46 35 / 76%));
+}
+body.clans-shell .clans-heading-tools select {
+  border-color: rgb(255 235 202 / 25%);
+  background: rgb(38 47 35 / 78%);
+  box-shadow: inset 0 1px 0 rgb(255 244 220 / 8%);
+}
+body.clans-shell .clans-search-status,
+body.clans-shell .clan-modal {
+  border-color: var(--rank-glass-line);
+}
+body.clans-shell .clan-modal-overlay { background: rgb(15 19 15 / 68%); backdrop-filter: blur(5px); }
+body.clans-shell .clan-modal {
+  background: linear-gradient(145deg, rgb(68 78 55 / 91%), rgb(31 39 31 / 94%));
+  box-shadow: inset 0 1px 0 var(--rank-glass-highlight), 0 28px 80px rgb(7 10 7 / 48%);
+  -webkit-backdrop-filter: blur(22px) saturate(120%);
+  backdrop-filter: blur(22px) saturate(120%);
+}
+body.clans-shell .clan-modal-close {
+  border-color: var(--rank-glass-line);
+  background: rgb(36 43 34 / 87%);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+body.clans-shell .clan-modal-badge {
+  border-color: rgb(255 235 202 / 26%);
+  background: linear-gradient(145deg, rgb(131 106 66 / 64%), rgb(47 47 37 / 76%));
+}
+body.clans-shell .clan-modal-roster-scroll {
+  border-color: rgb(255 235 202 / 18%);
+  background: rgb(26 34 27 / 53%);
+}
+body.clans-shell .clan-modal-roster th { background: rgb(32 40 31 / 88%); }
+body.clans-shell .clan-modal-roster td { border-color: rgb(255 235 202 / 12%); }
+body.clans-shell .role-leader,
+body.clans-shell .role-coleader { color: #f0cf8d; }
+
+@media (max-width: 820px) {
+  body.leaderboard-body .site-header .nav-links,
+  body.clans-shell .site-header .nav-links {
+    border-color: var(--rank-glass-line);
+    background: rgb(32 39 37 / 92%);
+    box-shadow: 0 16px 36px rgb(10 14 14 / 32%);
+    -webkit-backdrop-filter: blur(20px) saturate(120%);
+    backdrop-filter: blur(20px) saturate(120%);
+  }
+  body.leaderboard-body .hero-copy,
+  body.clans-shell .clans-hero-copy { -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  body.leaderboard-body :is(.site-header, .nav-dropdown, .nav-toggle, .hero-copy, .arena-summary, .rankings-panel, .podium-card, .table-card),
+  body.clans-shell :is(.site-header, .nav-dropdown, .nav-toggle, .clans-hero-copy, .clans-search-form, .clans-summary, .clans-search-status, .clans-hero-crest, .clans-table-card, .clan-modal) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}

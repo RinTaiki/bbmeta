@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clans &amp; Tribes — BBmeta</title>
+    <meta
+      name="description"
+      content="Explore Badland Brawl tribes — search, sort, and dive into clan rosters."
+    />
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/emotes/bouncybomb-disco.png"
+    />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/components/header.css" />
+    <link rel="stylesheet" href="css/components/footer.css" />
+    <link rel="stylesheet" href="css/components/notifications.css" />
+    <link rel="stylesheet" href="css/clans.css" />
+
+    <script>
+      window.va =
+        window.va ||
+        function () {
+          (window.vaq = window.vaq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+    <script>
+      window.si =
+        window.si ||
+        function () {
+          (window.siq = window.siq || []).push(arguments);
+        };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+    <script src="js/navigation.js" defer></script>
+    <link rel="stylesheet" href="css/scenery.css" />
+    <link rel="stylesheet" href="css/unslop.css" />
+    <link rel="stylesheet" href="css/universal-glass.css" />
+    <link rel="stylesheet" href="css/rankings-clans-glass.css" />
+</head>
+  <body class="clans-shell" data-scene="clans" data-palette="forest">
+    <header class="site-header">
+      <div class="header-container">
+        <a href="index.html" class="logo"
+          >BBmeta<span class="beta-tag">[Beta]</span></a
+        >
+        <button
+          type="button"
+          class="nav-toggle"
+          aria-expanded="false"
+          aria-controls="site-navigation"
+        >
+          <span class="nav-toggle-icon" aria-hidden="true"></span
+          ><span>Menu</span>
+        </button>
+        <nav
+          class="nav-links"
+          id="site-navigation"
+          aria-label="Main navigation"
+        >
+          <a href="index.html">Home</a>
+          <details class="nav-group">
+            <summary>
+              Rankings<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="leaderboard.html"
+                ><strong>Players</strong><span>Follow the trophy climb</span></a
+              ><a href="clans.html" class="active" aria-current="page"
+                ><strong>Clans</strong
+                ><span>Find your tribe and rivals</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Game<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="clones.html"
+                ><strong>Clones</strong><span>Explore your collection</span></a
+              ><a href="meta.html"
+                ><strong>Meta decks</strong
+                ><span>Scout winning combinations</span></a
+              ><a href="deck-builder.html"
+                ><strong>Deck Builder</strong
+                ><span>The brawler’s workshop</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Legacy<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="champions.html"
+                ><strong>Hall of Champions</strong
+                ><span>Meet the legends</span></a
+              ><a href="season-archive.html"
+                ><strong>Seasons</strong><span>Relive past seasons</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              About<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="about.html"
+                ><strong>About BBmeta</strong
+                ><span>The community behind the stats</span></a
+              ><a href="contact.html"
+                ><strong>Contact</strong><span>Get in touch</span></a
+              ><a href="privacy.html"
+                ><strong>Privacy</strong><span>How we handle your data</span></a
+              >
+            </div>
+          </details>
+        </nav>
+      </div>
+    </header>
+
+    <main class="clans-page">
+      <div class="clans-wrapper">
+        <section class="clans-hero" aria-labelledby="clans-title">
+          <div class="clans-hero-copy">
+            <span class="clans-eyebrow">BADLANDS TRIBES</span>
+            <h1 class="clans-title" id="clans-title">
+              Clans across<br /><em>the Badlands.</em>
+            </h1>
+            <p class="clans-subtitle">
+              Compare clans by trophies and members, then open a clan to view its roster.
+            </p>
+
+            <form id="clan-search-form" class="clans-search-form" role="search">
+              <label for="clan-search-input" class="sr-only"
+                >Search for a tribe by name</label
+              >
+              <span class="clans-search-label">Find a clan</span>
+              <div class="clans-search-field">
+                <input
+                  type="search"
+                  id="clan-search-input"
+                  class="clans-search-input"
+                  placeholder="Search for a tribe by name..."
+                  autocomplete="off"
+                  maxlength="64"
+                  required
+                />
+                <button type="submit" class="clans-search-btn">Search</button>
+                <button
+                  type="button"
+                  id="clan-search-clear"
+                  class="clans-search-clear hidden"
+                  aria-label="Clear search"
+                >
+                  ✕
+                </button>
+              </div>
+            </form>
+            <p class="clans-hero-hint">
+              Search by tribe name, or explore the rankings below.
+            </p>
+          </div>
+          <div class="clans-hero-art" aria-hidden="true">
+            <div class="clans-art-ring"></div>
+            <img
+              class="clans-hero-crest side-left"
+              src="assets/badges/005.png"
+              alt=""
+              width="120"
+              height="150"
+            /><img
+              class="clans-hero-crest side-right"
+              src="assets/badges/021.png"
+              alt=""
+              width="120"
+              height="150"
+            /><img
+              class="clans-hero-crest main-crest"
+              src="assets/badges/010.png"
+              alt=""
+              width="190"
+              height="220"
+              fetchpriority="high"
+            /><span class="clans-art-label">Clan rankings</span>
+          </div>
+        </section>
+        <div class="clans-summary" aria-label="Clan leaderboard overview">
+          <div>
+            <span>TRIBES RANKED</span><strong id="clan-total">—</strong>
+          </div>
+          <div>
+            <span>LEADING TROPHY SCORE</span
+            ><strong id="clan-top-score">—</strong>
+          </div>
+          <div>
+            <span>MEMBERS ACROSS TRIBES</span
+            ><strong id="clan-member-total">—</strong>
+          </div>
+          <p>
+            A good lineup wins battles.<br /><b
+              >A great tribe makes them count.</b
+            >
+          </p>
+        </div>
+
+        <div
+          id="search-status"
+          class="clans-search-status hidden"
+          role="status"
+          aria-live="polite"
+        >
+          <span id="search-status-text"></span>
+          <button type="button" id="back-to-leaderboard" class="clans-back-btn">
+            ← Back to Leaderboard
+          </button>
+        </div>
+
+        <section
+          class="clans-leaderboard-section"
+          aria-labelledby="clans-table-title"
+        >
+          <div class="clans-section-heading">
+            <div>
+              <span class="clans-section-eyebrow" id="clans-section-eyebrow"
+                >Leading clans</span
+              >
+              <h2 id="clans-table-title" class="clans-section-title">
+                Top Clans
+              </h2>
+            </div>
+            <div class="clans-heading-tools">
+              <label for="clans-sort"
+                >Sort tribes<select id="clans-sort">
+                  <option value="rank">Leaderboard order</option>
+                  <option value="score">Trophy score</option>
+                  <option value="members">Members</option>
+                  <option value="name">Name A–Z</option>
+                </select></label
+              ><span
+                class="clans-results-count"
+                id="clans-results-count"
+                role="status"
+                aria-live="polite"
+                >Loading…</span
+              >
+            </div>
+          </div>
+
+          <div class="clans-table-card">
+            <div id="clans-loading" class="clans-state" role="status">
+              <div class="clans-spinner"></div>
+              <p>Gathering the tribes…</p>
+            </div>
+
+            <div id="clans-error" class="clans-state hidden" role="alert">
+              <div class="clans-state-icon">⚠️</div>
+              <h3>Couldn't load clans</h3>
+              <p>Please try again in a moment.</p>
+              <button type="button" id="clans-retry" class="clans-primary-btn">
+                Try again
+              </button>
+            </div>
+
+            <div id="clans-empty" class="clans-state hidden">
+              <div class="clans-state-icon">🛡️</div>
+              <h3>No tribes found</h3>
+              <p>Try a different name or check your spelling.</p>
+            </div>
+
+            <div id="clans-table-wrap" class="clans-table-wrap hidden">
+              <table class="clans-table" aria-label="Clan rankings">
+                <thead>
+                  <tr>
+                    <th scope="col" class="clans-col-rank">Rank</th>
+                    <th scope="col" class="clans-col-clan">Clan</th>
+                    <th scope="col" class="clans-col-trophies">Trophies</th>
+                    <th scope="col" class="clans-col-members">Members</th>
+                  </tr>
+                </thead>
+                <tbody id="clans-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ══════════ CLAN MODAL ══════════ -->
+    <div id="clan-modal" class="clan-modal-overlay hidden" aria-hidden="true">
+      <div
+        class="clan-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="clan-modal-name"
+      >
+        <button
+          id="clan-modal-close"
+          class="clan-modal-close"
+          aria-label="Close clan profile"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+
+        <div id="clan-modal-loading" class="clan-modal-state">
+          <div class="clans-spinner"></div>
+          <p>Loading clan…</p>
+        </div>
+
+        <div id="clan-modal-error" class="clan-modal-state hidden" role="alert">
+          <h3>Clan profile unavailable</h3>
+          <p>Please try loading this tribe again.</p>
+          <button type="button" id="clan-modal-retry" class="clans-primary-btn">
+            Try again
+          </button>
+        </div>
+        <div id="clan-modal-content" class="hidden">
+          <header class="clan-modal-head">
+            <div class="clan-modal-badge-wrap">
+              <img
+                id="clan-modal-badge"
+                class="clan-modal-badge"
+                alt=""
+                width="88"
+                height="88"
+              />
+              <span
+                id="clan-modal-badge-fallback"
+                class="clan-modal-badge-fallback hidden"
+                >🛡️</span
+              >
+            </div>
+            <div class="clan-modal-info">
+              <h2 id="clan-modal-name" class="clan-modal-name">—</h2>
+              <p id="clan-modal-tag" class="clan-modal-tag">—</p>
+              <div class="clan-modal-meta">
+                <span class="clan-modal-stat"
+                  ><strong id="clan-modal-trophies">—</strong> Trophies</span
+                >
+                <span class="clan-modal-stat"
+                  ><strong id="clan-modal-members">—</strong> Members</span
+                >
+              </div>
+            </div>
+          </header>
+
+          <div class="clan-modal-roster-wrap">
+            <div class="roster-heading">
+              <div>
+                <span class="roster-eyebrow">MEMBER RANKINGS</span>
+                <h3 class="clan-modal-roster-title">Tribe leaderboard</h3>
+              </div>
+              <p id="clan-roster-note" aria-live="polite"></p>
+            </div>
+            <div class="clan-modal-roster-scroll">
+              <table class="clan-modal-roster" aria-label="Clan roster">
+                <thead>
+                  <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Player</th>
+                    <th scope="col">Trophies</th>
+                    <th scope="col">Role</th>
+                  </tr>
+                </thead>
+                <tbody id="clan-modal-roster-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer" id="about">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <span class="footer-logo"
+            >BBmeta<span class="beta-tag">[Beta]</span></span
+          >
+          — Unofficial Badland Brawl Stats
+        </div>
+        <ul class="footer-links">
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="privacy.html">Privacy</a></li>
+        </ul>
+        <div class="footer-disclaimer">Game assets © Frogmind</div>
+      </div>
+    </footer>
+
+    <div id="notification-container" class="toast-container"></div>
+    <script type="module" src="js/clans.js"></script>
+  </body>
+</html>

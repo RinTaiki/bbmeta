@@ -79,7 +79,10 @@ test(
             ? "<img src=x onerror=alert(1)>"
             : `Brawler ${index + 1}`,
       trophies: String(18000 - index * 40),
-      clan: { name: "Badland Legends" },
+      clan: {
+        name: "Badland Legends",
+        ...(index === 0 ? { badge: { id: 10, file: "10.png" } } : {}),
+      },
     }));
     await page.route("**/*", async (route) => {
       const url = new URL(route.request().url());
@@ -132,6 +135,11 @@ test(
       }
       if (url.pathname === "/api/rank-changes")
         return route.fulfill({ json: { changes: { "#SAME": 2 } } });
+      if (url.pathname === "/assets/badges/010.png")
+        return route.fulfill({
+          contentType: "image/svg+xml",
+          body: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"></svg>',
+        });
       if (url.pathname.startsWith("/_vercel/"))
         return route.fulfill({
           body: "",
@@ -151,6 +159,22 @@ test(
       "<img src=x onerror=alert(1)>",
     );
     assert.equal(await page.locator(".col-player .player-name img").count(), 0);
+    assert.equal(
+      await page
+        .locator("#leaderboard-body .col-clan")
+        .first()
+        .locator(".clan-badge-icon")
+        .getAttribute("src"),
+      "assets/badges/010.png",
+    );
+    assert.equal(
+      await page
+        .locator("#leaderboard-body .col-clan")
+        .nth(2)
+        .locator(".clan-badge-fallback")
+        .textContent(),
+      "🛡️",
+    );
     console.log("Desktop rendering and escaping passed");
     const background = await page.evaluate(
       () => getComputedStyle(document.body, "::before").backgroundImage,

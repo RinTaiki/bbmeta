@@ -1,36 +1,66 @@
 .news-button {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 999;
-    background: rgba(255, 250, 240, 0.9);
-    border: 2px solid #c9881f;
-    border-radius: 50px;
-    padding: 12px 20px;
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: #2c2114;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(80, 56, 20, 0.2);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: all 0.3s ease;
+  position: fixed;
+  bottom: max(22px, env(safe-area-inset-bottom));
+  right: max(22px, env(safe-area-inset-right));
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 15px 9px 10px;
+  border: 1px solid #c9881f88;
+  border-radius: 14px;
+  background: linear-gradient(130deg, #432b19, #25170f);
+  color: #f5d598;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px #1b0d0744;
+  transition:
+    transform 0.18s,
+    border-color 0.18s;
 }
-
+.news-button img {
+  width: 31px;
+  height: 31px;
+  object-fit: contain;
+}
 .news-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(201, 136, 31, 0.3);
+  transform: translateY(-3px);
+  border-color: #f5b942;
 }
-
+.news-button:focus-visible {
+  outline: 3px solid #f5b942;
+  outline-offset: 4px;
+}
 .news-button .badge {
-    background: #dc2626;
-    color: #fff;
-    border-radius: 50%;
-    padding: 2px 8px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    min-width: 20px;
-    text-align: center;
+  display: inline-grid;
+  place-items: center;
+  background: #f5b942;
+  color: #38210c;
+  border-radius: 50%;
+  min-width: 21px;
+  height: 21px;
+  padding: 0 5px;
+  font-size: 0.61rem;
+  font-weight: 800;
+}
+@media (max-width: 560px) {
+  .news-button {
+    right: 16px;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    padding: 7px 12px 7px 8px;
+    font-size: 0.68rem;
+    gap: 7px;
+    border-radius: 12px;
+  }
+  .news-button img {
+    width: 26px;
+    height: 26px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .news-button {
+    transition: none;
+  }
 }

@@ -42,9 +42,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Season has no final_top_10" });
     }
 
-    // 2. Fetch decks for each player
+    // 2. Fetch decks, names, and trophies for each player
     const apiKey = process.env.API_KEY;
-    const decks = {};
+    const playerData = {};
 
     await Promise.all(
       top10.map(async (p) => {
@@ -54,18 +54,24 @@ export default async function handler(req, res) {
             { headers: { Authorization: `Bearer ${apiKey}` } },
           );
           const profile = await r.json();
-          decks[p.tag] = profile.currentDeck || [];
+          playerData[p.tag] = {
+            deck: profile.currentDeck || [],
+            name: profile.name || p.name,
+            trophies: profile.trophies || p.trophies,
+          };
         } catch (e) {
-          console.error(`Deck fetch failed for ${p.tag}:`, e.message);
-          decks[p.tag] = [];
+          console.error(`Fetch failed for ${p.tag}:`, e.message);
+          playerData[p.tag] = { deck: [], name: p.name, trophies: p.trophies };
         }
       }),
     );
 
-    // 3. Merge decks into the archived top 10
+    // 3. Merge decks, names, and trophies into the archived top 10
     const updated = top10.map((p) => ({
       ...p,
-      deck: decks[p.tag] || [],
+      name: playerData[p.tag]?.name || p.name,
+      trophies: playerData[p.tag]?.trophies || p.trophies,
+      deck: playerData[p.tag]?.deck || [],
     }));
 
     const { error: updateErr } = await supabase
@@ -75,7 +81,7 @@ export default async function handler(req, res) {
 
     if (updateErr) return res.status(500).json({ error: updateErr.message });
 
-    const withDecks = Object.values(decks).filter((d) => d.length > 0).length;
+    const withDecks = Object.values(playerData).filter((p) => p.deck.length > 0).length;
 
     return res.status(200).json({
       ok: true,

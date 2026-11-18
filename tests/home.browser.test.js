@@ -129,21 +129,92 @@ test(
       await page.evaluate(() => {
         const hero = document.querySelector(".hero"),
           creators = document.querySelector("#creators-section"),
-          features = document.querySelector(".home-explore");
+          features = document.querySelector(".home-explore"),
+          playerTag = document.querySelector("#find-player-tag");
         return (
           !!(
             hero.compareDocumentPosition(creators) &
             Node.DOCUMENT_POSITION_FOLLOWING
           ) &&
           !!(
-            creators.compareDocumentPosition(features) &
+            features.compareDocumentPosition(creators) &
             Node.DOCUMENT_POSITION_FOLLOWING
-          )
+          ) &&
+          playerTag.previousElementSibling === creators
         );
       }),
       true,
     );
     await page.setViewportSize({ width: 360, height: 800 });
+    creators = [
+      {
+        channelName: "NinjaX Play",
+        videos: [
+          { videoId: "abcdefghijk", title: "Ninja latest" },
+          { videoId: "bcdefghijkl", title: "Ninja second" },
+          { videoId: "cdefghijklm", title: "Ninja older" },
+        ],
+      },
+      {
+        channelName: "Second creator",
+        videos: [
+          { videoId: "defghijklmn", title: "Second latest" },
+          { videoId: "efghijklmno", title: "Second recent" },
+          { videoId: "fghijklmnop", title: "Second older" },
+        ],
+      },
+    ];
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.reload();
+    await page.locator(".creator-card").first().waitFor();
+    assert.equal(await page.locator(".creator-card").count(), 4);
+    assert.deepEqual(await page.locator(".creator-name").allTextContents(), [
+      "NinjaX Play",
+      "NinjaX Play",
+      "Second creator",
+      "Second creator",
+    ]);
+    assert.deepEqual(await page.locator(".video-title").allTextContents(), [
+      "Ninja latest",
+      "Ninja second",
+      "Second latest",
+      "Second recent",
+    ]);
+    assert.equal(
+      await page.locator("#creators-grid").evaluate((el) => {
+        const cards = [...el.children].map((card) =>
+          card.getBoundingClientRect(),
+        );
+        return (
+          cards.every((card) => Math.abs(card.top - cards[0].top) < 1) &&
+          Math.abs(cards[0].left - el.getBoundingClientRect().left) < 1 &&
+          Math.abs(cards.at(-1).right - el.getBoundingClientRect().right) < 1
+        );
+      }),
+      true,
+    );
+    await page.locator("#creators-section").scrollIntoViewIfNeeded();
+    await page.screenshot({
+      path: path.join(tmpdir(), "bbmeta-creators-four-desktop.png"),
+    });
+    await page.setViewportSize({ width: 800, height: 1000 });
+    assert.equal(
+      await page
+        .locator("#creators-grid")
+        .evaluate(
+          (el) => getComputedStyle(el).gridTemplateColumns.split(" ").length,
+        ),
+      2,
+    );
+    await page.setViewportSize({ width: 360, height: 800 });
+    assert.equal(
+      await page
+        .locator("#creators-grid")
+        .evaluate(
+          (el) => getComputedStyle(el).gridTemplateColumns.split(" ").length,
+        ),
+      1,
+    );
     assert.equal(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth,

@@ -80,16 +80,51 @@
     "Brawl Ball": "brawlball",
   };
 
+  let allSeasons = [],
+    listReady = false,
+    detailToken = 0,
+    detailController,
+    activeId,
+    returnFocus;
+  const modalError = document.getElementById("modal-error");
   init();
 
   function init() {
     loadSeasonList();
+    document
+      .getElementById("archive-retry")
+      .addEventListener("click", loadSeasonList);
+    document
+      .getElementById("modal-retry")
+      .addEventListener("click", () => openSeasonModal(activeId));
+    document
+      .getElementById("archive-search")
+      .addEventListener("input", renderFiltered);
+    document
+      .getElementById("archive-sort")
+      .addEventListener("change", renderFiltered);
 
     els.modalClose.addEventListener("click", closeModal);
     els.modal.addEventListener("click", (e) => {
       if (e.target === els.modal) closeModal();
     });
     document.addEventListener("keydown", (e) => {
+      if (e.key === "Tab" && !els.modal.classList.contains("hidden")) {
+        const nodes = [
+          ...els.modal.querySelectorAll(
+            "button,a[href],input,select,[tabindex='0']",
+          ),
+        ].filter((node) => node.getClientRects().length);
+        const first = nodes[0],
+          last = nodes.at(-1);
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
       if (e.key === "Escape" && !els.modal.classList.contains("hidden"))
         closeModal();
     });
@@ -100,20 +135,44 @@
   // Season list
   // ---------------------------------------------------------
   async function loadSeasonList() {
+    listReady = false;
     showOnly("loading");
     try {
       const data = await fetchSeasonList();
-      const seasons = Array.isArray(data.seasons) ? data.seasons : [];
+      if (!Array.isArray(data.seasons))
+        throw new Error("Invalid archive response");
+      const seasons = data.seasons.filter(
+        (s) => s && typeof s === "object" && s.id != null,
+      );
+      allSeasons = seasons;
+      listReady = true;
+      document.getElementById("archive-count").textContent =
+        seasons.length.toLocaleString();
+      const champions = new Set(
+        seasons
+          .map((s) => s.season_champion_tag || s.season_champion_name)
+          .filter(Boolean),
+      );
+      document.getElementById("champions-count").textContent =
+        champions.size.toLocaleString();
+      const scores = seasons
+        .map((s) => numeric(s.season_champion_trophies))
+        .filter((n) => n != null);
+      document.getElementById("record-trophies").textContent = scores.length
+        ? formatNumber(Math.max(...scores))
+        : "—";
 
       if (seasons.length === 0) {
         showOnly("empty");
+        document.getElementById("archive-results").textContent =
+          "No archived seasons";
+        handleUrlState();
         return;
       }
 
       seasons.sort((a, b) => new Date(b.ended_at) - new Date(a.ended_at));
 
-      renderSeasonGrid(seasons);
-      showOnly("grid");
+      renderFiltered();
 
       handleUrlState();
     } catch (err) {
@@ -121,6 +180,8 @@
       els.errorMsg.textContent =
         "Could not load the season archive. Please try again later.";
       showOnly("error");
+      document.getElementById("archive-results").textContent =
+        "Archive unavailable";
     }
   }
 
@@ -131,6 +192,48 @@
     els.grid.classList.toggle("hidden", which !== "grid");
   }
 
+  function renderFiltered() {
+    if (!listReady || allSeasons.length === 0) return;
+    const query = document
+      .getElementById("archive-search")
+      .value.trim()
+      .toLowerCase();
+    const sort = document.getElementById("archive-sort").value;
+    const seasons = allSeasons.filter((s) =>
+      [
+        s.id,
+        formatSeasonId(s.id),
+        s.season_champion_name,
+        s.season_champion_tag,
+      ].some((v) =>
+        String(v || "")
+          .toLowerCase()
+          .includes(query),
+      ),
+    );
+    seasons.sort((a, b) =>
+      sort === "trophies"
+        ? (numeric(b.season_champion_trophies) ?? -1) -
+          (numeric(a.season_champion_trophies) ?? -1)
+        : (sort === "oldest" ? 1 : -1) * (sortTime(a) - sortTime(b)),
+    );
+    renderSeasonGrid(seasons);
+    showOnly("grid");
+    document.getElementById("archive-results").textContent =
+      seasons.length + " seasons";
+    if (!seasons.length) {
+      const message = document.createElement("p");
+      message.className = "state-container";
+      message.textContent = "No matching seasons. Try another name or year.";
+      els.grid.append(message);
+    }
+  }
+  function sortTime(season) {
+    const time = Date.parse(season.ended_at);
+    return Number.isFinite(time)
+      ? time
+      : Date.parse(String(season.id) + "-01") || 0;
+  }
   function renderSeasonGrid(seasons) {
     els.grid.innerHTML = seasons.map(seasonCardHTML).join("");
 
@@ -152,25 +255,25 @@
 
     return `
       <article class="season-card" data-season-id="${escapeAttr(season.id)}">
-        <div class="season-card-month">${monthLabel}</div>
+        <div class="season-card-month">${escapeHtml(monthLabel)}<span>FINAL RESULTS</span></div>
 
         <div class="season-champion-row">
           <div class="mini-avatar-wrapper">
-            <span class="crown-badge">👑</span>
-            <div class="mini-avatar">${initial}</div>
+
+            <div class="mini-avatar">${escapeHtml(initial)}</div>
           </div>
           <div class="champion-meta">
-            <div class="name">${escapeHtml(season.season_champion_name || "Unknown")}</div>
+            <span class="champion-label">SEASON CHAMPION</span><div class="name">${escapeHtml(season.season_champion_name || "Unknown")}</div>
             <div class="tag">${escapeHtml(season.season_champion_tag || "")}</div>
           </div>
         </div>
 
-        <div class="season-stats-row">
+        <div class="season-card-bottom"><div class="season-stats-row">
           <div class="season-trophies">${trophyCountHTML(season.season_champion_trophies)}</div>
           <div class="season-end-date">${endLabel}</div>
         </div>
 
-        <button class="view-standings-btn" type="button">View Final Standings →</button>
+        <button class="view-standings-btn" type="button" aria-label="View standings for ${escapeAttr(monthLabel)}">View final standings ↗</button></div>
       </article>
     `;
   }
@@ -196,36 +299,56 @@
   }
 
   async function openSeasonModal(id) {
+    const token = ++detailToken;
+    detailController?.abort();
+    detailController = new AbortController();
+    activeId = id;
+    if (els.modal.classList.contains("hidden"))
+      returnFocus = document.activeElement;
     els.modal.classList.remove("hidden");
     els.modal.setAttribute("aria-hidden", "false");
     els.modalContent.classList.add("hidden");
+    modalError.classList.add("hidden");
     els.modalLoading.classList.remove("hidden");
+    els.modalSeasonId.textContent = "Season " + id;
+    els.modal.querySelector(".modal-panel").setAttribute("aria-busy", "true");
     document.body.style.overflow = "hidden";
-
+    setBackgroundInert(true);
+    els.modalClose.focus();
     try {
-      const data = await fetchSeasonDetail(id);
-      if (!data.season) throw new Error("Season not found");
-
+      const data = await fetchSeasonDetail(id, detailController.signal);
+      if (token !== detailToken) return;
+      if (!data.season || typeof data.season !== "object")
+        throw new Error("Season not found");
       renderSeasonDetail(data.season);
-      els.modalLoading.classList.add("hidden");
       els.modalContent.classList.remove("hidden");
     } catch (err) {
-      console.error(err);
-      els.modalLoading.classList.add("hidden");
-      els.modalContent.classList.remove("hidden");
-      els.standingsBody.innerHTML = `
-        <tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 24px;">
-          Could not load this season's standings.
-        </td></tr>`;
+      if (token !== detailToken) return;
+      modalError.classList.remove("hidden");
+    } finally {
+      if (token === detailToken) {
+        els.modalLoading.classList.add("hidden");
+        els.modal
+          .querySelector(".modal-panel")
+          .setAttribute("aria-busy", "false");
+      }
     }
   }
-
+  function setBackgroundInert(value) {
+    document
+      .querySelectorAll(".site-header,main,.site-footer")
+      .forEach((el) => (el.inert = value));
+  }
   function closeModal(updateUrl = true) {
+    const wasOpen = !els.modal.classList.contains("hidden");
+    ++detailToken;
+    detailController?.abort();
     els.modal.classList.add("hidden");
     els.modal.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
-
-    if (updateUrl) {
+    setBackgroundInert(false);
+    if (wasOpen && returnFocus?.isConnected) returnFocus.focus();
+    if (updateUrl && wasOpen) {
       const url = new URL(window.location.href);
       url.searchParams.delete("id");
       history.pushState({}, "", url);
@@ -243,20 +366,28 @@
 
     const top10 = Array.isArray(season.final_top_10) ? season.final_top_10 : [];
     els.standingsBody.innerHTML =
-      top10.map(standingsRowHTML).join("") ||
+      top10
+        .filter((entry) => entry && typeof entry === "object")
+        .sort(
+          (a, b) =>
+            (numeric(a.rank) ?? Infinity) - (numeric(b.rank) ?? Infinity),
+        )
+        .map(standingsRowHTML)
+        .join("") ||
       `<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding: 20px;">No standings recorded.</td></tr>`;
   }
 
   function standingsRowHTML(entry) {
     const medal = RANK_MEDALS[entry.rank] || "";
-    const rankClass = entry.rank <= 3 ? `rank-${entry.rank}` : "";
+    const rank = numeric(entry.rank);
+    const rankClass = [1, 2, 3].includes(rank) ? `rank-${rank}` : "";
 
     return `
       <tr>
-        <td><span class="rank-badge ${rankClass}">${medal} ${entry.rank}</span></td>
+        <td><span class="rank-badge ${rankClass}">${medal} ${escapeHtml(rank ?? "—")}</span></td>
         <td>
           <div class="player-cell">
-            <span class="p-name">${escapeHtml(entry.name || "Unknown")}</span>
+            <a class="p-name" href="profile.html?tag=${encodeURIComponent(String(entry.tag || ""))}">${escapeHtml(entry.name || "Unknown")}</a>
             <span class="p-tag">${escapeHtml(entry.tag || "")}</span>
           </div>
         </td>
@@ -271,11 +402,15 @@
     if (!Array.isArray(deck) || deck.length === 0) {
       return '<span class="deck-empty">—</span>';
     }
-    return `<div class="deck-icons">${deck.map(cloneIconHTML).join("")}</div>`;
+    return `<div class="deck-icons">${deck
+      .filter((clone) => clone && typeof clone === "object")
+      .slice(0, 8)
+      .map(cloneIconHTML)
+      .join("")}</div>`;
   }
 
   function cloneIconHTML(clone) {
-    const displayName = clone.displayName || "Unknown";
+    const displayName = String(clone.displayName || clone.name || "Unknown");
     const fileName = getCloneFileName(displayName);
     const imgSrc = `/assets/clones/${fileName}.png`;
     const firstLetter = displayName.charAt(0).toUpperCase();
@@ -285,7 +420,7 @@
       <div class="clone-icon" style="--clone-color: ${color}" title="${escapeAttr(displayName)}">
         <img src="${imgSrc}" alt="${escapeAttr(displayName)}" width="26" height="26" loading="lazy" decoding="async"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-        <span class="clone-fallback" style="display:none;">${firstLetter}</span>
+        <span class="clone-fallback" style="display:none;">${escapeHtml(firstLetter)}</span>
       </div>
     `;
   }
@@ -295,20 +430,24 @@
     if (Object.hasOwn(CLONE_FILE_MAP, displayName)) {
       return CLONE_FILE_MAP[displayName];
     }
-    return displayName.toLowerCase().replace(/[\s_-]/g, "");
+    return displayName.toLowerCase().replace(/[^a-z0-9]/g, "");
   }
 
   // ---------------------------------------------------------
   // Helpers
   // ---------------------------------------------------------
   async function fetchSeasonList() {
-    const res = await fetch("/api/seasons");
+    const res = await fetch("/api/seasons", {
+      signal: AbortSignal.timeout(20000),
+    });
     if (!res.ok) throw new Error(`Request failed (${res.status})`);
     return res.json();
   }
 
-  async function fetchSeasonDetail(id) {
-    const res = await fetch(`/api/seasons?id=${encodeURIComponent(id)}`);
+  async function fetchSeasonDetail(id, signal) {
+    const res = await fetch(`/api/seasons?id=${encodeURIComponent(id)}`, {
+      signal: AbortSignal.any([signal, AbortSignal.timeout(20000)]),
+    });
     if (!res.ok) throw new Error(`Request failed (${res.status})`);
     return res.json();
   }
@@ -320,7 +459,12 @@
   function formatSeasonId(id) {
     // "2026-09" -> "September 2026"
     const [year, month] = String(id).split("-");
-    if (!year || !month) return id;
+    if (
+      !/^\d{4}-\d{2}$/.test(String(id)) ||
+      Number(month) < 1 ||
+      Number(month) > 12
+    )
+      return String(id);
     const date = new Date(Number(year), Number(month) - 1, 1);
     return date.toLocaleString("default", { month: "long", year: "numeric" });
   }
@@ -338,9 +482,15 @@
     });
   }
 
+  function numeric(value) {
+    if (value == null || value === "" || typeof value === "boolean")
+      return null;
+    const n = Number(value);
+    return Number.isFinite(n) && n >= 0 ? n : null;
+  }
   function formatNumber(n) {
-    if (n === null || n === undefined) return "0";
-    return Number(n).toLocaleString("en-US");
+    const value = numeric(n);
+    return value == null ? "—" : Math.floor(value).toLocaleString("en-US");
   }
 
   function colorFromString(str) {

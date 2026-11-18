@@ -361,6 +361,7 @@ async function loadGlobalRank(tag) {
 }
 
 function renderProfile(data) {
+  document.title = (data.name || "Player") + " — BBmeta Profile";
   const avatarEl = document.querySelector(".player-avatar");
   if (avatarEl) {
     avatarEl.innerHTML = `<img src="assets/king/King_01_blue.png" alt="King" />`;
@@ -901,7 +902,24 @@ async function loadTrophyChart(tag) {
 
   loadingEl.classList.add("hidden");
 
-  const points = Array.isArray(data?.points) ? data.points : [];
+  const points = [
+    ...new Map(
+      (Array.isArray(data?.points) ? data.points : [])
+        .filter(
+          (p) =>
+            p &&
+            Number.isFinite(Date.parse(p.captured_at)) &&
+            p.trophies != null &&
+            p.trophies !== "" &&
+            Number.isFinite(Number(p.trophies)) &&
+            Number(p.trophies) >= 0,
+        )
+        .map((p) => [
+          Date.parse(p.captured_at),
+          { captured_at: p.captured_at, trophies: Number(p.trophies) },
+        ]),
+    ).values(),
+  ].sort((a, b) => Date.parse(a.captured_at) - Date.parse(b.captured_at));
 
   if (points.length === 0) {
     errorEl.textContent = "No history data yet. Come back after a few hours.";
@@ -909,6 +927,11 @@ async function loadTrophyChart(tag) {
     return;
   }
 
+  if (typeof Chart === "undefined") {
+    errorEl.textContent = "The chart could not load. Refresh to try again.";
+    errorEl.classList.remove("hidden");
+    return;
+  }
   const dates = points.map((p) => p.captured_at);
   const trophies = points.map((p) => p.trophies ?? 0);
 
@@ -923,148 +946,138 @@ function formatChartLabel(raw) {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-function buildChartLabels(dates, maxLabels = 6) {
-  const firstIndexByDate = new Map();
-  dates.forEach((date, index) => {
-    const label = formatChartLabel(date);
-    if (!firstIndexByDate.has(label)) firstIndexByDate.set(label, index);
-  });
-
-  const uniqueDates = Array.from(firstIndexByDate, ([label, index]) => ({
-    label,
-    index,
-  }));
-  const labels = dates.map(() => "");
-  const labelCount = Math.min(maxLabels, uniqueDates.length);
-
-  for (let i = 0; i < labelCount; i++) {
-    const dateIndex =
-      labelCount === 1
-        ? 0
-        : Math.round((i * (uniqueDates.length - 1)) / (labelCount - 1));
-    const entry = uniqueDates[dateIndex];
-    labels[entry.index] = entry.label;
-  }
-
-  return labels;
-}
-
 function renderChart(dates, trophies) {
-  const ctx = document.getElementById("trophyChart").getContext("2d");
-
-  if (trophyChartInstance) {
-    trophyChartInstance.destroy();
-  }
-
-  const gradient = ctx.createLinearGradient(0, 0, 0, 320);
-  gradient.addColorStop(0, "rgba(201, 136, 31, 0.35)");
-  gradient.addColorStop(0.55, "rgba(201, 136, 31, 0.12)");
-  gradient.addColorStop(1, "rgba(201, 136, 31, 0.02)");
-
-  const first = trophies[0] ?? 0;
-  const last = trophies[trophies.length - 1] ?? 0;
-  const net = last - first;
-  const best = Math.max(...trophies);
-  const bestIdx = trophies.indexOf(best);
-
+  const canvas = document.getElementById("trophyChart");
+  const ctx = canvas.getContext("2d");
+  trophyChartInstance?.destroy();
+  const first = trophies[0],
+    last = trophies.at(-1);
+  const net = last - first,
+    best = Math.max(...trophies),
+    low = Math.min(...trophies);
+  const padding = Math.max(30, Math.ceil((best - low) * 0.18));
+  const timestamps = dates.map((date) => Date.parse(date));
+  const single = timestamps.length === 1;
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute(
+    "aria-label",
+    `Trophy history: ${first.toLocaleString()} to ${last.toLocaleString()}, net ${net >= 0 ? "+" : ""}${net.toLocaleString()} trophies across ${dates.length} snapshots.`,
+  );
   trophyChartInstance = new Chart(ctx, {
     type: "line",
     data: {
-      labels: buildChartLabels(dates),
       datasets: [
         {
           label: "Trophies",
-          data: trophies,
-          borderColor: "#c9881f",
-          borderWidth: 2,
-          backgroundColor: gradient,
-          fill: true,
-          tension: 0.2,
-          pointRadius: 0,
-          pointHoverRadius: 5,
-          pointBackgroundColor: "#fffaf0",
-          pointBorderColor: "#c9881f",
+          data: timestamps.map((x, i) => ({ x, y: trophies[i] })),
+          borderColor: "#bb7d1b",
+          borderWidth: 2.5,
+          backgroundColor: (context) => {
+            const area = context.chart.chartArea;
+            if (!area) return "rgba(201,136,31,.08)";
+            const gradient = context.chart.ctx.createLinearGradient(
+              0,
+              area.top,
+              0,
+              area.bottom,
+            );
+            gradient.addColorStop(0, "rgba(201,136,31,.24)");
+            gradient.addColorStop(1, "rgba(201,136,31,0)");
+            return gradient;
+          },
+          fill: "start",
+          tension: 0.15,
+          cubicInterpolationMode: "monotone",
+          pointRadius: (context) =>
+            context.dataIndex === trophies.length - 1 ? 4 : 0,
+          pointHoverRadius: 6,
+          pointHitRadius: 18,
+          pointBackgroundColor: "#bb7d1b",
+          pointBorderColor: "#fff8e9",
           pointBorderWidth: 2,
-          pointHitRadius: 12,
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      interaction: {
-        mode: "index",
-        intersect: false,
-      },
+      animation: false,
+      layout: { padding: { top: 15, right: 12, bottom: 3, left: 0 } },
+      interaction: { mode: "nearest", axis: "x", intersect: false },
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: "#2c2114",
-          titleColor: "#ffe9b8",
-          bodyColor: "#fffaf0",
-          borderColor: "#b8923f",
-          borderWidth: 1,
-          padding: 10,
-          cornerRadius: 8,
+          backgroundColor: "#302014",
+          titleColor: "#f5d28b",
+          bodyColor: "#fff1da",
+          padding: 12,
+          cornerRadius: 9,
           displayColors: false,
           callbacks: {
             title: (items) =>
-              items.length ? formatChartLabel(dates[items[0].dataIndex]) : "",
-            label: (item) => {
-              const val = item.parsed.y;
-              const prev = trophies[item.dataIndex - 1];
-              let delta = "";
-              if (prev != null) {
-                const d = val - prev;
-                delta = d >= 0 ? `  ▲ +${d}` : `  ▼ ${d}`;
-              }
-              return `Trophies: ${val.toLocaleString()}${delta}`;
+              items.length
+                ? new Date(items[0].parsed.x).toLocaleString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "",
+            label: (item) => `${item.parsed.y.toLocaleString()} trophies`,
+            afterLabel: (item) => {
+              const previous = trophies[item.dataIndex - 1];
+              if (previous == null) return "First recorded snapshot";
+              const change = item.parsed.y - previous;
+              return `${change >= 0 ? "+" : ""}${change.toLocaleString()} since previous snapshot`;
             },
           },
         },
       },
       scales: {
         x: {
+          type: "linear",
+          min: single ? timestamps[0] - 43200000 : timestamps[0],
+          max: single ? timestamps[0] + 43200000 : timestamps.at(-1),
+          border: { display: false },
+          grid: { display: false },
           ticks: {
-            color: "#7c6a4f",
-            maxTicksLimit: 6,
+            maxTicksLimit: 4,
             maxRotation: 0,
-            autoSkip: false,
-            padding: 8,
-            font: { size: 10 },
-          },
-          grid: {
-            drawOnChartArea: false,
-            drawTicks: false,
+            padding: 10,
+            color: "#977b54",
+            font: { family: "Inter", size: 10 },
+            callback: (value) => formatChartLabel(Number(value)),
           },
         },
         y: {
-          ticks: { color: "#7c6a4f", maxTicksLimit: 6 },
-          grid: { color: "rgba(184, 146, 63, 0.12)" },
+          min: Math.max(0, Math.floor((low - padding) / 10) * 10),
+          max: Math.ceil((best + padding) / 10) * 10,
+          border: { display: false },
+          grid: { color: "rgba(121,89,45,.09)", drawTicks: false },
+          ticks: {
+            maxTicksLimit: 5,
+            padding: 10,
+            color: "#977b54",
+            font: { family: "Inter", size: 10 },
+            callback: (value) => Number(value).toLocaleString(),
+          },
         },
       },
     },
   });
-
-  // Summary strip above the chart
-  const summary = document.getElementById("chart-summary");
-  if (summary) {
-    const netClass = net >= 0 ? "is-gain" : "is-loss";
-    summary.innerHTML = `
-      <div class="chart-summary-item">
-        <span class="chart-summary-label">Net</span>
-        <span class="chart-summary-value ${netClass}">${net >= 0 ? "+" : ""}${net.toLocaleString()}</span>
-      </div>
-      <div class="chart-summary-item">
-        <span class="chart-summary-label">Peak</span>
-        <span class="chart-summary-value">${best.toLocaleString()}</span>
-      </div>
-      <div class="chart-summary-item">
-        <span class="chart-summary-label">Current</span>
-        <span class="chart-summary-value">${last.toLocaleString()}</span>
-      </div>
-    `;
+  document.getElementById("chart-summary").innerHTML = `
+    <div class="chart-summary-item chart-current"><span class="chart-summary-label">Latest snapshot</span><strong class="chart-summary-value">${last.toLocaleString()}</strong></div>
+    <div class="chart-summary-item"><span class="chart-summary-label">Net change</span><strong class="chart-summary-value ${net >= 0 ? "is-gain" : "is-loss"}">${net >= 0 ? "+" : ""}${net.toLocaleString()}</strong></div>
+    <div class="chart-summary-item"><span class="chart-summary-label">Period peak</span><strong class="chart-summary-value">${best.toLocaleString()}</strong></div>`;
+  let caption = document.getElementById("chart-caption");
+  if (!caption) {
+    caption = document.createElement("p");
+    caption.id = "chart-caption";
+    document.getElementById("chart-container").append(caption);
   }
+  caption.textContent = single
+    ? "One snapshot recorded · More visits will build your trophy trail."
+    : `${formatChartLabel(dates[0])} – ${formatChartLabel(dates.at(-1))} · ${dates.length.toLocaleString()} recorded snapshots`;
 }
 
 function getRelativeTime(timestamp) {

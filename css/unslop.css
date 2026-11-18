@@ -1,0 +1,185 @@
+/* BBmeta interface refinements inspired by unslop by Damir Sokolovsky (CC BY 4.0): https://github.com/heydamir/unslop */
+body[data-scene] {
+  --ui-paper: #f7efdf;
+  --ui-paper-raised: #fff9ed;
+  --ui-ink: #34261b;
+  --ui-muted: #e6d7c0;
+  --ui-line: #d2b88c;
+  --ui-gold: #c9881f;
+}
+body[data-scene] :is(h1, h2, h3) {
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  text-shadow: none;
+}
+body[data-scene]
+  :is(
+    [class*="eyebrow"],
+    [class*="kicker"],
+    [class*="seal"],
+    [class*="label"]
+  ) {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+body[data-scene] :is(.hero-ring, .art-orbit, .hero-art-ring, .art-ring) {
+  display: none;
+}
+body[data-scene]
+  :is(
+    .search-panel,
+    .hero-copy,
+    .clones-hero-copy,
+    .clans-hero-copy,
+    .champions-panel,
+    .rankings-panel,
+    .clone-library,
+    .meta-summary,
+    .clans-summary,
+    .archive-snapshot,
+    .construction-card
+  ) {
+  box-shadow: 0 4px 16px #20150d24;
+}
+body[data-scene]
+  :is(
+    .search-panel,
+    .meta-summary,
+    .clans-summary,
+    .archive-snapshot,
+    .clones-overview,
+    .hall-snapshot
+  ) {
+  border-color: #dfc49a;
+}
+body[data-scene]
+  :is(
+    button,
+    a.button,
+    .hero-link,
+    .clones-hero-link,
+    .search-button,
+    .season-card-link
+  ) {
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+body[data-scene]
+  :is(
+    button,
+    a.button,
+    .hero-link,
+    .clones-hero-link,
+    .search-button,
+    .season-card-link
+  ):active {
+  transform: translateY(1px);
+}
+body[data-scene] .site-header.site-header.site-header {
+  background: #302117;
+  border-color: #ffffff18;
+}
+body[data-scene] .site-header .nav-links > a,
+body[data-scene] .site-header .nav-group > summary {
+  font-weight: 500;
+}
+body[data-scene] .site-footer {
+  border-color: #ffffff20;
+}
+body[data-scene] .hero-title,
+body[data-scene] .meta-hero h1,
+body[data-scene] .clones-hero-copy h1 {
+  text-shadow: none;
+}
+body[data-scene] .hero-stamp {
+  box-shadow: 0 3px 10px #20150d20;
+}
+body[data-scene] .profile-studio .player-stat-strip {
+  gap: 12px;
+}
+body[data-scene] .profile-studio .stat-tile:last-child {
+  grid-column: auto;
+  width: auto;
+}
+@media (max-width: 820px) {
+  body[data-scene] .profile-studio .player-stat-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  body[data-scene] .profile-studio .stat-tile.highlight-gold {
+    grid-column: 1/-1;
+    min-height: 112px;
+  }
+}
+
+/* Keep surfaces calm so the page art carries the color. */
+body[data-scene]
+  :is(
+    .search-panel,
+    .rankings-panel,
+    .clone-library,
+    .meta-summary,
+    .clans-summary,
+    .clans-table-card,
+    .archive-snapshot,
+    .hall-snapshot,
+    .construction-card,
+    .season-history-section,
+    .battles-section,
+    .chart-section
+  ) {
+  background-image: none;
+  background-color: var(--scene-panel);
+  border-color: var(--scene-line);
+  box-shadow: 0 2px 8px #21160e24;
+}
+body[data-scene] :is(.season-card, .clone-card, .deck-card, .stat-tile) {
+  box-shadow: 0 1px 4px #21160e20;
+}
+body[data-scene]
+  :is(
+    .home-eyebrow,
+    .eyebrow,
+    .clones-eyebrow,
+    .champions-kicker,
+    .archive-eyebrow,
+    .profile-section-kicker,
+    .workshop-label,
+    .clans-search-label,
+    .hero-art-label,
+    .news-eyebrow
+  ) {
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+body[data-scene] :is(.page-title, .clones-hero-copy h1, .hero-copy h1) {
+  text-shadow: none;
+}
+body[data-scene="index"] .hero-title {
+  font-size: clamp(2.75rem, 5.1vw, 4.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+body[data-scene="index"] .search-panel label {
+  letter-spacing: 0;
+}
+body[data-scene="vfx-lab"] .lab {
+  max-width: 1120px;
+}
+body[data-scene="vfx-lab"] :is(button, select, input) {
+  font: inherit;
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-scene] *,
+  body[data-scene] *::before,
+  body[data-scene] *::after {
+    scroll-behavior: auto;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

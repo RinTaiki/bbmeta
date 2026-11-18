@@ -1,84 +1,232 @@
-.site-header {
+.site-header.site-header.site-header {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 100;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.7) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
+  background: #24180ff0;
+  border-bottom: 1px solid #c9881f33;
 }
-
-.header-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px 24px;
+.site-header.site-header .header-container {
+  max-width: 1240px;
+  margin: auto;
+  padding: 16px 32px;
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
+  gap: 28px;
+  position: relative;
 }
-
 .logo {
-  font-size: 1.75rem;
+  font-size: 1.7rem;
   font-weight: 800;
-  color: var(--color-accent);
+  color: #e0b94e;
   text-decoration: none;
-  letter-spacing: -0.5px;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  transition: transform 0.2s ease;
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-
-.logo:hover {
-  transform: scale(1.03);
-}
-
 .beta-tag {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  color: #fff;
-  background: var(--color-accent);
-  padding: 2px 6px;
-  border-radius: 6px;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fff5df;
+  background: #a88330;
+  padding: 3px 5px;
+  border-radius: 4px;
   margin-left: 6px;
   vertical-align: middle;
-  text-shadow: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
-
-.nav-links {
+.site-header.site-header .nav-links {
   display: flex;
-  gap: 24px;
+  flex-wrap: nowrap;
   align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  min-width: 0;
 }
-
-.nav-links a {
-  color: var(--color-text);
+.site-header .nav-links > a,
+.site-header .nav-group > summary {
+  color: #d6c5af;
   text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  opacity: 0.85;
-  transition:
-    opacity 0.2s ease,
-    color 0.2s ease;
-}
-
-.nav-links a:hover,
-.nav-links a.active {
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 10px 13px;
+  border: 1px solid transparent;
+  border-radius: 7px;
   opacity: 1;
-  color: var(--color-accent);
+  cursor: pointer;
+  white-space: nowrap;
 }
-
-@media (max-width: 640px) {
-  .header-container {
-    flex-direction: column;
-    gap: 12px;
+.site-header .nav-links > a:hover,
+.site-header .nav-group > summary:hover {
+  color: #f5d392;
+  background: #f5b9420a;
+}
+.site-header .nav-links > a.active,
+.site-header .nav-group:has([aria-current="page"]) > summary {
+  color: #f5b942;
+  border-color: #c9881f33;
+  background: #c9881f0d;
+}
+.nav-group {
+  position: relative;
+}
+.nav-group > summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  list-style: none;
+}
+.nav-group > summary::-webkit-details-marker {
+  display: none;
+}
+.nav-chevron {
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+}
+.nav-group[open] > summary .nav-chevron {
+  transform: rotate(225deg) translate(-1px, -1px);
+}
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 255px;
+  padding: 7px;
+  border: 1px solid #c9881f66;
+  border-radius: 12px;
+  background: linear-gradient(130deg, #39271b, #21160f);
+  box-shadow: 0 15px 35px #10080666;
+}
+.site-header.site-header .nav-dropdown a {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 13px 14px;
+  text-decoration: none;
+  color: #f0ddc2;
+  opacity: 1;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: normal;
+}
+.nav-dropdown a strong {
+  font-weight: 700;
+}
+.nav-dropdown a span {
+  color: #bda587;
+  font-size: 0.64rem;
+  font-weight: 400;
+}
+.site-header.site-header .nav-dropdown a:hover,
+.site-header.site-header .nav-dropdown a.active {
+  color: #f5b942;
+  background: #c9881f14;
+}
+.nav-toggle {
+  display: none;
+}
+.site-header :is(a, button, summary):focus-visible {
+  outline: 3px solid #f5b942;
+  outline-offset: 3px;
+}
+@media (max-width: 820px) {
+  .site-header.site-header .header-container {
+    padding: 15px 20px;
+    gap: 15px;
   }
-
-  .nav-links {
-    gap: 16px;
-    font-size: 0.85rem;
+  .site-header .logo {
+    font-size: 1.5rem;
+  }
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    border: 1px solid #c9881f55;
+    border-radius: 7px;
+    padding: 9px 12px;
+    color: #ead0a4;
+    background: #c9881f0a;
+    font: inherit;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .nav-toggle-icon {
+    width: 14px;
+    height: 10px;
+    border-block: 1px solid currentColor;
+    position: relative;
+  }
+  .nav-toggle-icon::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 0;
+    width: 14px;
+    height: 1px;
+    background: currentColor;
+  }
+  .site-header.site-header .nav-links {
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 12px;
+    right: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+    padding: 10px;
+    border: 1px solid #c9881f55;
+    border-radius: 0 0 12px 12px;
+    background: #291b12;
+    box-shadow: 0 16px 30px #10080655;
+    max-height: calc(100dvh - 95px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .site-header.nav-ready:not(.nav-open) .nav-links {
+    display: none;
+  }
+  .site-header .nav-links > a,
+  .site-header .nav-group > summary {
+    padding: 13px 14px;
+    font-size: 0.8rem;
+  }
+  .nav-group > summary {
+    justify-content: space-between;
+  }
+  .nav-dropdown {
+    position: static;
+    min-width: 0;
+    padding: 4px 8px;
+    margin-top: 5px;
+    box-shadow: none;
+    background: #1c120c66;
+    border-color: #c9881f26;
+  }
+  body
+    :is(
+      .leaderboard-page,
+      .clones-page,
+      .meta-page,
+      .archive-page,
+      .champions-page,
+      .builder-page,
+      .clans-page
+    ) {
+    padding-top: 110px;
+  }
+  .home-body.home-body .hero {
+    padding-top: 110px;
   }
 }

@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="css/components/battle-card.css" />
     <link rel="stylesheet" href="css/components/chart.css" />
     <link rel="stylesheet" href="css/profile.css" />
+    <link rel="stylesheet" href="css/profile-showcase.css" />
     <script>
       window.va =
         window.va ||
@@ -38,8 +39,12 @@
         };
     </script>
     <script defer src="/_vercel/speed-insights/script.js"></script>
-  </head>
-  <body class="fade-in">
+    <script src="js/navigation.js" defer></script>
+    <link rel="stylesheet" href="css/scenery.css" />
+    <link rel="stylesheet" href="css/unslop.css" />
+    <link rel="stylesheet" href="css/universal-glass.css" />
+</head>
+  <body class="profile-studio" data-scene="profile" data-palette="ember">
     <div class="profile-bg"></div>
     <div class="profile-bg-deco">
       <img src="assets/emotes/king-celebration.png" alt="" style="--r: -8deg" />
@@ -53,19 +58,91 @@
         <a href="index.html" class="logo"
           >BBmeta<span class="beta-tag">[Beta]</span></a
         >
-        <nav class="nav-links">
+        <button
+          type="button"
+          class="nav-toggle"
+          aria-expanded="false"
+          aria-controls="site-navigation"
+        >
+          <span class="nav-toggle-icon" aria-hidden="true"></span
+          ><span>Menu</span>
+        </button>
+        <nav
+          class="nav-links"
+          id="site-navigation"
+          aria-label="Main navigation"
+        >
           <a href="index.html">Home</a>
-          <a href="leaderboard.html">Leaderboard</a>
-          <a href="clones.html">Clones</a>
-          <a href="meta.html">Meta</a>
-          <a href="deck-builder.html">Deck Builder</a>
-          <a href="about.html" class="nav-about">About</a>
+          <details class="nav-group">
+            <summary>
+              Rankings<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="leaderboard.html"
+                ><strong>Players</strong><span>Follow the trophy climb</span></a
+              ><a href="clans.html"
+                ><strong>Clans</strong
+                ><span>Find your tribe and rivals</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Game<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="clones.html"
+                ><strong>Clones</strong><span>Explore your collection</span></a
+              ><a href="meta.html"
+                ><strong>Meta decks</strong
+                ><span>Scout winning combinations</span></a
+              ><a href="deck-builder.html"
+                ><strong>Deck Builder</strong
+                ><span>The brawler’s workshop</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              Legacy<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="champions.html"
+                ><strong>Hall of Champions</strong
+                ><span>Meet the legends</span></a
+              ><a href="season-archive.html"
+                ><strong>Seasons</strong><span>Relive past seasons</span></a
+              >
+            </div>
+          </details>
+          <details class="nav-group">
+            <summary>
+              About<span class="nav-chevron" aria-hidden="true"></span>
+            </summary>
+            <div class="nav-dropdown">
+              <a href="about.html"
+                ><strong>About BBmeta</strong
+                ><span>The community behind the stats</span></a
+              ><a href="contact.html"
+                ><strong>Contact</strong><span>Get in touch</span></a
+              ><a href="privacy.html"
+                ><strong>Privacy</strong><span>How we handle your data</span></a
+              >
+            </div>
+          </details>
         </nav>
       </div>
     </header>
 
     <main class="profile-page">
       <div class="content-wrapper">
+        <div class="profile-masthead">
+          <div>
+            <span>THE BRAWLER’S DOSSIER</span>
+            <p>Every brawl leaves a mark.</p>
+          </div>
+          <a href="leaderboard.html">Explore the rankings ↗</a>
+        </div>
         <div id="loading-state" class="state-container">
           <div class="spinner"></div>
           <p id="loading-message">Fetching player profile...</p>
@@ -97,7 +174,10 @@
                       tabindex="0"
                       hidden
                     >
-                      <span class="profile-title-embers" aria-hidden="true"></span>
+                      <span
+                        class="profile-title-embers"
+                        aria-hidden="true"
+                      ></span>
                       <span id="achievement-title-text"></span>
                       <span
                         class="profile-title-sweep"
@@ -310,7 +390,7 @@
             class="season-history-section hidden"
           >
             <div class="section-header-strip season-history-header">
-              <h2 class="section-title">🏆 Season History</h2>
+              <h2 class="section-title">The legacy</h2>
               <div id="season-history-stats" class="season-history-stats"></div>
             </div>
 
@@ -325,7 +405,10 @@
           <div class="profile-columns">
             <section class="battles-section">
               <div class="section-header-strip">
-                <h2 class="section-title">Recent Battles</h2>
+                <div>
+                  <span class="profile-section-kicker">Recent battles</span>
+                  <h2 class="section-title">Recent battles</h2>
+                </div>
                 <div
                   class="battle-filter"
                   id="battle-filter"
@@ -354,7 +437,10 @@
 
             <section class="chart-section">
               <div class="section-header-strip">
-                <h2 class="section-title">30-Day Trophy History</h2>
+                <div>
+                  <span class="profile-section-kicker">Trophy history</span>
+                  <h2 class="section-title">30-day trophy trail</h2>
+                </div>
               </div>
               <div id="chart-loading" class="sub-loading">
                 Generating graph...

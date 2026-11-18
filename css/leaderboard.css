@@ -10,14 +10,8 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(6, 20, 25, 0.56),
-      rgba(7, 24, 28, 0.08) 48%,
-      rgba(9, 22, 25, 0.68)
-    ),
-    url("../assets/backgrounds/frozen_dawn.webp") center / cover no-repeat;
+  background: url("../assets/backgrounds/frozen_dawn.webp") center / cover
+    no-repeat;
 }
 .leaderboard-page {
   padding: 122px 0 64px;
@@ -425,6 +419,45 @@
   width: 16%;
   text-align: right;
 }
+
+.clan-cell-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.clan-badge-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  object-fit: contain;
+  flex-shrink: 0;
+  background: #49311e;
+  padding: 3px;
+}
+
+.clan-badge-fallback {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+  background: rgba(201, 136, 31, 0.12);
+  border: 1px solid rgba(201, 136, 31, 0.25);
+}
+
+.clan-name-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
 .player-name {
   display: block;
   font-weight: 700;
@@ -723,7 +756,6 @@
 @media (max-width: 640px) {
   .leaderboard-body .site-header {
     position: relative;
-    background: #142328;
   }
   .leaderboard-body .nav-links {
     justify-content: center;
