@@ -1,4 +1,5 @@
 import creatorsHandler from "../lib/creators.js";
+import seasonsHandler from "../lib/seasons-handler.js";
 
 let redis = null;
 let redisInitialized = false;
@@ -34,6 +35,9 @@ export default async function handler(req, res) {
   const requestPath = new URL(req.url, "http://localhost").pathname;
   if (requestPath === "/api/creators") {
     return creatorsHandler(req, res);
+  }
+  if (requestPath === "/api/seasons") {
+    return seasonsHandler(req, res);
   }
 
   // CORS
